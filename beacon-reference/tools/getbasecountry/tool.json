@@ -9,18 +9,18 @@
     "EIMAdmin",
     "GeographicalLocations"
   ],
-  "status": "unlive",
+  "status": "live",
   "signature": "getBaseCountry",
   "createdAt": "2026-02-06T03:25:00.322Z",
-  "updatedAt": "2026-07-17T12:51:46.182Z",
+  "updatedAt": "2026-09-17T05:38:46.121Z",
   "assignedAgents": [
     {
       "id": "690dc571931a2d61ba0b1bc2",
       "name": "EIM Administration"
     }
   ],
-  "contentHash": "1e0896bf1156c169611624b932b469edc5e6f2ce621f4d59d25ca52dd8615136",
-  "lastExportedAt": "2026-09-10T09:08:50.261Z",
+  "contentHash": "27f31b59ceb85e5aa3039d08f7b0ea88bf661e65bc159282b777a32257b06699",
+  "lastExportedAt": "2026-09-17T11:32:35.486Z",
   "raw": {
     "basic": {
       "_id": "69855f0cf88a0de2d0e5ad25",
@@ -52,7 +52,7 @@
         "isAdvanced": false,
         "_id": "6a5a256272821e5b5ec1a246"
       },
-      "by": "34476",
+      "by": "7854",
       "fetcher": "(function (args, reqOptions) {\n  return {\n    code: `(function(){\n        return [];\n      })`\n  };\n})",
       "transformer": "(async function (data, args, reqOptions) {\n  try {\n\n    /* -------------------------------------------------\n     * 1) Access validation\n     * ------------------------------------------------- */\n    if (!BeaconBar?.user?.metaData?.menus?.includes(\"EIM/Country.aspx\")) {\n      return {\n        status: \"NO_ACCESS\",\n        message: \"You do not have access to Country screen. Please contact HR Admin.\"\n      };\n    }\n\n    /* -------------------------------------------------\n     * 2) Navigate to the Country page\n     * ------------------------------------------------- */\n    const updateUrl = await BeaconBar.executeFunction(\"updateUrlParams\")(\"EIM/Country.aspx\");\n    const url = updateUrl.updateUrl\n      ? `${window.origin}/${reqOptions.sl}/${updateUrl.updateUrl}`\n      : `${window.origin}/${reqOptions.sl}/EIM/Country.aspx`;\n\n\n    // Open the page in an iframe\n    const iframe = document.createElement('iframe');\n    iframe.style.display = 'none';\n    document.body.appendChild(iframe);\n\n    try {\n      // Load the page\n      await new Promise((resolve, reject) => {\n        iframe.onload = resolve;\n        iframe.onerror = reject;\n        iframe.src = url;\n        setTimeout(() => reject(new Error('Page load timeout')), 10000);\n      });\n\n      // Wait for JavaScript execution\n      await new Promise(resolve => setTimeout(resolve, 1500));\n\n      const doc = iframe.contentDocument || iframe.contentWindow.document;\n\n      /* -------------------------------------------------\n       * 3) Find base country row (BurlyWood background)\n       * ------------------------------------------------- */\n      \n      // Method 1: Look for BurlyWood in inline style (most reliable)\n      let baseRow = doc.querySelector(\"tr[style*='BurlyWood' i]\");\n      \n      if (!baseRow) {\n        // Method 2: Check all grid rows for BurlyWood style\n        const allRows = doc.querySelectorAll(\"tr[id^='ctl00_body_grdsummary_ctl00__']\");\n        \n        for (const row of allRows) {\n          const style = row.getAttribute(\"style\") || \"\";\n          if (style.toLowerCase().includes(\"burlywood\")) {\n            baseRow = row;\n            break;\n          }\n        }\n      }\n\n      if (!baseRow) {\n        return {\n          status: \"NOT_FOUND\",\n          message: \"Base country not found. Please ensure a base country is configured.\"\n        };\n      }\n\n      // Extract country data\n      const tds = baseRow.querySelectorAll(\"td\");\n      const result = {\n        countryCode: (tds[0]?.textContent || \"\").trim(),\n        countryName: (tds[1]?.textContent || \"\").trim()\n      };\n\n\n      return {\n        status: \"SUCCESS\",\n        baseCountry: result\n      };\n\n    } finally {\n      document.body.removeChild(iframe);\n    }\n\n  } catch (e) {\n    return { status: \"ERROR\", message: e?.message || String(e) };\n  }\n})",
       "groupName": "",
@@ -62,10 +62,10 @@
       ],
       "taskName": "Fetching Base Country Details",
       "sourceConstructor": "(function(data, args, reqOptions) {\n  return [\n    {\n      url: \"\",\n      title: \"\",\n      subTitle: \"\",\n      icon: \"\"\n    }\n  ];\n})",
-      "status": "unlive",
+      "status": "live",
       "createdAt": "2026-02-06T03:25:00.322Z",
-      "updatedAt": "2026-07-17T12:51:46.182Z",
-      "__v": 5,
+      "updatedAt": "2026-09-17T05:38:46.121Z",
+      "__v": 6,
       "sampleRequest": {},
       "apiConfig": {
         "method": "GET"

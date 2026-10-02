@@ -1,18 +1,28 @@
 {
-  "arguments": [
+  "arguments": [],
+  "advancedArguments": [
     {
       "name": "courseCode",
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "The course code to filter the training calendar by (e.g. `\"000070\"`). Use `\"-1\"` to retrieve all courses.",
-      "advanced": false,
+      "description": "The course code to filter the training calendar by (e.g. \"000070\"). Use \"-1\" to retrieve all courses, or omit and use courseName instead if the user names the course rather than a code. Combine with date to get FULL details (real seat counts, cut-off date, etc.) of one specific scheduled training instance the user picked from the calendar - courseCode alone (without date) only browses the calendar, where those fields are placeholders (though if that course only has one scheduled session, the tool resolves straight through to full details for it automatically).",
+      "advanced": true,
       "raw": {
-        "name": "courseCode",
         "type": "string",
-        "description": "The course code to filter the training calendar by (e.g. `\"000070\"`). Use `\"-1\"` to retrieve all courses.",
-        "required": false,
-        "_id": "6a9cf26701c38d9fd8e84a75"
+        "description": "The course code to filter the training calendar by (e.g. \"000070\"). Use \"-1\" to retrieve all courses, or omit and use courseName instead if the user names the course rather than a code. Combine with date to get FULL details (real seat counts, cut-off date, etc.) of one specific scheduled training instance the user picked from the calendar - courseCode alone (without date) only browses the calendar, where those fields are placeholders (though if that course only has one scheduled session, the tool resolves straight through to full details for it automatically)."
+      }
+    },
+    {
+      "name": "courseName",
+      "type": "string",
+      "required": false,
+      "defaultValue": null,
+      "description": "The course name (or partial name) the user mentioned, e.g. 'First Aid'. Matches case-insensitively against every returned schedule's course name (a substring match) - applied client-side after fetching, since the underlying calendar service only filters server-side by courseCode/status. Do not resolve this to a courseCode yourself first; pass the name directly and let this tool filter by it. Combines with date when both are given. Do not ask the user for a course code - this is resolved against the live course list automatically. If the name matches more than one course, the tool asks which one - never guess. Use this whenever the user names a course by name instead of picking one from an earlier list result.",
+      "advanced": true,
+      "raw": {
+        "type": "string",
+        "description": "The course name (or partial name) the user mentioned, e.g. 'First Aid'. Matches case-insensitively against every returned schedule's course name (a substring match) - applied client-side after fetching, since the underlying calendar service only filters server-side by courseCode/status. Do not resolve this to a courseCode yourself first; pass the name directly and let this tool filter by it. Combines with date when both are given. Do not ask the user for a course code - this is resolved against the live course list automatically. If the name matches more than one course, the tool asks which one - never guess. Use this whenever the user names a course by name instead of picking one from an earlier list result."
       }
     },
     {
@@ -20,14 +30,11 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "Approval status filter for the schedules",
-      "advanced": false,
+      "description": "Approval status filter for the schedules.",
+      "advanced": true,
       "raw": {
-        "name": "status",
         "type": "string",
-        "description": "Approval status filter for the schedules",
-        "required": false,
-        "_id": "6a9cf26701c38d9fd8e84a76"
+        "description": "Approval status filter for the schedules."
       }
     },
     {
@@ -35,16 +42,12 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "Specific date in `YYYY-MM-DD` format. When provided, only training schedules occurring on that date are returned.",
-      "advanced": false,
+      "description": "Specific date in YYYY-MM-DD format. When provided, the tool switches from browsing the calendar to fetching FULL details for the scheduled training instance(s) on that exact date - start date, end date, application cut-off date, and participation date, and REAL maxParticipants/filledSeats/availableSeats numbers. If the user asks for more/full details on a specific training they already picked from a calendar listing, you MUST call this tool AGAIN with date set (plus courseCode/courseName if they picked a specific course) - never answer using field values from an earlier browse-the-calendar result. If the user only names the course (via courseCode or courseName) and doesn't know the date, you can omit date entirely - the tool looks up that course's own scheduled date(s) itself and resolves straight through to full details when there's exactly one, or asks which date when there's more than one.",
+      "advanced": true,
       "raw": {
-        "name": "date",
         "type": "string",
-        "description": "Specific date in `YYYY-MM-DD` format. When provided, only training schedules occurring on that date are returned.",
-        "required": false,
-        "_id": "6a9cf26701c38d9fd8e84a77"
+        "description": "Specific date in YYYY-MM-DD format. When provided, the tool switches from browsing the calendar to fetching FULL details for the scheduled training instance(s) on that exact date - start date, end date, application cut-off date, and participation date, and REAL maxParticipants/filledSeats/availableSeats numbers. If the user asks for more/full details on a specific training they already picked from a calendar listing, you MUST call this tool AGAIN with date set (plus courseCode/courseName if they picked a specific course) - never answer using field values from an earlier browse-the-calendar result. If the user only names the course (via courseCode or courseName) and doesn't know the date, you can omit date entirely - the tool looks up that course's own scheduled date(s) itself and resolves straight through to full details when there's exactly one, or asks which date when there's more than one."
       }
     }
-  ],
-  "advancedArguments": []
+  ]
 }

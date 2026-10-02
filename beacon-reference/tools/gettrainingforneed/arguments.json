@@ -1,20 +1,17 @@
 {
-  "arguments": [
+  "arguments": [],
+  "advancedArguments": [
     {
       "name": "keyword",
       "type": "string",
       "required": true,
       "defaultValue": null,
-      "description": "The core topic of what the user described their training requirement as - e.g. 'MS Excel', 'DevOps', 'git version control'. Pass just the topic/phrase itself, not the user's full sentence (e.g. pass 'git version control', not 'I want a course to lear",
-      "advanced": false,
+      "description": "The core topic of what the user described their training requirement as - e.g. 'MS Excel', 'DevOps', 'git version control'. Pass just the topic/phrase itself, not the user's full sentence (e.g. pass 'git version control', not 'I want a course to learn about version control with git'). Matched word-by-word, PARTIAL match per word (e.g. 'dev' matches 'Development') against both the merged need category name and each individual raw request's own text.",
+      "advanced": true,
       "raw": {
-        "name": "keyword",
         "type": "string",
-        "description": "The core topic of what the user described their training requirement as - e.g. 'MS Excel', 'DevOps', 'git version control'. Pass just the topic/phrase itself, not the user's full sentence (e.g. pass 'git version control', not 'I want a course to lear",
-        "required": true,
-        "_id": "6a9fab381234b756221c4e49"
+        "description": "The core topic of what the user described their training requirement as - e.g. 'MS Excel', 'DevOps', 'git version control'. Pass just the topic/phrase itself, not the user's full sentence (e.g. pass 'git version control', not 'I want a course to learn about version control with git'). Matched word-by-word, PARTIAL match per word (e.g. 'dev' matches 'Development') against both the merged need category name and each individual raw request's own text."
       }
     }
-  ],
-  "advancedArguments": []
+  ]
 }

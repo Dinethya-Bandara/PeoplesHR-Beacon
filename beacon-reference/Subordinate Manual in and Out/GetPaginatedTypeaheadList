@@ -1,0 +1,36 @@
+curl --url 'https://hrmmainphqa.phrsandbox.dev/hr/CommonComponents/Search/GetPaginatedTypeaheadList/?empNumber=IRie_Ok4yQ3MlcY1eVbVSuHM9YYyokwi_5c-dKi7AaZ14OT-RcZR8RqmOMiry2xPGVuzkzl0-HDVJntLGfAZYbvVxra7wpdggF1VKENHYrm6rPze5fXMTNIULBE_uaJdF2UTP9le07-FlwRXyrkSQVT1x-nu2K-24v_I4uK89NjwKc6ercNsN3ExbQ5i8vJ6oGgsgpHSHkOAONJQhSCCzWM0tFGNJsxMyU_J33FaQvOxP3Z1LO5rWK-PJ-zljDL1_OEzsqKI2bNnr36BULaouQ0VA8bznt7mwvPJzMygFELrrUT1A4S_-cHOACwrbPAls5yU1J_tXsDhwrpzsgd-tE4oTFQ_oQGln3tsVHeXw7oe3pFkFhfPykVdINBTCRpy4D70-Bd3DbvNnfLsNVqAOz8-O76fHxhKmmkmrtU3xv3skpZRPioEr8XGU0H-5pf3aFfjr5WbOyddJSvCYJ8_rU_-DLoxTH_tLHW9xwbwcG_c3J0b9epZPz2lOdfwaaAC&key=24d4902b-4c9f-41cb-8c89-4b18ace10020&_=1789968521802' \
+  -H 'accept: */*' \
+  -H 'accept-language: en-GB,en;q=0.9,en-US;q=0.8' \
+  -b 'ASP.NET_SessionId=3uqu1451asvcq1kscv4joua0; __RequestVerificationToken_L2hy0=lwpHoAnjFZnwEo4RbU2se58WAnSXhDQvBmiGswV3WTGjgDEmRcYwsw4uFdiiMQrlCI-lN-VlK6oYZ-0P4wudHspxvf01; THEME_V8=default; .ASPXAUTH=A144A741836BBBBB0881D97B9367BEC4AFAA57CED136DC142ED22D44A8BD963F006669C3496745D0E0AF43D42AC22A7ACA4F55258E1B438216FF03F77308868C78344F3A7EFC7173521BA8A1410034E4042EC8EE568BAD4CED6E6FBD0F989527; ehrm85=EAAAAB9bcFbg5z0Pkc0zSMKRmrS+USqEiQABsxCEzsXwTcdGfDzVUKiSv1M34jbvWmVvz/puTqp2NV05BQbNc4wyt9nCsnjA0ZX6K+XxUJug60CpODAoNrxCVL7iVYixiAxML/1m8bQwVTy2oi+fJ70jU1RcxGRONUMNLJbghA15BfZC5ZZSnyr9Ug7tq8p677qZZtxR5kVFS1vW6EKv6GOvXHFDjjvNCb4tVoQrN1T77RMH0tnr3nIKrcVW//kZ7xPfCE2NMqdUGgFlajrU6jykYC+OA0kIinyS+hhOluvZRAosWBKIWyi9UsTO2V1E59Sr9vT94smUfZzpzAk2F+STQk0RekZvttBzyG4Tsw/H7nhay5kEMqqezR8RMtkwfwLmbMFcn7f490zYE+MRWgn6JDExfd23bsG9HDRJmqdLIX47EwkGP5JD9eg3Wsihm/KE0R8jWHCo6cnpi+0cWXDPnA51OWxF77ycmGywZonhK1T9zR4Ci/L6ELr+TYHrr9CtetYxtkO5bMmvi8zKg63fuOiZHYgs9nC+djC0E2gteXfl5G2IDGxhYPhs5F0Wx65bhI61jcArH/YfNbL7k0UCMF4GjuJntvqi2dHC/7py/78LqGXzmE2C/QrnWSojobgeStRydXrJXsdwxQJg0i6adpbci1TX6PElMrtfyzvsYGT9jyPLokeSrR4JTNiHG3TihZm6nJUyT1Xw8jDrJeqRoscr9Cm+izh3RAiEVe7upunRVHo/XU7ZYv9DwKSseRcQFTfwMdAD+OwkRqKM1DGu7RZK1sD/K5Y7+vVKF0GDiDM7Kv1MM1/mk3xRWHAJ2yqrwndW5Fl0GsHH+1Ay7QEaBYzxaUQUBawTQHmTC8yB3f0JawGKVCyXRFAWTX6ozHUJyzGmVptHsFNG5zk0OmcZMb8sxnzEXV2RSvsCSP1mVds8+BVHEPEALBwbnTgpuZMzbtTTOnpG0gYzfJAdsUSZbMB2FHcI2t2/A6hTGgOXuRMgTWV48xxJidJZTsLhcEqqJFsnUnfYWSaJHxFxWfbjGZN4oyy4p473S6r82aPqvvFSOLaxdCeCQ0fBZmTPscDVymxK2/3Sx+OmNONGG8CLzvo=; my-application-browser-tab={"guid":"e0fafde7-4502-967d-48fa-26390c80c08e","timestamp":1789971314057}' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://hrmmainphqa.phrsandbox.dev/hr/home/index' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="153", "Not_A Brand";v="8", "Chromium";v="153"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0' \
+  -H 'x-requested-with: XMLHttpRequest'
+
+  payload
+  empNumber
+IRie_Ok4yQ3MlcY1eVbVSuHM9YYyokwi_5c-dKi7AaZ14OT-RcZR8RqmOMiry2xPGVuzkzl0-HDVJntLGfAZYbvVxra7wpdggF1VKENHYrm6rPze5fXMTNIULBE_uaJdF2UTP9le07-FlwRXyrkSQVT1x-nu2K-24v_I4uK89NjwKc6ercNsN3ExbQ5i8vJ6oGgsgpHSHkOAONJQhSCCzWM0tFGNJsxMyU_J33FaQvOxP3Z1LO5rWK-PJ-zljDL1_OEzsqKI2bNnr36BULaouQ0VA8bznt7mwvPJzMygFELrrUT1A4S_-cHOACwrbPAls5yU1J_tXsDhwrpzsgd-tE4oTFQ_oQGln3tsVHeXw7oe3pFkFhfPykVdINBTCRpy4D70-Bd3DbvNnfLsNVqAOz8-O76fHxhKmmkmrtU3xv3skpZRPioEr8XGU0H-5pf3aFfjr5WbOyddJSvCYJ8_rU_-DLoxTH_tLHW9xwbwcG_c3J0b9epZPz2lOdfwaaAC
+key
+24d4902b-4c9f-41cb-8c89-4b18ace10020
+_
+1789968521802
+
+response
+
+{
+    "results": [
+        {
+            "id": "000017",
+            "text": "000017 - Jackson Walker"
+        }
+    ],
+    "pagination": {
+        "more": false
+    }
+}

@@ -1,3 +1,6 @@
 {
-  "sampleRequest": {}
+  "sampleRequest": {},
+  "sanity": {
+    "apiResponse": []
+  }
 }

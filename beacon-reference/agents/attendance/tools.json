@@ -5,6 +5,16 @@
     "path": "tools/editsubordinatesmanualinandout"
   },
   {
+    "toolId": "6a82e376462b20b27700e67e",
+    "toolName": "submitSubordinatesManualInAndOut",
+    "path": "tools/submitsubordinatesmanualinandout"
+  },
+  {
+    "toolId": "6a7d652bdf5557a058554c33",
+    "toolName": "submitSelfManualInAndOut",
+    "path": "tools/submitselfmanualinandout"
+  },
+  {
     "toolId": "6a8ea65237b20ee9436a5da9",
     "toolName": "editSelfManualInAndOut",
     "path": "tools/editselfmanualinandout"
@@ -18,16 +28,6 @@
     "toolId": "6a8fec0523d5d8fe14b0f829",
     "toolName": "submitManualInAndOutByAdmin",
     "path": "tools/submitmanualinandoutbyadmin"
-  },
-  {
-    "toolId": "6a7d652bdf5557a058554c33",
-    "toolName": "submitSelfManualInAndOut",
-    "path": "tools/submitselfmanualinandout"
-  },
-  {
-    "toolId": "6a82e376462b20b27700e67e",
-    "toolName": "submitSubordinatesManualInAndOut",
-    "path": "tools/submitsubordinatesmanualinandout"
   },
   {
     "toolId": "690dc56b931a2d61ba0b1af5",

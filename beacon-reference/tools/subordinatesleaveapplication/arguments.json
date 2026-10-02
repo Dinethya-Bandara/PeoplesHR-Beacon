@@ -40,7 +40,7 @@
     {
       "name": "year",
       "type": "string",
-      "required": false,
+      "required": true,
       "defaultValue": null,
       "description": "Leave year, e.g. 2026. Defaults to the current calendar year if it is an entitled leave year for this employee, otherwise the first available year.",
       "advanced": true,
@@ -52,7 +52,7 @@
     {
       "name": "fromDate",
       "type": "string",
-      "required": false,
+      "required": true,
       "defaultValue": null,
       "description": "Leave start date. Use the format returned by the dateFormat tool (MM/DD/YYYY for en-US, otherwise DD/MM/YYYY). Ask the user for this if not provided.",
       "advanced": true,
@@ -64,7 +64,7 @@
     {
       "name": "toDate",
       "type": "string",
-      "required": false,
+      "required": true,
       "defaultValue": null,
       "description": "Leave end date, in the same format as fromDate. Omit for a single-day leave application.",
       "advanced": true,
@@ -134,37 +134,15 @@
       }
     },
     {
-      "name": "attachment",
-      "type": "object",
-      "required": false,
-      "defaultValue": null,
-      "description": "Optional fallback for supplying a file as data when the chat's own upload is not available. Normally omit - a file attached to the chat is picked up automatically.",
-      "advanced": true,
-      "raw": {
-        "type": "object",
-        "properties": {
-          "fileName": {
-            "type": "string",
-            "description": "File name including its extension, e.g. 'medical.pdf'."
-          },
-          "base64Data": {
-            "type": "string",
-            "description": "The file's contents, base64 encoded. A data: prefix is accepted and stripped."
-          }
-        },
-        "description": "Optional fallback for supplying a file as data when the chat's own upload is not available. Normally omit - a file attached to the chat is picked up automatically."
-      }
-    },
-    {
       "name": "isAttachmentMandatory",
       "type": "boolean",
-      "required": false,
+      "required": true,
       "defaultValue": null,
-      "description": "Optional and normally unnecessary - the tool reads IsAttachmentRequired from the leave type itself, so it already knows. Accepted only for parity with employeeLeaveApplication.",
+      "description": "Set to true when the leave type requires a mandatory attachment (e.g., medical leave). When true, Set this field to true if the user is applying for one of the following leave types: Annual Leave, Sick Leave, or Maternity Leave.",
       "advanced": true,
       "raw": {
         "type": "boolean",
-        "description": "Optional and normally unnecessary - the tool reads IsAttachmentRequired from the leave type itself, so it already knows. Accepted only for parity with employeeLeaveApplication."
+        "description": "Set to true when the leave type requires a mandatory attachment (e.g., medical leave). When true, Set this field to true if the user is applying for one of the following leave types: Annual Leave, Sick Leave, or Maternity Leave."
       }
     },
     {
@@ -182,7 +160,7 @@
     {
       "name": "dayModes",
       "type": "array",
-      "required": false,
+      "required": true,
       "defaultValue": null,
       "description": "Optional per-day leave mode. Omit for whole days - the system works the breakdown out itself.",
       "advanced": true,

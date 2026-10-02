@@ -84,13 +84,110 @@
       const dd = isUsFormat ? b : a;
       const mm = isUsFormat ? a : b;
       const yyyy = String(y).length === 2 ? `20${y}` : String(y);
-      return Number(`${yyyy}${pad(mm)}${pad(dd)}${pad(h)}${pad(min)}`);
+      return {
+        dayKey: Number(`${yyyy}${pad(mm)}${pad(dd)}`),
+        key: Number(`${yyyy}${pad(mm)}${pad(dd)}${pad(h)}${pad(min)}`),
+        text: `${pad(dd)}/${pad(mm)}/${yyyy} ${pad(h)}:${pad(min)}`
+      };
     }
 
     const start = build(m[1], m[2], m[3], m[4], m[5]);
     const end = build(m[6], m[7], m[8], m[9], m[10]);
-    if (!Number.isFinite(start) || !Number.isFinite(end) || start > end) return null;
-    return { start, end, text: toolTip.split("[")[0].trim() };
+    if (!Number.isFinite(start.key) || !Number.isFinite(end.key) || start.key > end.key) return null;
+
+    // "09.00 - 18.00" - the shift's own start and end, as the API states them.
+    const shiftText = toolTip.split("[")[0].trim();
+    const clock = shiftText.match(/(\d{1,2})[.:](\d{2})\s*-\s*(\d{1,2})[.:](\d{2})/);
+
+    /* spansNextDay is the fact that settles whether an Out time earlier on
+     * the clock than the In time is legal. When the API's own window runs
+     * past midnight the Out belongs to the following date, so "In before
+     * Out" is only ever true of the full In/Out date-times - never of the
+     * bare clock values. 149 of the 171 rows in the captured team grid have
+     * a window like that, so it is the normal case, not the exception. */
+    return {
+      start: start.key,
+      end: end.key,
+      startDayKey: start.dayKey,
+      endDayKey: end.dayKey,
+      startText: start.text,
+      endText: end.text,
+      spansNextDay: end.dayKey > start.dayKey,
+      shiftInClock: clock ? `${pad(clock[1])}:${clock[2]}` : null,
+      shiftOutClock: clock ? `${pad(clock[3])}:${clock[4]}` : null,
+      text: shiftText
+    };
+  }
+
+  /* -------------------------------------------------
+   * Which date a time belongs to is decided by the window the API
+   * returned, never by a rule of our own. resolveOutDate mirrors what the
+   * UI does when an Out time is typed that sits earlier on the clock than
+   * the In time: keep the same date while that is legal, and otherwise
+   * roll to the next date when - and only when - the shift the API
+   * described actually reaches there.
+   * ------------------------------------------------- */
+  function addDays(parsed, days) {
+    const d = new Date(Number(parsed.yyyy), Number(parsed.mm) - 1, Number(parsed.dd) + days);
+    return { dd: pad(d.getDate()), mm: pad(d.getMonth() + 1), yyyy: String(d.getFullYear()) };
+  }
+
+  function resolveOutDate(inParsed, inHHMM, outHHMM, rowInDateText, rowOutDateText, window, isMidNightShift) {
+    const sameDay = { parsed: inParsed, text: formatCultureDate(inParsed), rolled: false, source: "sameDay" };
+
+    // What the grid itself pre-filled, when it already spans two dates.
+    let gridDay = null;
+    if (rowInDateText && rowOutDateText && rowInDateText !== rowOutDateText) {
+      const gridParsed = parseCultureDate(rowOutDateText);
+      if (gridParsed) gridDay = { parsed: gridParsed, text: rowOutDateText, rolled: true, source: "grid" };
+    }
+
+    const inKey = toMinuteKey(inParsed, inHHMM);
+    const sameKey = toMinuteKey(inParsed, outHHMM);
+    if (inKey === null || sameKey === null) return gridDay || sameDay;
+
+    if (!window) {
+      /* No parsable window - the grid's own dates, then IsMidNightShift,
+       * are all the API has said about whether this shift crosses midnight. */
+      if (gridDay) return gridDay;
+      if (isMidNightShift === 1 && sameKey <= inKey) {
+        const next = addDays(inParsed, 1);
+        return { parsed: next, text: formatCultureDate(next), rolled: true, source: "isMidNightShift" };
+      }
+      return sameDay;
+    }
+
+    // The same date is right whenever it is both after the In and inside the window.
+    if (sameKey > inKey && sameKey >= window.start && sameKey <= window.end) return sameDay;
+
+    // The window itself is what licenses rolling to the next date.
+    if (window.spansNextDay) {
+      const next = addDays(inParsed, 1);
+      const nextKey = toMinuteKey(next, outHHMM);
+      if (nextKey !== null && nextKey >= window.start && nextKey <= window.end) {
+        return { parsed: next, text: formatCultureDate(next), rolled: true, source: "graceWindow" };
+      }
+    }
+
+    return gridDay || sameDay;
+  }
+
+  /* A single time (a break edge) placed on whichever of the two dates the
+   * API's window puts it on. inside:false means it is on neither. */
+  function resolveTimeInWindow(baseParsed, hhmm, window) {
+    const sameKey = toMinuteKey(baseParsed, hhmm);
+    if (!window) return { parsed: baseParsed, key: sameKey, inside: true };
+    if (sameKey !== null && sameKey >= window.start && sameKey <= window.end) {
+      return { parsed: baseParsed, key: sameKey, inside: true };
+    }
+    if (window.spansNextDay) {
+      const next = addDays(baseParsed, 1);
+      const nextKey = toMinuteKey(next, hhmm);
+      if (nextKey !== null && nextKey >= window.start && nextKey <= window.end) {
+        return { parsed: next, key: nextKey, inside: true };
+      }
+    }
+    return { parsed: baseParsed, key: sameKey, inside: false };
   }
 
   /* -------------------------------------------------
@@ -446,6 +543,32 @@
     || loggedEmpNumber;
 
   /* -------------------------------------------------
+   * Page-load parity, in the order the screen itself calls them:
+   *   ManualInOut/1 (above) -> Search component (above) ->
+   *   GetRostersByGroupId -> GetSearchCriteria -> GetPaginatedTypeaheadList
+   *
+   * Which roster group is loaded varies from user to user, so it is read
+   * off the page's own RosterGroupList rather than assumed - the captured
+   * page listed group "6" first and that is the group the UI asked for.
+   * ------------------------------------------------- */
+  const rosterGroupList = Array.isArray(filterModel.RosterGroupList) ? filterModel.RosterGroupList : [];
+  const rosterGroupId = args.rosterGroup
+    || (rosterGroupList[0] && rosterGroupList[0].GroupId)
+    || "1";
+
+  const rosterResult = await safePostJson(
+    `${baseUrl}/TNAV9/api/Common/GetRostersByGroupId/`,
+    { rosterGroup: String(rosterGroupId) },
+    ajaxHeaders
+  );
+  const rosterList = Array.isArray(rosterResult.body) ? rosterResult.body : [];
+
+  // The search modal's criteria list, fetched the way the screen fetches it.
+  await safeGetJson(
+    `${baseUrl}/CommonComponents/Search/GetSearchCriteria/?key=${encodeURIComponent(searchKey)}&_=${Date.now()}`
+  );
+
+  /* -------------------------------------------------
    * Step 3: fetch the subordinate list and match. This list is
    * what restricts the tool to actual subordinates.
    *
@@ -632,10 +755,38 @@
     };
   }
 
-  // The roster dropdown is pre-selected on "000017 - Default Yes", which is
-  // what the team screen sends when nobody touches it. An empty code is the
-  // fallback, so a roster mismatch never reads as "the day does not exist".
-  const rosterAttempts = ["000017", ""];
+  /* The roster the screen searches with is the first one GetRostersByGroupId
+   * returned for this user's roster group - in the capture that was "000058"
+   * (MAK01), not the "000017" this tool used to assume. A named roster wins
+   * over that, and the old hard-coded guesses stay on the end as fallbacks so
+   * a user whose roster list comes back empty is no worse off than before. */
+  let namedRosterCode = args.rosterCode || null;
+  if (!namedRosterCode && args.rosterName) {
+    const wanted = String(args.rosterName).toLowerCase().trim();
+    const rosterMatch = rosterList.find(function (r) {
+      return String(r.RosterName || "").toLowerCase().trim() === wanted;
+    }) || rosterList.find(function (r) {
+      return String(r.RosterName || "").toLowerCase().includes(wanted);
+    });
+    if (!rosterMatch) {
+      return {
+        error: true,
+        message: `Could not find a roster named "${args.rosterName}". Please pick one of the available rosters.`,
+        availableRosters: rosterList.map(function (r) { return { rosterCode: r.RosterCode, rosterName: r.RosterName }; })
+      };
+    }
+    namedRosterCode = rosterMatch.RosterCode;
+  }
+
+  const rosterAttempts = [];
+  function addRosterAttempt(code) {
+    if (code === null || code === undefined) return;
+    if (rosterAttempts.indexOf(code) === -1) rosterAttempts.push(code);
+  }
+  addRosterAttempt(namedRosterCode);
+  rosterList.forEach(function (r) { addRosterAttempt(r.RosterCode); });
+  addRosterAttempt("000017");
+  addRosterAttempt("");
   let gridPayload = null;
   let recordList = [];
   let usedRosterCode = null;
@@ -655,15 +806,43 @@
   }
 
   /* -------------------------------------------------
-   * Search parity: the page loads the employee summary straight after
-   * the grid comes back. Its EmployeeData is the authoritative identity
-   * for whoever the search actually resolved to - worth showing before
-   * a manager confirms a change to someone else's attendance.
+   * Search parity, in the order the screen itself calls them once the
+   * Search button is pressed:
+   *   GetGridDataByCriteria (above) -> GetManuallyTimeFixedData ->
+   *   GetManualRejectedData -> GetLocalizedMessage -> GetDynamicEmployeeSummary
    *
-   * The EmpNumber tokens are per-response nonces, and the page always
-   * uses the freshest, so prefer the one the grid just issued.
+   * GetManuallyTimeFixedData and GetManualRejectedData are both posted
+   * the SAME array - the InOutRecordType 1 rows the grid is showing,
+   * shaped the way the submit shapes them. Confirmed against the capture:
+   * both payloads are 20 rows, every one of them type 1, beginning at
+   * 2024-11-04 - the first type 1 row - while the grid itself begins at
+   * 2024-11-01 (a type 3 row).
    * ------------------------------------------------- */
   const gridEmpToken = (recordList[0] && recordList[0].EmpNumber) || empToken;
+
+  const submittableRows = recordList
+    .filter(function (r) { return r.InOutRecordType === 1; })
+    .map(toSubmitRow);
+
+  const fixedResult = await safePostJson(
+    `${baseUrl}/TNAV9/api/ManualInOut/GetManuallyTimeFixedData/`,
+    submittableRows,
+    jsonHeaders
+  );
+  const fixedList = Array.isArray(fixedResult.body) ? fixedResult.body : [];
+
+  await safePostJson(
+    `${baseUrl}/TNAV9/api/ManualInOut/GetManualRejectedData/`,
+    submittableRows,
+    jsonHeaders
+  );
+
+  // The grid's "Select All" caption, fetched the way the screen fetches it.
+  await safePostJson(
+    `${baseUrl}/TNAV9/api/Common/GetLocalizedMessage/`,
+    { resourceKey: "CommonSelectAllBtn", parameter: "", classKey: "Common" },
+    ajaxHeaders
+  );
 
   const summaryResult = await safePostJson(
     `${baseUrl}/TNAV9/api/Common/GetDynamicEmployeeSummary/`,
@@ -764,6 +943,13 @@
     };
   }
 
+  /* Whether this day has been manually fixed before, off the list the
+   * search already loaded. */
+  const previouslyManuallyFixed = fixedList.some(function (r) {
+    return isoDayOf(r.DatInDate) === targetIsoDay
+      && (!gridRow.EmpDisplayNumber || r.EmpDisplayNumber === gridRow.EmpDisplayNumber);
+  });
+
   const hasExistingIn = hasTime(targetRow.InTime);
   const hasExistingOut = hasTime(targetRow.OutTime);
   const currentInText = hasExistingIn ? (targetRow.InTimeText || hhmmToText(targetRow.InTime)) : null;
@@ -778,30 +964,60 @@
   }
 
   /* -------------------------------------------------
-   * Step 7: collect what is still required. A half that is already
-   * recorded is kept as it is - only the missing half is asked for.
+   * Step 7: collect what is still required.
+   *
+   * All four of In Date, In Time, Out Date and Out Time are asked for
+   * separately, never inferred - a shift can end on the date after it
+   * started, so the Out Date is a real choice and not something to
+   * decide on the manager's behalf. The row's own dates and the shift's
+   * period go back with the question so the caller can offer them as the
+   * defaults rather than asking blind.
    * ------------------------------------------------- */
+  const suggestedInDateText = targetRow.InDateText || dateText;
+  const suggestedOutDateText = targetRow.OutDateText || dateText;
+
   const missing = [];
-  if (!hasExistingIn && !args.inTime) missing.push("In Time");
-  if (!hasExistingOut && !args.outTime) missing.push("Out Time");
+  if (!args.inDate) missing.push("In Date");
+  if (!args.inTime) missing.push("In Time");
+  if (!args.outDate) missing.push("Out Date");
+  if (!args.outTime) missing.push("Out Time");
   if (!args.reason) missing.push("Reason for adding manual In and Out");
 
   if (missing.length > 0) {
+    const canEndNextDay = shiftWindow ? shiftWindow.spansNextDay : (targetRow.IsMidNightShift === 1);
+    const nextDayNote = canEndNextDay
+      ? ` This shift can end on the following day, so the Out Date may be ${formatCultureDate(addDays(parseCultureDate(suggestedInDateText) || parsedDate, 1))} rather than ${suggestedInDateText} - ask, do not assume.`
+      : "";
+
     return {
       needsInput: true,
-      message: `Please provide the following to add manual In and Out for ${employeeLabel} on ${dateText}: ${missing.join(", ")}. Also ask whether a break should be added for this day - if yes, collect Break In Time and Break Out Time (HH:mm); if no, continue without them.`,
+      message: `Please provide the following to add manual In and Out for ${employeeLabel} on ${dateText}: ${missing.join(", ")}. Dates are ${dateFormatName} and times are HH:mm - the In Date and In Time, and the Out Date and Out Time, are each asked for separately.${nextDayNote} Also ask whether a break should be added for this day - if yes, collect Break In Time and Break Out Time (HH:mm); if no, continue without them.`,
       missingFields: missing,
+      // What the row already carries - offer these as the defaults.
+      suggested: {
+        inDate: suggestedInDateText,
+        outDate: suggestedOutDateText
+      },
       current: {
         employee: employeeLabel,
         employeeNumber: employeeDisplayNumber,
         designation: employeeDesignation,
         date: dateText,
+        inDate: suggestedInDateText,
+        outDate: suggestedOutDateText,
         shift: targetRow.ShiftAbbreviation || null,
         shiftPeriod: shiftWindow ? shiftWindow.text : null,
         shiftToolTip: targetRow.ShiftToolTip || null,
+        shiftStart: shiftWindow ? shiftWindow.shiftInClock : null,
+        shiftEnd: shiftWindow ? shiftWindow.shiftOutClock : null,
+        shiftAllowedFrom: shiftWindow ? shiftWindow.startText : null,
+        shiftAllowedTo: shiftWindow ? shiftWindow.endText : null,
+        shiftCanEndNextDay: canEndNextDay,
+        isMidNightShift: targetRow.IsMidNightShift,
         inTime: currentInText,
         outTime: currentOutText,
-        status: targetRow.RecordStatusText || null
+        status: targetRow.RecordStatusText || null,
+        previouslyManuallyFixed
       }
     };
   }
@@ -819,20 +1035,14 @@
   /* -------------------------------------------------
    * Step 8: validate the values (HH:mm in, HH.MM on the wire).
    * ------------------------------------------------- */
-  let newIn = null;
-  if (!hasExistingIn) {
-    newIn = timeToHHMM(args.inTime);
-    if (newIn === null) {
-      return { error: true, message: "In Time must be in HH:mm 24-hour format, e.g. 08:30." };
-    }
+  const newIn = timeToHHMM(args.inTime);
+  if (newIn === null) {
+    return { error: true, message: "In Time must be in HH:mm 24-hour format, e.g. 08:30." };
   }
 
-  let newOut = null;
-  if (!hasExistingOut) {
-    newOut = timeToHHMM(args.outTime);
-    if (newOut === null) {
-      return { error: true, message: "Out Time must be in HH:mm 24-hour format, e.g. 17:30." };
-    }
+  const newOut = timeToHHMM(args.outTime);
+  if (newOut === null) {
+    return { error: true, message: "Out Time must be in HH:mm 24-hour format, e.g. 17:30." };
   }
 
   let breakIn = null;
@@ -857,11 +1067,46 @@
   const finalInText = hasExistingIn ? currentInText : args.inTime;
   const finalOutText = hasExistingOut ? currentOutText : args.outTime;
 
-  /* The In and Out dates are the row's own, not the selected date forced
-   * onto both - on a midnight shift the Out date is legitimately the next
-   * day, and overwriting it would put the Out before the In. */
-  const finalInDateText = targetRow.InDateText;
-  const finalOutDateText = targetRow.OutDateText;
+  /* -------------------------------------------------
+   * Which dates the In and the Out belong to.
+   *
+   * Both are asked for above, so normally they arrive as arguments and
+   * are used exactly as the manager gave them. resolveOutDate is the
+   * fallback for a caller that supplied the times but not the Out Date:
+   * it reads the window the API returned for this row (ShiftToolTip) and
+   * falls back to IsMidNightShift when the tooltip cannot be parsed, so
+   * an Out time earlier on the clock than the In time lands on the next
+   * date exactly when this shift reaches there, and stays on the same
+   * date when it does not. Nothing about any particular shift is assumed.
+   * ------------------------------------------------- */
+  let finalInDateText = targetRow.InDateText || dateText;
+
+  if (args.inDate) {
+    const parsedInDate = parseCultureDate(args.inDate);
+    if (!parsedInDate) return { error: true, message: `Invalid inDate. Please provide it as ${dateFormatName}.` };
+    finalInDateText = formatCultureDate(parsedInDate);
+  }
+
+  const parsedInDateText = parseCultureDate(finalInDateText) || parsedDate;
+
+  let outDateResolution;
+  if (args.outDate) {
+    const parsedOutDate = parseCultureDate(args.outDate);
+    if (!parsedOutDate) return { error: true, message: `Invalid outDate. Please provide it as ${dateFormatName}.` };
+    outDateResolution = { parsed: parsedOutDate, text: formatCultureDate(parsedOutDate), rolled: false, source: "argument" };
+  } else {
+    outDateResolution = resolveOutDate(
+      parsedInDateText,
+      finalInText,
+      finalOutText,
+      targetRow.InDateText,
+      targetRow.OutDateText,
+      shiftWindow,
+      targetRow.IsMidNightShift
+    );
+  }
+  const finalOutDateText = outDateResolution.text;
+  const parsedOutDateText = outDateResolution.parsed;
 
   /* -------------------------------------------------
    * Break cell parity: the grid row carries DABreakList null, the day's
@@ -881,16 +1126,20 @@
    * ------------------------------------------------- */
   const warnings = [];
   let outTimeExceedsGrace = false;
+  let breakInPlacement = null;
+  let breakOutPlacement = null;
 
-  // Which of the two break times, if either, sits outside the window.
+  /* Each break edge is placed on whichever of the window's two dates it
+   * falls on, the same way the Out time is - so a break after midnight on
+   * a shift that reaches there is not refused. */
   function breakTimesOutsideWindow(window) {
-    const bInKey = toMinuteKey(parsedDate, args.breakInTime);
-    const bOutKey = toMinuteKey(parsedDate, args.breakOutTime);
+    breakInPlacement = resolveTimeInWindow(parsedInDateText, args.breakInTime, window);
+    breakOutPlacement = resolveTimeInWindow(parsedInDateText, args.breakOutTime, window);
     const outside = [];
-    if (bInKey !== null && (bInKey < window.start || bInKey > window.end)) {
+    if (!breakInPlacement.inside) {
       outside.push(`Break In Time ${args.breakInTime}`);
     }
-    if (bOutKey !== null && (bOutKey < window.start || bOutKey > window.end)) {
+    if (!breakOutPlacement.inside) {
       outside.push(`Break Out Time ${args.breakOutTime}`);
     }
     return outside;
@@ -912,10 +1161,37 @@
     };
   }
 
-  if (shiftWindow) {
-    const inKey = toMinuteKey(parseCultureDate(finalInDateText), finalInText);
-    const outKey = toMinuteKey(parseCultureDate(finalOutDateText), finalOutText);
+  const inKey = toMinuteKey(parsedInDateText, finalInText);
+  const outKey = toMinuteKey(parsedOutDateText, finalOutText);
 
+  /* The only ordering rule applied is the one the shift itself states.
+   * It is checked on the full In/Out date-times, never on the bare clock
+   * values, so a shift that ends after midnight is not refused for having
+   * an Out "before" its In. When the API's window is single-day the shift
+   * really does require the Out later the same day, and that check stays;
+   * when there is no window to check against, the server decides. */
+  if (inKey !== null && outKey !== null && outKey <= inKey) {
+    if (shiftWindow && !shiftWindow.spansNextDay) {
+      return {
+        error: true,
+        message: `The Out time ${finalOutText} is not after the In time ${finalInText} on ${finalInDateText}. ${employeeLabel}'s shift that day runs ${shiftWindow.text} and has to be swiped between ${shiftWindow.startText} and ${shiftWindow.endText}, which is all within one day, so the Out time cannot be on the following date. Please give an Out time later than the In time.`,
+        current: {
+          employee: employeeLabel,
+          date: dateText,
+          shift: targetRow.ShiftAbbreviation || null,
+          shiftPeriod: shiftWindow.text,
+          shiftAllowedFrom: shiftWindow.startText,
+          shiftAllowedTo: shiftWindow.endText,
+          shiftToolTip: targetRow.ShiftToolTip || null,
+          inTime: finalInText,
+          outTime: finalOutText
+        }
+      };
+    }
+    warnings.push(`The Out time ${finalOutText} on ${finalOutDateText} is not after the In time ${finalInText} on ${finalInDateText}. The system will decide whether it accepts this.`);
+  }
+
+  if (shiftWindow) {
     if (!hasExistingIn && inKey !== null && (inKey < shiftWindow.start || inKey > shiftWindow.end)) {
       warnings.push(`The In time ${finalInText} on ${finalInDateText} falls outside the shift's allowed window (${targetRow.ShiftToolTip}).`);
     }
@@ -940,8 +1216,16 @@
     date: dateText,
     shift: targetRow.ShiftAbbreviation || null,
     shiftPeriod: shiftWindow ? shiftWindow.text : null,
+    shiftAllowedFrom: shiftWindow ? shiftWindow.startText : null,
+    shiftAllowedTo: shiftWindow ? shiftWindow.endText : null,
     inDate: finalInDateText,
     outDate: finalOutDateText,
+    /* True when the Out lands on the date after the In - worth showing,
+     * because it is the part of the entry a manager is most likely to
+     * want to correct before confirming someone else's attendance. */
+    outIsNextDay: finalOutDateText !== finalInDateText,
+    outDateSource: outDateResolution.source,
+    previouslyManuallyFixed,
     inTime: finalInText,
     outTime: finalOutText,
     inTimeAlreadyRecorded: hasExistingIn,
@@ -974,7 +1258,13 @@
    * untouched, exactly as the page posts them.
    * ------------------------------------------------- */
   function buildUpdatedRow(row, forceOutTimeExceedConfirmed) {
+    /* InDate/OutDate are the ISO halves of InDateText/OutDateText and have
+     * to move with them. Leaving the ISO date on the In date is what makes
+     * the server read a legitimate overnight Out as an Out before its own
+     * In - the captured UI submit sends both halves together. */
     const updated = Object.assign({}, row, {
+      InDate: formatIsoDateOnly(parsedInDateText),
+      OutDate: formatIsoDateOnly(parsedOutDateText),
       InTime: finalInTime,
       OutTime: finalOutTime,
       InTimeText: finalInText || "",
@@ -1000,6 +1290,11 @@
 
     if (breakIn !== null && breakOut !== null) {
       const datInDate = row.DatInDate || formatIsoDateOnly(parsedDate);
+      /* Each break edge keeps the date it was resolved onto, so a break
+       * after midnight on a shift that reaches there is stored on the
+       * right day instead of being folded back onto the In date. */
+      const bStartParsed = (breakInPlacement && breakInPlacement.parsed) || parsedInDateText;
+      const bEndParsed = (breakOutPlacement && breakOutPlacement.parsed) || parsedInDateText;
       const baseSeq = existingBreaks.reduce(function (maxVal, br) {
         const seq = Number(br && br.SeqNo);
         return Number.isFinite(seq) && seq > maxVal ? seq : maxVal;
@@ -1013,12 +1308,12 @@
         DatInDate: datInDate,
         EmpNumber: row.EmpNumber || empToken,
         SeqNo: baseSeq + 1,
-        BStartDate: datInDate,
-        BStartDateText: dateText,
+        BStartDate: formatIsoDateOnly(bStartParsed),
+        BStartDateText: formatCultureDate(bStartParsed),
         BStartTime: breakIn,
         BStartTimeText: args.breakInTime,
-        BEndDate: datInDate,
-        BEndDateText: dateText,
+        BEndDate: formatIsoDateOnly(bEndParsed),
+        BEndDateText: formatCultureDate(bEndParsed),
         BEndTime: breakOut,
         BEndTimeText: args.breakOutTime,
         BStartOldDate: null,
@@ -1139,11 +1434,13 @@
   /* The recalculated day figures are asked for with the refreshed
    * tab as the body - the rows carry the EmpNumber tokens the
    * grid reload just issued, not the ones the submit went out with. */
-  const refreshedTabRows = refreshedList
-    .filter(function (r) { return r.InOutRecordType === tabRecordType; })
+  const refreshedSubmittableRows = refreshedList
+    .filter(function (r) { return r.InOutRecordType === 1; })
     .map(toSubmitRow);
 
-  await safePostJson(`${baseUrl}/TNAV9/api/ManualInOut/GetManuallyTimeFixedData/`, refreshedTabRows, jsonHeaders);
+  /* Same array to both, exactly as the search does. */
+  await safePostJson(`${baseUrl}/TNAV9/api/ManualInOut/GetManuallyTimeFixedData/`, refreshedSubmittableRows, jsonHeaders);
+  await safePostJson(`${baseUrl}/TNAV9/api/ManualInOut/GetManualRejectedData/`, refreshedSubmittableRows, jsonHeaders);
 
   await safePostJson(`${baseUrl}/TNAV9/api/Common/GetDynamicEmployeeSummary/`, {
     pageId: 1,

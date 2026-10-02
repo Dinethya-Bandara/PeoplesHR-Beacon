@@ -1,27 +1,17 @@
 (async function (data, args, reqOptions) {
-
-  /* -------------------------------------------------
-   * Access gate - runs before anything else. This is the Team Leave
-   * Management screen (AbsenceV9/LeaveApplication/LeaveApplication,
-   * isDirectSubbordiante=1) - a different menu entry from the
-   * employee's own Leave Application screen.
-   * ------------------------------------------------- */
   if (
     !BeaconBar.user?.metaData?.menus?.some(menu =>
       menu.includes("AbsenceV9/LeaveApplication/LeaveApplication?mvc=1&isDirectSubbordiante=1")
     )
   ) {
-    return { error: true, message: "You do not have access to apply leave for your team. Please contact HR Admin." };
+    return {
+      error: true,
+      message: "You do not have access to apply for leave for your subordinates. Please contact HR Admin."
+    };
   }
-
+  
   function pad(n) { return String(n).padStart(2, "0"); }
 
-  /* -------------------------------------------------
-   * Date helpers. The on-screen/tool-facing format follows the
-   * culture (matching the dateFormat tool), but the wire's *Text
-   * fields for this module carry a two-digit year, e.g. "09/09/26" -
-   * captured directly off CalculateLeaveDays / GetLeaveClashDetails.
-   * ------------------------------------------------- */
   const culture = BeaconBar.user?.metaData?.culture || "en-GB";
   const isUsFormat = culture === "en-US";
   const dateFormatName = isUsFormat ? "MM/DD/YYYY" : "DD/MM/YYYY";
@@ -66,13 +56,7 @@
    * ------------------------------------------------- */
   const sl = reqOptions.sl;
   const baseUrl = `${location.origin}/${sl}`;
-  /* Every captured AbsenceV9/api/LeaveApplication/* request carried the
-   * __cfafvalue anti-forgery header. window.csrf is NOT ambient - the
-   * BeaconBar "application" / "employeeLeaveApplication" functions set it
-   * by parsing #hdbAbsenceV9AFToken off a freshly loaded Absence page, and
-   * this tool does the same below. Headers are therefore built per request,
-   * not once up front, so they pick up the token after the page load rather
-   * than baking in an undefined value. */
+
   function absenceHeaders() {
     return {
       "accept": "*/*",
@@ -136,15 +120,6 @@
     }
   }
 
-  /* -------------------------------------------------
-   * Argument reading. The assistant does not always send back the exact
-   * property name - employeeLeaveApplication and selfEmployeeLeaveApplication
-   * both defend against this (args.comment || args.Comment,
-   * args.leaveReason || args.LeaveReason) - so every argument is looked up
-   * through its known aliases and case-insensitively, rather than read off
-   * one exact key. A tool that silently sees no arguments can only ever
-   * answer "who?", which reads as the tool being broken.
-   * ------------------------------------------------- */
   args = args || {};
 
   function argOf() {
@@ -200,12 +175,7 @@
     : (Array.isArray(args.DayModes) ? args.DayModes : null);
 
   /* -------------------------------------------------
-   * Step 2: load the Team Leave Application page. The page carries a
-   * `model` JSON literal with the logged-in supervisor's own encrypted
-   * token (needed as LoginEmpNumber on later calls), and, in a plain
-   * <script> block, the hardcoded "search my subordinate" URL used by
-   * the toolbar's search icon - a pre-signed URL (own digest) that has
-   * to be reused as-is, the same way updateUrlParams' digest has to be.
+   * Step 2: load the Team Leave Application page.
    * ------------------------------------------------- */
   const updateUrl = await BeaconBar.executeFunction("updateUrlParams")(
     "AbsenceV9/LeaveApplication/LeaveApplication?mvc=1&isDirectSubbordiante=1"
@@ -394,11 +364,7 @@
   /* -------------------------------------------------
    * Loads the search widget (subordinate or, later, covering-employee)
    * and resolves a name/number to the encrypted EmpNumber token the
-   * Leave Application APIs require. This is the same nonce dance as
-   * the manual-in-out tools: the component issues its OWN key/EmpNumber
-   * pair on render, and a fabricated pair reads as "nothing found"
-   * rather than failing outright, so it must be loaded the way the
-   * page loads it.
+   * Leave Application APIs require. 
    * ------------------------------------------------- */
   async function resolveEmployeeToken(searchUrlRaw, wantedNumber, wantedName, label) {
     const searchUrl = resolveSearchUrl(searchUrlRaw);
@@ -435,13 +401,7 @@
     const componentEmpNumber = advModel.EmpNumber;
     const keyValue = advModel.KeyValue;
 
-    /* GetSearchList is what the popup's own grid calls, captured verbatim:
-     * criteriaValues empty, modeId "2", supEmpNumber null, sorted on column
-     * 2. The rows come back as the DataTables columns the widget declares -
-     * Col1 Employee No., Col2 Name, Col3 Date Joined, Col4 Active Status -
-     * and Col2/Col3 are exactly what GetEmpNumber then wants as
-     * empDisplayName/empDateJoined. GetPaginatedTypeaheadList is kept only
-     * as a fallback for a widget that answers that way instead. */
+    /* GetSearchList is what the popup's own grid calls */
     async function listViaSearchList(pageNo) {
       const result = await safePostJson(`${baseUrl}/CommonComponents/Search/GetSearchList/`, {
         empNumber: componentEmpNumber,
@@ -489,11 +449,6 @@
     const attempts = [];
     let rows = [];
 
-    /* The widget itself sends an EMPTY tblSearchText and filters nothing
-     * server-side - its own DataTables config comes back with
-     * "searching": false - so the whole list is fetched and matched here,
-     * exactly as the popup does. Paging follows _pageData.TotalPages, since
-     * a manager with more reports than PageSize gets more than one page. */
     const firstPage = await listViaSearchList(1);
     attempts.push({ via: "GetSearchList(page 1)", status: firstPage.status, rows: firstPage.rows.length });
     rows = firstPage.rows;
@@ -692,20 +647,6 @@
     };
   }
 
-  /* -------------------------------------------------
-   * Additional fields. A leave type can switch on extra controls via
-   * LevTypeAdditionalField - each one gated by its own Enable<Kind>_<n>
-   * flag, with a matching <Kind>_<n>_Label. Only the Date_1..5 family has
-   * a known home in the SaveLeaveApplication payload (Date_1_Text ..
-   * Date_5_Text, which every captured save carries), so those are
-   * collected and sent; any other kind is refused by name rather than
-   * dropped silently, because submitting without them would store an
-   * incomplete application.
-   *
-   * Note the flags gate the labels: a label alone does not mean the field
-   * is on. Test Leave carries labels with EnableAdditionalFields 0 and
-   * must not be refused because of them.
-   * ------------------------------------------------- */
   function enabledAdditionalFields(t) {
     const f = t.LevTypeAdditionalField;
     const supported = [];
@@ -781,21 +722,11 @@
     }
   }
 
-  /* Files the user attached in the chat come from BeaconBar, the same
-   * source employeeLeaveApplication / selfEmployeeLeaveApplication read.
-   * Guarded, because a host without the helper must degrade to "no files"
-   * rather than throw. */
   const attachmentSources = { baoHelperPresent: false, baoCount: 0, base64Count: 0, error: null };
 
   function uploadedFiles() {
     const files = [];
 
-    /* 1. An explicit base64 attachment argument. employeeLeaveApplication
-     * documents this as its `attachment` argument and even sketches the
-     * decode, but the block is commented out there and the property is
-     * missing from its schema, so it never actually runs. Implemented here
-     * as a real second route, for when the chat hands the file over as data
-     * rather than through BeaconBar. */
     const raw = args.attachment || args.Attachment || args.attachments || args.Attachments;
     const list = Array.isArray(raw) ? raw : (raw ? [raw] : []);
     list.forEach(function (att) {
@@ -862,12 +793,7 @@
   const toDateText = toWireDateText(parsedTo);
 
   /* -------------------------------------------------
-   * Step 6: approver. GetApprovalPerson's own response carries the
-   * resolved default directly on EmpNumber/DisplayText - confirmed by
-   * the live employeeLeaveApplication tool, which uses approverData
-   * .EmpNumber as-is rather than picking out of AppPersonList. Only
-   * fall back to AppPersonList when the leave type actually allows
-   * choosing a different approver and more than one is offered.
+   * Step 6: approver. 
    * ------------------------------------------------- */
   const approvalResult = await safePostJson(`${baseUrl}/AbsenceV9/api/LeaveApplication/GetApprovalPerson/`, {
     EmpNumber: empToken,
@@ -910,10 +836,7 @@
   }
 
   /* -------------------------------------------------
-   * Step 7: covering employee, only when the leave type requires one.
-   * Checks the recently-used list first (no extra network call),
-   * then falls back to the same search-and-resolve dance used for the
-   * subordinate, scoped by the employee's own CoveringEmployeeSearchURL.
+   * Step 7: covering employee
    * ------------------------------------------------- */
   let coveringEmployeeNumber = null;
   if (leaveType.CoveringEmployeeRequired === 1) {
@@ -946,16 +869,8 @@
   /* -------------------------------------------------
    * Step 8: reason and comment.
    * ------------------------------------------------- */
-  let reasonCode = null;
-  if (leaveType.ShowLeaveReason === 1 && reasonList.length > 0) {
-    if (!argReason) {
-      return {
-        needsInput: true,
-        message: `Please give a reason for ${employeeLabel}'s ${leaveType.TypeName}.`,
-        missingFields: ["Reason"],
-        reasons: reasonList.map(r => ({ code: r.ReasonCode, description: decodeURIComponent(r.Description || "").replace(/%20/g, " ") }))
-      };
-    }
+    let reasonCode = null;
+  if (leaveType.ShowLeaveReason === 1 && reasonList.length > 0 && argReason) {
     const wantedReason = String(argReason).toLowerCase().trim();
     const reasonMatch = reasonList.find(r => decodeURIComponent(r.Description || "").replace(/%20/g, " ").toLowerCase().trim() === wantedReason)
       || reasonList.find(r => String(r.ReasonCode) === String(argReason));
@@ -978,11 +893,7 @@
   }
 
   /* -------------------------------------------------
-   * Step 8b: attachment. Asked for last, once everything else about the
-   * application is settled, so the user is not chased for a file before
-   * they have even been asked for the dates. Mandatory for this leave type
-   * means the run stops here; optional means it is picked up if present and
-   * simply offered in the preview if not.
+   * Step 8b: attachment. Asked for last, once everything else about the application is settled
    * ------------------------------------------------- */
   if (attachmentRequired && attachments.length === 0) {
     return {
@@ -1005,9 +916,7 @@
   /* -------------------------------------------------
    * Step 9: let the server compute the day breakdown and validate the
    * range - the same call the page makes as soon as both dates and a
-   * leave type are set. BreakdownList/EarnedLeaveList/NotificationList
-   * go out empty so the server derives the day-type breakdown itself,
-   * same as an untouched new application.
+   * leave type are set.
    * ------------------------------------------------- */
   function buildLeavePayload() {
     return {
@@ -1047,12 +956,7 @@
     };
   }
 
-  /* Per-day day mode, the same override employeeLeaveApplication and
-   * selfEmployeeLeaveApplication apply: the server returns a breakdown row
-   * per date, and any date the caller named has its DayMode/DayValue
-   * replaced (Whole Day 2/1, First Half 1/0.5, Second Half 0/0.5, Off Day
-   * 7/0). Dates left out keep whatever the server worked out, so a plain
-   * whole-day application needs no dayModes at all. */
+  /* Per-day day mode */
   const breakdownList = Array.isArray(calc.BreakdownList) ? calc.BreakdownList : [];
 
   if (Array.isArray(argDayModes) && argDayModes.length > 0) {
@@ -1101,15 +1005,8 @@
   }
 
   /* -------------------------------------------------
-   * Balance check. BalanceDV is what the screen shows - already net of
-   * leave that is used and leave still pending approval - so it is the
-   * number to measure this application against. A type that allows a
-   * negative balance is warned about rather than blocked, exactly as the
-   * UI does; the server has the final say either way.
+   * Balance check.
    * ------------------------------------------------- */
-  /* Careful with the absent case: Number(null) is 0, so reading the balance
-   * off a missing Entitlement would look like "no days left" and block a
-   * perfectly valid application. An unknown balance must never block. */
   const entitlement = leaveType.Entitlement || null;
   const rawBalance = entitlement
     ? (entitlement.BalanceAmount !== undefined && entitlement.BalanceAmount !== null
@@ -1205,28 +1102,6 @@
 
   /* -------------------------------------------------
    * Step 11: submit via SaveLeaveApplication.
-   *
-   * This endpoint and payload shape are not from a capture of this
-   * screen - they are lifted from the live "employeeLeaveApplication"
-   * tool (AbsenceManagement agent), which submits leave the same way
-   * for the admin/self "apply for a specific employee" screen. Both
-   * screens share the same GetApprovalPerson/CalculateLeaveDays/
-   * GetLeaveClashDetails calls this tool already confirmed by capture,
-   * so SaveLeaveApplication is treated as the same write for this
-   * screen too - EmpNumber is the subject employee (the subordinate,
-   * via empToken), while LoginEmpNumber stays the supervisor's own
-   * token, matching the EmpNumber/LoginEmpNumber split already
-   * confirmed on CalculateLeaveDays and GetLeaveClashDetails.
-   *
-   * Attachments follow the same two-step the working tools use: each file
-   * goes to UploadLeaveAttachmentData as multipart FIRST, and only once
-   * that answers Status true does SaveLeaveApplication run, carrying the
-   * file NAMES. Note the two live tools disagree on the save shape -
-   * employeeLeaveApplication sends Attachments:[{AttachmentName}] with
-   * Attachment:{AttachmentName:""}, selfEmployeeLeaveApplication sends the
-   * inverse - and this follows employeeLeaveApplication, the one confirmed
-   * working. With no file at all both agree: Attachment {AttachmentName:
-   * "-1"} and Attachments null.
    * ------------------------------------------------- */
   const attachmentNames = [];
   for (let i = 0; i < attachments.length; i++) {
@@ -1288,8 +1163,8 @@
     NotificationList: [],
     IsMedicalLeave: false,
     MedicalIssueDateText: "",
-    Attachment: hasAttachment ? { AttachmentName: "" } : { AttachmentName: "-1" },
-    Attachments: hasAttachment ? attachmentNames : null,
+    Attachment: hasAttachment ? { AttachmentName: attachmentNames[0].AttachmentName } : { AttachmentName: "-1" },
+    Attachments: null,
     // Empty unless the leave type switched on a Date_n additional field.
     Date_1_Text: extraFieldValues.Date_1_Text || "",
     Date_2_Text: extraFieldValues.Date_2_Text || "",

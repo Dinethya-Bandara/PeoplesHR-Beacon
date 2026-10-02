@@ -1,0 +1,1634 @@
+curl --url 'https://hrmmainphqa.phrsandbox.dev/hr/TNAV9/ManualInOut/ManualInOut/1?mvc=1&digest=mJ5o5JQtBIVjQ7AR5aOxuQ&_=1789968521771' \
+  -H 'accept: */*' \
+  -H 'accept-language: en-GB,en;q=0.9,en-US;q=0.8' \
+  -b 'ASP.NET_SessionId=3uqu1451asvcq1kscv4joua0; __RequestVerificationToken_L2hy0=lwpHoAnjFZnwEo4RbU2se58WAnSXhDQvBmiGswV3WTGjgDEmRcYwsw4uFdiiMQrlCI-lN-VlK6oYZ-0P4wudHspxvf01; THEME_V8=default; .ASPXAUTH=F0845D15873FDE018611C2E49C194A6BFF468F52234511BEEA5E00A207E374F946332315C0AC2DBC7E8D0B884BEC1966891F0908C9CBDFA0EFC32BFEA8C8E7FAD6C80B6B02A84E9850080E9B1F90889F0EB0BEA4E1EB1A2C9093DE264E650BC8; ehrm85=EAAAADRQUBxB1JJ1aaXtn6Ed8vOS5Z+lcCNC3yPvyFykkRN4WTMHaEHHcIKo0KZJGaPKqdBymGdJSNoFx9qZIgH5xr/SDLCsEGlPs/0b1VeEUUgmPw0msfuulAlNl8M1CRhjo2+hoeysMVp9LmG+VVkNG2wmUnePZmUyr16N4FNDkDmUTlRLZLqbOkeOjmLc8jChd64x0zbNxsm/vuH7T3S6tt4+oEgd60iKGU9HTPDrIwZu7yNP/Twsq9zFDPVLsra0cEgF7qiGxRc7nMHVwSTHlC+/1vnl6cN+hiBQ5zaUpzvaRi14b+L4Xe2OZhVcMhNIW03txO+vdblMMIeH874FxAcDfBRBt/Tu/ERK+eVb4lD5MoXq+TNVhq9dQ9ZI5MCWvYsbH8SLuIuW/Z/4zKzMB5BdA6f/Xn85GiI+842l5PEwWNmmeliXFPaqQvHKYjxf6VbSLJ6xOEUr+Eqn5SVXFJ4/b+3HGxB6pgmuUrd+OORMeHTyG39rcObbnHa4VzUR6gblYzfKEcihkS1lI6QhjCpWU2LgvME4LHbFAqHwiFc3ATyv1Ai5AHzLrNirr/rkN+2HGgVrht+zGLHKLpCg4RQe06NnSPkxxbHY/BbdLuJ5UiWgxISwuqvKPQqJlnx/Sx+X3jzIP2Ilmbhbdjg5h7i+HH3/aFBdpigEQfA/gpBlhyDQ2wnMU3+QWDLWRb92q8kGJmGMwYnx65cvUqePV4Ok9WMl4dAfuJdpHheliqzw9vvgvpgyHKsqjiPgaBj1BrwvvpbjwO850ZEUgD2YVYERsseun1a/vTMR4Q1ZewHD12MZneXEMVr/FP/NY3gmdYPOjrC3ijtZnKBCIlFslldYUhy82rqmvcpoSO12/AbzWBQKyfn2V+CWiVrSaHmaSRUN88ugdeHm11Vf1ByF2JLtLdX4mZlGs0lJ/8TYsCj9ZR7Rh3ft1TS+McrX6YV64QMKnwacJZYDnOlnzueD/IWMXOFN0bti/xQfTJpVoinx5EmyWE0RfENAZ1tGYY2mLmX5qsDq+Nhw2RacVcixpwv6x2RFctFWliF1D7MYMDfet55VIchi9bEgllCq1nloa/2UhRaTnwg9IGA9PjFh5Wc=; my-application-browser-tab={"guid":"e0fafde7-4502-967d-48fa-26390c80c08e","timestamp":1789970444578}' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://hrmmainphqa.phrsandbox.dev/hr/home/index' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="153", "Not_A Brand";v="8", "Chromium";v="153"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0' \
+  -H 'x-requested-with: XMLHttpRequest'
+
+  payload
+  mvc
+1
+digest
+mJ5o5JQtBIVjQ7AR5aOxuQ
+_
+1789968521771
+
+response
+<div id="divMain">
+
+    <script>$.ajaxSetup({ cache: true });</script>
+    <script src="/hr/TNAV9/Scripts/HbsErrorAlert/hbs-error-modal-component.js" data-modal-path="../TNAV9/Scripts/HbsErrorAlert/HbsProblemDetailsModal.html"></script>
+
+<script src="/hr/TNAV9/bundles/Scripts?v=BnEvJ7c_bG5oHtvuI-vbAnHth_iWIjL4O-1rcr6t0pA1"></script>
+<link href="/hr/TNAV9/bundles/Content/css?v=YV6UsaFYIRl_G1ZQCEsV7kuT48a2hvDNwE0NJ3mxxgU1" rel="stylesheet"/>
+
+
+    
+    
+
+    <script src="/hr/TNAV9/Scripts/lib/bootstrap-multiselect.min.js"></script>
+    <link href="/hr/TNAV9/Content/css/bootstrap-multiselect.css" rel="stylesheet" />
+
+    <link href="/hr/TNAV9/Content/css/Attendance_ehrmv9.css" rel="stylesheet" />
+    <link href="/resources/css/font-awesome.min.css" rel="stylesheet"> 
+    <link href="/resources/css/Version5/animate.min.css" rel="stylesheet"> 
+    <link href="/hr/TNAV9/Content/css/CustomTimePicker.css" rel="stylesheet" type="text/css" />
+
+    <link href="/hr/TNAV9/Content/css/clockpicker/bootstrap-clockpicker.min.css" rel="stylesheet" /> 
+    <script src="/hr/TNAV9/Scripts/lib/clockpicker/bootstrap-clockpicker.min.js"></script>
+
+    <script src="/resources/js/HbsAlert.js" type="text/javascript"></script> 
+    <script src="/resources/js/HbsConfirm.js" type="text/javascript"></script>  
+    <script src="/hr/TNAV9/Scripts/lib/CustomTimePicker.js"></script>
+
+
+
+
+    <script>
+            window.wfAjaxFilterEnabled = false;
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            // Retrieve the userCulture value from a server-side variable
+            var userCulture = 'en-US';
+            //console.log(userCulture); ///id-ID, si-LK, vi-VN,
+            userLocale = userCulture.split('-')[0]; // 'en-US' -> 'en'
+
+            // Set the language globally for all date pickers
+            $.fn.datepicker.defaults.language = userLocale;
+        });
+    </script>
+
+    <script>$.ajaxSetup({ cache: false });</script>
+
+    <script>
+            window.$ROOT = '/hr/TNAV9/';
+            window.$Culture = 'en-GB';
+            window.baseIframeUrl = '/hr/TNAV9/Common/_SearchDivFrame';
+
+        
+
+        var shortDatePattern = 'dd/mm/yyyy';
+            if (shortDatePattern.indexOf('mm') == -1) {
+                shortDatePattern = shortDatePattern.replace("m", "mm");
+            }
+            if (shortDatePattern.indexOf('dd') == -1) {
+                shortDatePattern = shortDatePattern.replace("d", "dd");
+            }
+            window.$DateFormat = shortDatePattern;
+            moment.locale(window.$Culture);
+
+        window.$JqGridDateFormat = 'd/m/Y';
+
+
+
+    </script>
+
+    
+
+
+
+
+
+
+
+    <div id="TNAV9-Layout-1" class="row wrapper border-bottom white-bg page-heading">
+
+
+  
+
+        
+        <span id="TNAV9-Layout-2" class="AjaxLoadingIE" style="display:none;">Loading...</span>
+
+        <div id="TNAV9-Layout-3" class="col-sm-12">
+            <h2>My Team Manual In &amp; Out</h2>
+
+    <div id="TNAV9-ManualInOut-1" class="Page_ToolBar">
+        <ul class="HBS-MenuList">
+            <li class="HBS-MenuList-item">
+                <a href="https://help.peopleshr.com/index.php/documentation/time-attendance/attendance-operations/manual-in-out/"
+                    target="_blank" rel="noopener noreferrer">
+                    Help
+                </a>
+            </li>
+
+            <li class="HBS-MenuList-item">
+                <a id="lnkToggleManualSearchPanel">Hide Search Panel</a>
+            </li>
+                <li class="HBS-MenuList-item" style="display:none">
+                    <a href="#empFilterModal" data-bs-toggle="modal"
+                        data-bs-content="divEmployeeFilterContent">Search Result</a>
+                </li>
+
+            <li class="HBS-MenuList-item">
+                <a id="lnkCancelPending"
+                    onclick="ManualVM.OnCancelPendingLinkClick();">Cancel Pending Manual In Out</a>
+        </li>
+    </ul>
+
+
+    </div>
+
+        </div>
+    </div>
+
+
+
+
+
+    <div id="TNAV9-Layout-5" class="wrapper wrapper-content">
+
+
+    <div id="TNAV9-ManualInOut-2" class="row">
+        <div id="divManualSearchPanel" class="col-lg-3">
+            <div id="TNAV9-ManualInOut-3" class="ibox">
+                <div id="TNAV9-ManualInOut-4" class="ibox-content">
+                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                        <style>
+    .role-based .select2-selection__arrow {
+        display: none;
+        pointer-events: none;
+    }
+
+    .role-based .select2-selection.select2-selection--single {
+        pointer-events: none;
+    }
+
+    #typeaheadSearch .select2 .select2-selection--single {
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+    }
+    #divSearch .form-check.cc_typhead_div2 {
+        padding: 0;
+        margin: 0;
+    }
+    #divSearch .form-check #searchBtn {
+        height: 31px;
+    }
+</style>
+<div id="divDataFilter" class="panel panel-default">
+    <div id="divDataFilterHeader" class="panel-heading" role="tab">
+        <span><a id="lnkDataFilter" role="button" data-bs-toggle="collapse" data-bs-parent="#accordion"
+                href="#divDataFilterContent" aria-expanded="true" aria-controls="divDataFilterContent">
+                Search Criteria </a> </span>
+    </div>
+    <div id="divDataFilterContent" class="panel-collapse collapse in" role="tabpanel"
+        aria-labelledby="divDataFilterHeader">
+        <div id="TNAV9-datafilter-1" class="panel-body">
+            <div id="TNAV9-datafilter-2" class="row" data-bind="visible:FilterVM.IsClientUOC()==false">
+                <div id="TNAV9-datafilter-3" class="col-md-12 d-flex justify-content-between mb-2">
+                    <div class="d-flex align-items-center flex-wrap gap-1">
+                        <div id="TNAV9-datafilter-4" class="form-check form-check-inline d-flex align-items-center gap-1 me-1">
+                            <input class="form-check-input" id="rdoLast7Days" type="radio" value="0" name="DateSelection"
+                                   data-bind="checked: DateSelectMode, event: {click: FilterVM.OnSevenDaysClick}">
+                            <label class="form-check-label">
+                                Last 7 Days
+                        </label>
+                    </div>
+                    <div id="TNAV9-datafilter-5" class="form-check form-check-inline d-flex align-items-center gap-1 me-1">
+                        <input class="form-check-input" id="rdoLast30Days" type="radio" value="1" name="DateSelection"
+                               data-bind="checked: DateSelectMode, event: {click: FilterVM.OnMonthPeriodClick}">
+                        <label class="form-check-label">
+                            Last 30 Days
+                    </label>
+                </div>
+                <div id="TNAV9-datafilter-6" class="form-check form-check-inline d-flex align-items-center gap-1 me-1">
+                    <input class="form-check-input" id="rdoPeriod" type="radio" value="2" name="DateSelection"
+                           data-bind="checked: DateSelectMode, event: {click: FilterVM.OnPeriodClick}">
+                    <label class="form-check-label">
+                        By Period
+                </label>
+                </div>
+                        </div>
+                </div>
+                </div>
+
+            <div id="TNAV9-datafilter-7" class="mb-3 row" data-bind="visible:FilterVM.IsClientUOC()==true">
+                <label class="col-md-3 col-form-label">Period</label>
+
+                <div id="TNAV9-datafilter-8" class="col-lg-9">
+                    <select id="ddAttendancePeriod" class="form-select form-select-sm"
+                        data-bind="options: AttendancePeriodList, optionsText: 'DispPeriod', optionsValue:'PaySchId', value: FilterVM.AttendancePeriod, event: {change: FilterVM.OnAttendancePeriodChange}"></select>
+                </div>
+            </div>
+
+            <div id="TNAV9-datafilter-9" class="mb-3 row">
+
+                <label class="col-md-3 col-form-label">From</label>
+
+                <div id="TNAV9-datafilter-10" class="col-md-9">
+                    <div class="input-group date" id='dtpFromDate' data-tempval="From Date"
+                        data-bind="datepicker:true,event: {change: FilterVM.OnFromDateChange}">
+                        <input type="text" class="form-control input-group-sm"
+                            data-bind="enable:FilterVM.IsUOC(),event: { blur: FilterVM.OnFromDateBlur }" />
+                        <span class="input-group-addon" data-bind="visible:FilterVM.IsUOC()"><i
+                                class="fa fa-calendar"></i></span>
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="TNAV9-datafilter-12" class="mb-3 row">
+
+
+                <label class="col-md-3 col-form-label">To</label>
+
+                <div id="TNAV9-datafilter-13" class="col-md-9">
+                    <div class="input-group date" id='dtpToDate' data-tempval="To Date"
+                        data-bind="datepicker:true, event: {change: FilterVM.OnToDateChange}">
+                        <input type='text' class="form-control form-control-sm"
+                            data-bind="enable:FilterVM.IsUOC(),event: { blur: FilterVM.OnToDateBlur }" />
+                        <span class="input-group-addon" data-bind="visible:FilterVM.IsUOC()"><i
+                                class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+
+            </div>
+            <div id="divGroupByEmployee" class="mb-3" data-bind="visible: FilterVM.PageMode !== 4">
+                <div id="TNAV9-datafilter-15" class="row mb-3">
+                    <div id="TNAV9-datafilter-16" class="col-lg-9 offset-lg-3">
+                        <div id="TNAV9-datafilter-17" class="checkbox">
+                            <label>
+                                <input type="checkbox" data-bind="checked: FilterVM.IsGroupByEmployee">
+                                Group by Employee
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+            </div>
+
+            <div id="divEmployee" class="mb-3 row" style="display:none;">
+                <div id="TNAV9-datafilter-18" class="col-lg-12">
+                    <label>
+                        <input id="rdoEmployee" type="radio" name="EmployeeSelection" value="1"
+                            data-bind="checked: EmployeeSelectMode, event: {change: FilterVM.OnEmployeeSelectModeChange}, visible: FilterVM.PageMode !== 4">
+                        Select Employee
+                    </label>
+
+                </div>
+                <div>
+                    <button type="button" id="newSearchBtn"
+                            class="btn btn-primary  btn-xs" data-bs-toggle="modal"
+                            data-bs-target="#divmodalpopupSearchMain" style="display: none;">                        
+                    </button>
+                </div>
+                <div id="TNAV9-datafilter-19" class="col-lg-12">
+                    <div id="divSearch" data-bind="event:{click: FilterVM.OnEmployeeSearchClick}"></div>
+                </div>
+
+            </div>
+            <div id="divRoster" style="display:none;">
+                <div id="TNAV9-datafilter-20" class="mb-3">
+                    <div id="TNAV9-datafilter-21" class="">
+                        <label>
+                            <input id="rdoRoster" type="radio" name="EmployeeSelection" value="2"
+                                data-bind="checked: EmployeeSelectMode, event: {change: FilterVM.OnEmployeeSelectModeChange}">
+                            Select Roster
+                        </label>
+                    </div>
+                </div>
+                <div id="TNAV9-datafilter-22" class="mb-3">
+                    <div id="TNAV9-datafilter-23" class="row">
+                        <div id="TNAV9-datafilter-24" class="col-lg-3 d-flex align-items-center">
+                            <label>Roster Group</label>
+                        </div>
+                        <div id="TNAV9-datafilter-25" class="col-lg-9">
+                            <select id="ddlRosterGroup" class="form-select form-select-sm"
+                                data-bind="options: RosterGroupList, optionsText: 'GroupName', optionsValue:'GroupId', value: FilterVM.RosterGroup, event: {change: FilterVM.OnRosterGroupChange}"></select>
+                        </div>
+                    </div>
+                </div>
+                <div id="TNAV9-datafilter-26" class="mb-3">
+                    <div id="TNAV9-datafilter-27" class="row">
+                        <div id="TNAV9-datafilter-28" class="col-lg-3 d-flex align-items-center">
+                            <label>Roster Name</label>
+                        </div>
+                        <div id="TNAV9-datafilter-29" class="col-lg-9">
+                            <select id="ddlRoster" class="form-select form-select-sm"
+                                data-bind="options: RosterList, optionsText: 'RosterName', optionsValue:'RosterCode', value: FilterVM.RosterCode "></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="divAllSubordinates" class="mb-3" style="display:none;">
+                <div id="TNAV9-datafilter-30" class="">
+                    <label>
+                        <input id="rdoAllSubordinates" type="radio" name="EmployeeSelection" value="3"
+                            data-bind="checked: EmployeeSelectMode, event: {change: FilterVM.OnEmployeeSelectModeChange}">
+                        All Subordinates
+                    </label>
+                </div>
+            </div>
+            <div id="TNAV9-datafilter-31" class="row">
+                <div id="TNAV9-datafilter-32" class="col-md-12">
+                    <div id="TNAV9-datafilter-33" class="float-end">
+                        <button type="button" id="btnDFSearch" class="btn btn-primary btn-sm"
+                            data-bind="click: FilterVM.OnSearchClick">Search</button>
+                        <button type="button" id="btnDFReset" class="btn btn-outline-primary btn-sm"
+                            data-bind="click: FilterVM.OnResetClick">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    
+     var filterModel = {"PageMode":1,"Mode":0,"LoginEmpNumber":"p829SdfpqEvpn_8t38Zf6Z_RN8ICeuWozaO__8xrNIFjQyuhRL9X1J2jWV6gu-k3iZ41jFJVfyzZWNUTvCF4Sm-pqchyADyDb7d58CqQWq9Fows1Y3H2kGcPdyrFDEMio3TkMumxLjPC7MBEXV-lI7lF20LQ7cRfTbLe0MXDIO_GJhMIY9j1O5GP7fPUlPfWNFMeY7JOxpdKphs51rZ7hkkBIIUHF4GKz_QBvG1IE64YwlqHFn2w7zRzCljmE8VaKbAwzlt-Uqgme7UYTU7-fH84Mi4VkyVnsVWTaAL9hMhMq_YJUPIKp3J2ASitwKclyyoIc3heyq8g8X0bQudCJS62H_UU-z_ivTx8JwdBF2jnqNsU2auJB4Agr6nKbYJCq0CjMUe6oZCFaqYxbsDzNRZmF3RQqSZ_CaLbkU0yoKxLmAW0zmeO0iPWWqmOvVux","IsClientUOC":false,"Year":"2021","FromDate":"0001-01-01T00:00:00","ToDate":"0001-01-01T00:00:00","IsGroupByEmployee":false,"FilterMode":0,"Datascope":0,"EmpNumber":null,"RosterCode":null,"RoleCode":null,"SearchKey":null,"EmpNumberList":null,"RosterGroupList":[{"GroupId":"6","GroupName":"New Roster EMP","Description":null,"CalendarCode":null,"IsActive":0,"IsApproved":0,"Comment":null},{"GroupId":"2","GroupName":"Roster 02","Description":null,"CalendarCode":null,"IsActive":0,"IsApproved":0,"Comment":null},{"GroupId":"1","GroupName":"Roster 1","Description":null,"CalendarCode":null,"IsActive":0,"IsApproved":0,"Comment":null},{"GroupId":"5","GroupName":"Roster A AUTO","Description":null,"CalendarCode":null,"IsActive":0,"IsApproved":0,"Comment":null},{"GroupId":"4","GroupName":"Roster AA","Description":null,"CalendarCode":null,"IsActive":0,"IsApproved":0,"Comment":null},{"GroupId":"3","GroupName":"Roster GPA","Description":null,"CalendarCode":null,"IsActive":0,"IsApproved":0,"Comment":null},{"GroupId":"10","GroupName":"Roster Mobile Offline","Description":null,"CalendarCode":null,"IsActive":0,"IsApproved":0,"Comment":null},{"GroupId":"7","GroupName":"xDont tk EMP ROST - RR 1","Description":null,"CalendarCode":null,"IsActive":0,"IsApproved":0,"Comment":null}],"RosterDetailList":null,"AttendancePeriodList":null,"EmployeeSearchURL":"../CommonComponents/Search/Search?empNumber=68ZsXBu8T3dS9vacfcY32h82laOkA2KZDazEYlrfGibOrjeukTYUF3SbY786K4azzowGHsbgvmJyDZdKm-udZBkjl5G1AdS9yKhmc5EZvN-R5qW-hpWd2urclTSD2rk5yhX2edBxmYZjgAiDgpBCb7nat-jqyUJAKwvXrcp2lzfojtq1mR5Op4j57ww5dIe9ATyxCAmdlH7pjG3vLXJ-G2gxiyaKHOwPf-PCcPFI2x_2AmCB0rcq5saw_6JBEGbxs8pJdESOAUKJ2QZScGB6PWE7-tOrjhKNHTIZJfed6ukKJms5sZfe046TYuAbW5WuBabutamLwGX-q-5ArhDRWwqsw0YKPWmT_rVRavMlk0_ikUZkR3pDZvJdk8nhxLMhP1DpMVS11M9vF3dI6nzBuHNgDs3h57jJoh9PS_gFcH1ct1LJm5bbMz7KtBd_3lTu&callBack=NgA1ACwAMQA%3D&searchMode=2&searchQueryMode=All&searchQueryState=ActiveOnly&isMultiple=1&breadCrumbEnable=0&isDivLoading=0&displayName=&elgmodid=65&elggrpid=15&ElgParam=000024&searchToken=HP8Y0IfkpdpClpCzEII2YqhH9I9jrdCVn3me1I8cvmI8hQ1KKDyaRr2i_JlcqgBKEO53gDiSrl4Ws840upa925P_Ajq_vOxkLF04dmULxU70vuMjG_PlwPsVwYc4vopwNaoMMLPZig5AOsGQHdaEkriqzoB-DxZepGwhmFXs8SnLVj_GVW5l2pQhb-Fe6UumJ0pEbSi_F2Bc3YJoLMDRbWlBF3Csr3koZ43MthTdy29B-2xyFUZEvUvDWTLoLjNM_SHnLAd8Ad2jltO98CUpreiXFGK1uySAc__ijfvr9z7HNcasoNz8GTjWEcmhOMjxL6Gk9FtYZrQGaCYwo55YBqiuiRZQB8ukEa-h_ZTs_dZnHmYwwiA1zmn38o1uJywBeZb4DDC7GhTHI51Nf42wmZIe5QwkaUn5ShFaYd-IcanvBXl5j33ouJ5KZ7UpUVb_GOJdpgLvkB5HCYwyMfP3BCDWrTgXnpRcy2R1QwZ1sMU","SearchCallBack":"ManualVM.GetGridDataByCriteria","EnableInitialDataLoading":false,"FromDateText":null,"ToDateText":null,"CallBackId":1,"isShowShiftHoursInShiftAdjEnabled":false,"EnableShiftAdjustment":false,"EmployeeSearchModalUrl":"../CommonComponents/Search/Search?empNumber=SR-EUedQg371s9HBQUXMnD6UPnkTAcC3iUWOtE05dNPLGmOxTyuyL3TKcoJyzFAx9bRrmVfbw5CMMpe6RKwG2xdJlfKXKk0H86hoR9AIiaVZrbzwNn5SAGk-0gnJWcBIvjZhOMCtGsxQxHO0PqX6qUBme0bQp6BNxX_wLJXFA1zeMBVZaPyINAWfl5XJmsdQWVwttrEbIHhBua2tyVM2YRNeHT5Uf2m3HJMoqTSNi3OzWhO4avD-3lCAIJAc-VMqVr4lR841XAzoyMg6r5jRBag6e10tv_ZOl2pkG3uu_qxl-noFDL71R9X_sxolhYIbFOpB3LClqaoYDY6-U1STJ2iEbZiyNWaQQzxu0K4_NQN9rCmqy8_NjLZlcbJUJNTamb4H7tNPwwn97-fYpaT0RSxk5I3-80t9Wev1mrrAFZl5gQfmB2Ot8MMP9tUAd74M&callBack=NgA1ACwANgA1ADAAMAAyAA%3D%3D&searchMode=2&searchQueryMode=All&searchQueryState=ActiveOnly&isMultiple=1&breadCrumbEnable=0&isDivLoading=1&displayName=&elgmodid=65&elggrpid=15&ElgParam=000024&searchToken=agZYLy5qpQrZfEFZ_aBbDTe84h4-uUHFojJQ8_BKFx8oN-tZnvyKj5xz2RIRYLrch5sePRd47f8gecN0YtvNJp0cAzf3yVBW50vvvaJreujn6Rjb0FC9pyQNm_Ao4dX0E_JUilS5LEUBckl2sYyEo31qWYMqO68LJHC4JtO9KJF1cN2XyDvkqQJ5CszxYaj1jBEmQl5G3bixOX6dxxu30H1iTyd3qdbOW6gZ3lc7QcCkilE8b5qdA_OxZw8VQZDrw6-0zalu3t2A5kH1KtBkAzvA5_E1g9LEUBnjnOXezXBOWWa7SdrOOkhijX569RqUCEXLkz-I-UJVE7ggizRrdfxRu0PsPe9D_27uTPP0GPyOAIgTdMVmzkekvQzByKFjr1nHP3Vm-6KSBiq8RHx3b8qRmcuUd-oKcE7awqE37fdWCZrjX0ny-NsiWGgghWwD6bYceuQ7wNyTepfczATuAOzCCKnFOSflkMdir_6Jr9d9S4APw7onCLsmLXMWzQBs","MaxFilterDaysLimit":0};
+     
+     $(document).ready(function() {
+         $(document).on('click', '#searchBtn', function(e) {
+             e.preventDefault();
+             e.stopPropagation();
+             $('#newSearchBtn').click();
+         });
+     });
+</script>
+<script>$.ajaxSetup({ cache: true });</script>
+<script src="/hr/TNAV9/Scripts/app/Common/DataFilter.js"></script>
+<script>$.ajaxSetup({ cache: false });</script>
+
+<style type="text/css">
+    .next {
+        float: none !important;
+    }
+</style>
+
+<div id="divEmployeeFilter" class="panel panel-default">
+    <div id="divEmployeeFilterHeader" class="panel-heading" role="tab">
+        <span><a id="lnkEmployeeFilter" class="collapsed" role="button" data-bs-toggle="collapse" data-bs-parent="#accordion" href="#divEmployeeFilterContent" aria-expanded="false" aria-controls="divEmployeeFilterContent">Search Result</a></span>
+    </div>
+    <div id="divEmployeeFilterContent" class="panel-collapse collapse" role="tabpanel"
+        aria-labelledby="divEmployeeFilterHeader">
+        <div id="TNAV9-EmployeeFilter-1" class="panel-body">
+            <div id="TNAV9-EmployeeFilter-2" class="mb-3">
+                <div id="TNAV9-EmployeeFilter-3" class="row">
+                    <div id="TNAV9-EmployeeFilter-4" class="col-lg-12">
+                        <div id="TNAV9-EmployeeFilter-5" class="input-group input-group-sm">
+                            <input id="txtSearchText" type="text" class="form-control" data-bind="event: {keyup: EmpFilterVM.OnSearchTextKeyUp}" placeholder="Employee Name/No:">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="TNAV9-EmployeeFilter-6" data-bind="visible: EmpFilterVM.AllowMultiSelect() == 1" class="row">
+                <div id="TNAV9-EmployeeFilter-7" class="col-lg-12">
+                    <div id="TNAV9-EmployeeFilter-8" class="">
+                        <ul class="list-inline">
+                            <li><a id="lnkSelectAll" href="#" data-bind="event: {click: EmpFilterVM.OnSelectAllClick}">Select All</a></li>
+                            <li><span>|</span></li>
+                            <li><a href="#" data-bind="event: {click: EmpFilterVM.OnEmployeeViewClick}">View</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="divEmployeeList" data-bind="foreach: EmpFilterVM.EmployeeFilterList">
+                <div id="TNAV9-EmployeeFilter-9" class="form-check mb-1">
+                    <label class="form-check-label p-0 align-items-center" style="display: flex;" data-bind="css: EmpFilterVM.AllowMultiSelect() == 1 ? '' : 'V2_HideFilterChkBox'">
+                        <input type="checkbox" id="chkEmpSelect" class="form-check-input V2_SrhChk" data-bind="value: EmpDisplayNumber, checked: IsSelected, visible: EmpFilterVM.AllowMultiSelect() == 1 ">
+                        <img data-bind="attr:{src:EmpFilterVM.GetEmpPictureURL(EmpNumber())}" class="AttenSrhImgList">
+                        <span data-bind="text: EmpCompleteName(), event: {click: EmpFilterVM.OnEmployeeClick.bind(EmpDisplayNumber())}" class="normal data-ellipsis ms-1" style="display:inline-block;"></span>
+                    </label>
+                </div>
+            </div>
+            <div id="TNAV9-EmployeeFilter-10" class="row">
+                <div id="TNAV9-EmployeeFilter-11" class="col-lg-12">
+                    <div id="TNAV9-EmployeeFilter-12" data-bind="with: EmpFilterVM.EmployeeNavigatorVM">
+                        
+<div id="TNAV9-pagenav-1" class="page-navigation-block" data-bind="visible: IsVisible()" style="display:none;"> 
+    <ul class="pagination mt-2 float-end">
+        <li class="page-item nav-prev" data-bind="css: { disabled: PageIndex() === 0 }"><a href="#" data-bind="click: PreviousPage"><span class="fa fa-angle-left"></span></a></li>
+        <li class="page-item" data-bind="css: { disabled: PageIndex() === 0 }"><a href="#" data-bind="click: QuickPreviousPage">...</a></li>
+        <!-- ko foreach: AllPages -->
+        <li class="page-item" data-bind="visible : (pageNumber - ($parent.PageIndex() + 1)) < 3 && (($parent.PageIndex() + 1) - pageNumber) < 3 ,css: { active: pageNumber === ($parent.PageIndex() + 1) }"><a href="#" class="page-link" data-bind="text: pageNumber, click: function() { $parent.MoveToPage(pageNumber-1); }"></a></li>
+        <!-- /ko -->
+        <li class="page-item nav-next" data-bind="css: { disabled: PageIndex() === MaxPageIndex() }"><a href="#" class="page-link" data-bind="click: NextPage"><span class="fa fa-angle-right"></span></a></li>
+        <li class="page-item ms-2">
+            <ul class="pagination page-size" data-bind="visible: PageName().length > 0">
+                <li class="page-item"><span>Page Size</span></li>
+                <li class="page-item"><input type='text' class="form-control form-control-sm" data-bind="value: PageSize" /></li>
+            </ul>
+        </li>
+        <li class="page-item">
+            <ul class="pagination button-change" data-bind="visible: PageName().length > 0">
+                <li class="page-item"><a href="#" data-bind="click: SavePageSize">Change</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+
+<script>$.ajaxSetup({ cache: true });</script>
+<script src="/hr/TNAV9/Scripts/app/Common/PageNavigator.js"></script>
+<script>$.ajaxSetup({ cache: false });</script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>$.ajaxSetup({ cache: true });</script>
+<script src="/hr/TNAV9/Scripts/app/Common/EmployeeFilter.js"></script>
+<script>$.ajaxSetup({ cache: false });</script>
+
+<script type="text/javascript">
+    EmpFilterVM.EmployeeCallBack('ManualVM.SetGridDataByEmployee');
+    EmpFilterVM.AllowMultiSelect('1');
+</script>                </div>
+            </div>
+        </div>
+    </div>
+    <div id="divManualDataPanel" class="col-lg-9">
+        <div id="TNAV9-ManualInOut-6" class="ibox">
+            <div id="TNAV9-ManualInOut-7" class="ibox-content">
+                
+
+
+
+
+<div id="customTimePickerTemplate" style="display: none;">
+    <div class="time-picker-dropdown" style="background-color: white;">
+        <div class="time-inputs">
+            <input type="number" class="hour-input form-control form-control-sm" min="0" max="23" step="1">
+            <span class="separator">:</span>
+            <input type="number" class="minute-input form-control form-control-sm" min="0" max="59" step="1">
+        </div>
+        <div class="time-picker-buttons">
+            <button type="button" class="btn btn-outline-primary btn-sm btn-clear">Clear</button>
+            <button type="button" class="btn btn-outline-primary btn-sm btn-cancel">Cancel</button>
+            <button type="button" class="btn btn-primary btn-sm btn-ok">OK</button>
+        </div>
+    </div>
+</div>
+
+<div id="divManualInOutMain">
+
+    <div id="divManualInOutMainHeader" class="row">
+        <div id="TNAV9-ManualInOut-Partial-3" class="col-lg-12">
+            <div class="panel-group" id="MainAccordion" role="tablist" aria-multiselectable="true">
+                <div id="divEmployeeSummary" class="panel panel-default" style="display:none;">
+                    <div id="divEmployeeSummaryHeader" class="panel-heading" role="tab">
+                        <span>
+                            <a id="lnkEmployeeSummary" role="button" data-bs-toggle="collapse"
+                               data-bs-parent="#MainAccordion" href="#divEmployeeSummaryContent" aria-expanded="true"
+                               aria-controls="divEmployeeSummaryContent">
+                                Employee Summary
+                        </a>
+                    </span>
+                </div>
+                <div id="divEmployeeSummaryContent" class="panel-collapse collapse in" role="tabpanel"
+                     aria-labelledby="divEmployeeSummaryHeader">
+                    <div id="TNAV9-ManualInOut-Partial-5" class="panel-body">
+                        <div id="TNAV9-ManualInOut-Partial-6" class="row">
+                            <div id="TNAV9-ManualInOut-Partial-7" class="col-lg-3">
+                                <div id="TNAV9-ManualInOut-Partial-8" class="V2_AttSrhResuDetImgCon">
+                                    <img id="imgEmployee">
+                                </div>
+                                <div id="TNAV9-ManualInOut-Partial-9" class="V2_AttSrhResuDetDesc">
+                                    <label id="lblEmpName" style="word-break: break-word;"></label>
+                                    <br />
+                                    <label id="lblEmpDesignation"></label>
+                                </div>
+                            </div>
+                            <div id="TNAV9-ManualInOut-Partial-10" class="col-lg-3">
+                                <table class="V2_AttenTab table">
+                                    <tbody data-bind="foreach: ManualVM.SummaryData_01">
+                                        <tr>
+                                            <!-- ko if:ManualVM.IsShowAbsantee()==1 && UniqueId == 'DAT_ABSENT_DAY'-->
+                                            <td>Total Nopay Days</td>
+                                            <td data-bind="text: FieldValue" class="V2_EmpSummary_Amount"></td>
+                                            <!-- /ko -->
+                                            <!-- ko if:ManualVM.IsShowAbsantee()==1 && UniqueId != 'DAT_ABSENT_DAY'-->
+                                            <td data-bind="text: FieldName"></td>
+                                            <td data-bind="text: FieldValue" class="V2_EmpSummary_Amount"></td>
+                                            <!-- /ko -->
+                                            <!-- ko if:ManualVM.IsShowAbsantee()==0 && UniqueId == 'DAT_ABSENT_DAY'-->
+                                            <!-- /ko -->
+                                            <!-- ko if:ManualVM.IsShowAbsantee()==0 && UniqueId != 'DAT_ABSENT_DAY'-->
+                                            <td data-bind="text: FieldName"></td>
+                                            <td data-bind="text: FieldValue" class="V2_EmpSummary_Amount"></td>
+                                            <!-- /ko -->
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="TNAV9-ManualInOut-Partial-11" class="col-lg-3">
+                                <table class="table V2_AttenTab">
+                                    <tbody data-bind="foreach: ManualVM.SummaryData_02">
+                                        <tr>
+                                            <td data-bind="text: FieldName"></td>
+                                            <td data-bind="text: FieldValue" class="V2_EmpSummary_Amount"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="TNAV9-ManualInOut-Partial-12" class="col-lg-3">
+                                <table class="V2_AttenTab table">
+                                    <tbody data-bind="foreach: ManualVM.SummaryData_03">
+                                        <tr>
+                                            <!-- ko if:ManualVM.IsShowAbsantee()==1 && UniqueId == 'DAT_NPY_DAYS'-->
+                                            <td>Total Absent Days</td>
+                                            <!-- /ko -->
+                                            <!-- ko if:ManualVM.IsShowAbsantee()==1 && UniqueId != 'DAT_NPY_DAYS'-->
+                                            <td data-bind="text: FieldName"></td>
+                                            <!-- /ko -->
+                                            <!-- ko if:ManualVM.IsShowAbsantee()==0 -->
+                                            <td data-bind="text: FieldName"></td>
+                                            <!-- /ko -->
+                                            <td data-bind="text: FieldValue" class="V2_EmpSummary_Amount"></td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="TNAV9-ManualInOut-Partial-13" data-bind="visible: ManualVM.ConfigData().IsShowOTAsPercentage">
+                        <div id="TNAV9-ManualInOut-Partial-14" class="col-lg-3">
+                            <div id="otContainer" style="padding-left: 50px; width: 300px;">
+                                <label id="lblOTPercentage">OT as Percentage:</label>
+                            <span id="spanOTPercentageValue" style="padding-left: 85px; color: #000000; "></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="divBulkApply" class="panel panel-default"
+         data-bind="visible: ManualVM.ConfigData().EnableManualInOutBulkInsert">
+        <div id="divBulkApplyHeader" class="panel-heading" role="tab">
+            <span>
+                <a id="lnkBulkApply" role="button" data-bs-toggle="collapse"
+                   data-bs-parent="#MainAccordion" href="#divBulkApplyContent" aria-expanded="true"
+                   aria-controls="divBulkApplyContent">Bulk Apply </a>
+            </span>
+        </div>
+        <div id="divBulkApplyContent" class="panel-collapse collapse in" role="tabpanel"
+             aria-labelledby="divBulkApplyHeader">
+            <div id="TNAV9-ManualInOut-Partial-15" class="panel-body">
+                <div id="TNAV9-ManualInOut-Partial-16" class="row align-items-center fw-semibold">
+                    <div id="TNAV9-ManualInOut-Partial-17" class="col-12 col-lg-5 col-sm-6">
+                        <div id="TNAV9-ManualInOut-Partial-18">
+                            <div id="TNAV9-ManualInOut-Partial-19" class="row align-items-center">
+                                <label for="ddlBulkType"
+                                       class="col">In Time / Out Time</label>
+                                    <select id="ddlBulkType" class="form-select form-select-sm col" data-bind="value: BulkType">
+                                        <option value="0">In Time</option>
+                                        <option value="1">Out Time</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="TNAV9-ManualInOut-Partial-20" class="col-12 col-lg-5 col-sm-6">
+                            <div id="TNAV9-ManualInOut-Partial-21">
+                                <div id="TNAV9-ManualInOut-Partial-22" class="ms-3 row align-items-center">
+                                    <label for="dtpBulkDate"
+                                           class="col-auto">Bulk Date Time</label>
+                                        <div class='input-group date col' id='dtpBulkDate' data-tempval="Bulk Date"
+                                             data-bind="datepickerBulk:true">
+                                            <input type='text' class="form-control form-control-sm"
+                                                   data-bind="value: BulkDateText" style="width: 85px;" />
+                                            <div id="TNAV9-ManualInOut-Partial-23" class="input-group-addon">
+                                                <i class="glyphicon glyphicon-calendar"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="TNAV9-ManualInOut-Partial-24" class="col-6 col-lg-1">
+                                <input id="txtBulkTime" type="text" class="form-control form-control-sm"
+                                       style="width:60px;"
+                                       data-bind="customTimePicker:true, value: BulkTimeText, event: {change: ManualVM.OnBulkTimeChange}">
+                            </div>
+                            <div id="TNAV9-ManualInOut-Partial-25" class="col-6 col-lg-1">
+                                <button type="button" id="btnBulkApply" class="btn btn-primary btn-sm"
+                                        data-bind="click: ManualVM.OnBulkApplyClick">
+                                    Apply
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="TNAV9-ManualInOut-Partial-26" class="row mt-4">
+        <div id="TNAV9-ManualInOut-Partial-27" class="col-lg-9">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link active" id="lnkRegularize" data-bind="event: {click: ManualVM.OnRecordFilterClick.bind($data, InOutRecordType.Regularize)}" data-bs-toggle="tab">
+                        Regularize
+                    <span class="label" data-bind="text: ManualVM.RegularizeSwipeCount"></span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="lnkViewAll" data-bind="event: {click: ManualVM.OnRecordFilterClick.bind($data, InOutRecordType.ViewAll)}" data-bs-toggle="tab">
+                    View All
+                <span class="label" data-bind="text: ManualVM.TotalRecordCount"></span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="lnkPending" data-bind="event: {click: ManualVM.OnRecordFilterClick.bind($data, InOutRecordType.Pending)}" data-bs-toggle="tab">
+                Pending
+            <span class="label" data-bind="text: ManualVM.PendingSwipeCount"></span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="lnkValidSwipe" data-bind="event: {click: ManualVM.OnRecordFilterClick.bind($data, InOutRecordType.Valid)}" data-bs-toggle="tab">
+            Valid Swipes
+        <span class="label" data-bind="text: ManualVM.ValidSwipeCount"></span>
+    </a>
+</li>
+<li class="nav-item" data-bind="visible:ManualVM.ConfigData().EnableManualInOutOffShiftTab">
+    <a class="nav-link" id="lnkOffShift" data-bind="event: {click: ManualVM.OnRecordFilterClick.bind($data, InOutRecordType.Offshift)}" data-bs-toggle="tab">
+        Off Shifts
+    <span class="label" data-bind="text: ManualVM.OffShiftSwipeCount"></span>
+</a>
+</li>
+</ul>
+</div>
+<div id="TNAV9-ManualInOut-Partial-28" class="col-lg-3">
+    <ul class="list-inline float-end GridSetting">
+        <li>
+            <a id="lnkLegendDetails" data-bind="event: {mouseover: ManualVM.SetGridLegendPopOver}" tabindex='0' data-bs-toggle='popover' data-bs-trigger="focus" data-bs-placement='left' data-bs-html='true'>
+                Legend Details
+            </a>
+        </li>
+        <li id="liGridSeparator" style="display:none;">|</li>
+        <li id="liGridSettings" style="display:none;">
+            <a href="#" data-bind="event: {click: ManualVM.OnGridSettingsClick}">Settings </a>
+        </li>
+    </ul>
+</div>
+</div>
+
+<div id="TNAV9-ManualInOut-Partial-29" class="row">
+    <div id="TNAV9-ManualInOut-Partial-30" class="col-md-12" style="z-index:1;">
+        <div id="divSummary" class="table-responsive" style="display: none; overflow-y: auto; max-height: 75vh;">
+
+            <table id="tblSummaryManual" class="table table-striped nomargin table-sm table-bordered" cellspacing="0">
+                <thead id="tHeadManual" data-bind="css: {'sticky-col': !$root.IsMobile()}">
+                    <tr>
+                        <th id="thfix_inout" data-bind="css: {'sticky-col': !$root.IsMobile()}, visible:ManualVM.IsHaveLockedRecords()"></th>
+                        <th id="thfix_inout" data-bind="css: {'sticky-col': !$root.IsMobile()}">
+                            <input id="chkSelectAll" type="checkbox" data-bind="event: {change: ManualVM.OnSelectAllClick}">
+                        </th>
+                        <th id="thfix_inout" style="min-width: 110px"  data-bind="css: {'sticky-col': !$root.IsMobile()}">Date</th>
+                        <th id="thfix_inout" data-bind="css: {'sticky-col': !$root.IsMobile()}"></th>
+                        <th id="thfix_inout" data-bind="css: {'sticky-col': !$root.IsMobile()}">Shift</th>
+                        <th data-bind="visible: ManualVM.ConfigData().EnableShiftAdjustment">Adjustment</th>
+                        <th>In Date</th>
+                            <th>In Time (HH:mm) </th>
+                        <th>Out Date</th>
+                            <th> Out Time (HH:mm) </th>
+                        <!-- ko if:ManualVM.IsShowUpdatePurches()==1-->
+                        <th>Updated Punches</th>
+                        <!-- /ko -->
+                        <th>Breaks</th>
+                        
+			<th data-bind="visible: !ManualVM.ConfigData().IsReasonVisible">Comment</th>
+                        
+			<th data-bind="visible: ManualVM.ConfigData().IsReasonVisible">Reason</th>
+                            <th>Status</th>
+                                <th>Leave (d) </th>
+                        <th data-bind="visible: ManualVM.ConfigData().IsDynamicColumnVisible">&amp;nbsp  GO</th>
+                        <!-- ko foreach: ManualVM.DynamicGridFieldList() -->
+                        <!-- ko if:ManualVM.IsShowAbsantee()==1 && UniqueId() == 'DAT_NPY_DAYS'-->
+                        <th data-bind="visible: IsVisible, attr: {id: 'DynamicGridField_' + SeqNo()}">Absent</th>
+                        <!-- /ko -->
+                        <!-- ko if:ManualVM.IsShowAbsantee()==1 && UniqueId() != 'DAT_NPY_DAYS'-->
+                        <th data-bind="visible: IsVisible, attr: {id: 'DynamicGridField_' + SeqNo()}, text: FieldName"></th>
+                        <!-- /ko -->
+                        <!-- ko if:ManualVM.IsShowAbsantee()==0 && UniqueId() == 'DAT_NPY_DAYS'-->
+                                <th data-bind="visible: IsVisible, attr: {id: 'DynamicGridField_' + SeqNo()}"> Nopay Days (d) </th>
+                        <!-- /ko -->
+                        <!-- ko if:ManualVM.IsShowAbsantee()==0 && UniqueId() != 'DAT_NPY_DAYS' -->
+                        <th data-bind="visible: IsVisible, attr: {id: 'DynamicGridField_' + SeqNo()}, text: FieldName"></th>
+                        
+                        <!-- /ko -->
+                        <!-- /ko -->
+                        <!-- ko if:ManualVM.IsShowAbsantee()==1-->
+                            <th>Nopay (d) </th>
+                        <!-- /ko -->
+                        <!-- ko if:ManualVM.ShowNopayAsHours()==true-->
+                            <th> Nopay (HH:mm) </th>
+                        <!-- /ko -->
+                        <th data-bind="visible: ManualVM.IsGridMessageVisible()"></th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: ManualVM.GridDataFL">
+                    <!-- ko if: $index() == 0 || EmpDisplayNumber() != ManualVM.GridDataFL()[$index()-1].EmpDisplayNumber() -->
+                    <tr class="SummaryManual-green-row">
+                        <td id="first_row_manual" data-bind="css: {'sticky-col': !$root.IsMobile()}" class="bg-primary"></td>
+                        <td id="first_row_manual" data-bind="css: {'sticky-col': !$root.IsMobile()}, text: EmpHeaderName()" class="bg-primary" colspan="5" style="z-index: 1002 !important;"></td>
+                        
+                        <td id="first_row_manual" data-bind="css: {'sticky-col': !$root.IsMobile()}" class="bg-primary" colspan="100"></td>
+                    </tr>
+                    <!-- /ko -->
+                    <tr data-bind=" css: {'Row_Highlight': IsSelected()}">
+                        <td data-bind="css: {'sticky-col': !$root.IsMobile()}, visible:ManualVM.IsHaveLockedRecords()">
+                            <div data-bind="visible:IsLockedRecord()">
+                                <i class="fa fa-lock fa-lg Locked-Record"></i>
+                            </div>
+                        </td>
+                        <td data-bind="css: {'sticky-col': !$root.IsMobile()}">
+                            <input type="checkbox" data-bind="enable: IsEnabled, checked: IsSelected">
+                        </td>
+                        <td data-bind="css: {'sticky-col': !$root.IsMobile()}, attr: { title: GetWeekDayName(DatInDate(), DayCaption()) }">
+                            <span data-bind="text: FormatDateToString(DatInDate())"></span><br />
+                            <span data-bind="text: GetShortDayNameWithDayTypeAbbrv(DatInDate(), DayAbbreviation())"></span>
+                        </td>
+                        <td data-bind="css: {'sticky-col': !$root.IsMobile()}">
+                            <div style="width:15px; height:15px;" data-bind="attr: { title: ShiftToolTip()}, style : { background : ShiftColor(), border: ShiftColor() == '#FFFFFF' ? 'solid 1px' : '' }"></div>
+                        </td>
+                        <td data-bind="css: {'sticky-col': !$root.IsMobile()}">
+                            <a data-bind="attr: { title: ShiftToolTip()}, event: {click: ShowShiftVisualizer.bind($data, ShiftCode())}"><label data-bind="text: ShiftAbbreviation" class="VisualizerModalLink mb-0"></label></a>
+                        </td>
+                        <td data-bind="visible: ManualVM.ConfigData().EnableShiftAdjustment">
+                            <input type="text" class="shift-autocomplete form-control form-control-sm" data-bind="enable: IsAdjustmentEnabled(), attr: {id: 'txtShiftAdjustment_' + $index(), empNumber: EmpNumber(), datInDate: DatInDate()}, value: AdjShiftAbbreviation" style="width:80px" placeholder="Select Shift">
+                        </td>
+                        <td>
+                            <input id="txtInDate" type='text' class="date-control form-control form-control-sm"
+                                   style="width:105px;"
+                                   data-bind="enable: IsEnabled(), value: InDateText, css: {'ChangeCell_Highlight': OldInDateText() != InDateText()}, event: {blur: ManualVM.CheckRowDataModification, change: ManualVM.OnInDateChange}" />
+                        </td>
+                        <td>
+                            <input id="txtInTime" type="text" class="time-control form-control form-control-sm"
+                                   style="width:68px;"
+                                   data-bind="enable: IsEnabled(), customTimePicker:true, value: InTimeText, event: {change: ManualVM.OnInTimeChange}, css: InTimeHighlightCSS">
+                            
+                        </td>
+                        <td>
+                            <input id="txtOutDate" type='text' class="date-control form-control form-control-sm"
+                                   style="width:105px;"
+                                   data-bind="enable: IsEnabled(), value: OutDateText, css: {'ChangeCell_Highlight': OldOutDateText() != OutDateText()}, event: {blur: ManualVM.CheckRowDataModification, change: ManualVM.OnOutDateChange}" />
+                        </td>
+                        <td>
+                            <input id="txtOutTime" type="text" class="time-control form-control form-control-sm"
+                                   style="width:68px;"
+                                   data-bind="enable: IsEnabled(), customTimePicker:true, value: OutTimeText, event: {change: ManualVM.OnOutTimeChange}, css: OutTimeHighlightCSS">
+                            
+                        </td>
+                        <!-- ko if:ManualVM.IsShowUpdatePurches()==1-->
+                        <td>
+                            <a href="#"
+                               data-bind="enable: IsEnabled(), event: {click: ManualVM.OnUpdatePurchesClick}" <i
+                                    class="fa fa-trello fa-lg"></i><span class="label label-default"
+                                        data-bind="text:PunchesCount"></span></a>
+                        </td>
+                        <!-- /ko -->
+                        <td>
+                            <a href="#" data-bind="enable: IsEnabled(), event: {click: ManualVM.OnBreakClick}">
+                                <i class="fa fa-trello fa-lg"></i><span class="label label-default"
+                                                                        data-bind="text:BreakCount, css: {'label-success': OldBreakCount() != BreakCount()}"></span>
+                            </a>
+                        </td>
+                        <td data-bind="visible: !ManualVM.ConfigData().IsReasonVisible">
+                            <div class="input-group input-group-sm" style="width:200px;">
+                                <input id="txtComment" type="text" class="form-control form-control-sm"
+                                       data-bind="enable: IsEnabled(), value: Comment, css: {'ChangeCell_Highlight': OldComment() != Comment()}, event: {change: ManualVM.CheckRowDataModification}">
+                                <span class="input-group-addon" tabindex='0' data-bs-toggle='popover'
+                                      data-bs-trigger="focus" data-bs-placement='left' data-bs-html='true'
+                                      data-bind="attr: {id: 'lnkCommentHistory_' + $index()}, event: {mouseover: ManualVM.SetManualCommentHistoryPopOver.bind($data, 'lnkCommentHistory_' + $index(), EmpNumber(), DatInDate())}">
+                                    <i class="fa fa-comments fa-lg"></i>
+                                </span>
+                            </div>
+                        </td>
+                        <td data-bind="visible: ManualVM.ConfigData().IsReasonVisible">
+                            <div class="input-group input-group-sm" style="width:200px;">
+                                <select id="ddlReason" class="form-select form-select-sm"
+                                        data-bind="enable: IsEnabled(), options: ManualVM.ReasonList(), optionsText: 'ReasonName', optionsValue:'ReasonCode', value: ReasonCode, css: {'ChangeCell_Highlight': OldReasonCode() != ReasonCode()}"></select>
+                                <span class="input-group-addon" tabindex='0' data-bs-toggle='popover'
+                                      data-bs-trigger="focus" data-bs-placement='left' data-bs-html='true'
+                                      data-bind="attr: {id: 'lnkCommentHistory_' + $index()}, event: {mouseover: ManualVM.SetManualCommentHistoryPopOver.bind($data, 'lnkCommentHistory_' + $index(), EmpNumber(), DatInDate())}">
+                                    <i class="fa fa-comments fa-lg"></i>
+                                </span>
+                            </div>
+                        </td>
+                        <td align="center">
+                            <span class="label label-success"
+                                  data-bind="visible: RecordStatus() == 0, text: RecordStatusText"></span>
+
+                            <a data-bind="visible: RecordStatus() == 1, attr: {id: 'lnkPendingApproval_' + $index()}, event: {mouseover: ManualVM.SetPendingApprovalPopOver.bind($data, $index(), EmpNumber(), EmpDisplayNumber(), DatInDate())}"
+                               tabindex='0' data-bs-toggle='popover' data-bs-trigger="focus"
+                               data-bs-placement='left' data-bs-html='true'>
+                                <span class="label label-warning" data-bind="text: RecordStatusText"></span>
+                            </a>
+
+                            <a data-bind="visible: RecordStatus() == 2, attr: {id: 'lnkPendingProcess_' + $index()}, event: {mouseover: ManualVM.SetPendingProcessPopOver.bind($data, $index(), EmpNumber(), EmpDisplayNumber(), DatInDate())}"
+                               tabindex='0' data-bs-toggle='popover' data-bs-trigger="focus"
+                               data-bs-placement='left' data-bs-html='true'>
+                                <span class="label label-info" data-bind="text: RecordStatusText"></span>
+                            </a>
+
+                            <span class="label label-default"
+                                  data-bind="visible: RecordStatus() == 3, text: RecordStatusText"></span>
+                            <span class="label label-danger"
+                                  data-bind="visible: RecordStatus() == 4, text: RecordStatusText"></span>
+                        </td>
+                        <td>
+                            <a data-bind="visible: LeaveDays() > 0 || LeaveType().length > 0, attr: {id: 'lnkLeaveStatus_' + $index()}, event: {mouseover: ManualVM.SetLeaveStatusPopOver.bind($data, $index(), EmpNumber(), DatInDate())}"
+                               tabindex='0' data-bs-toggle='popover' data-bs-trigger="focus"
+                               data-bs-placement='left' data-bs-html='true'>
+                                <!-- ko if: (ManualVM.IsShowLeaveTypesInGrid == '0.00' && LeaveDaysLabelString().length > 0) -->
+                                <span class="label label-info" style="display:inline"
+                                      data-bind="text: LeaveDaysLabelString"></span>
+                                
+                                <!-- /ko -->
+                                <!-- ko if: (ManualVM.IsShowLeaveTypesInGrid == '1.00' && LeaveDaysLabelString().length > 0) -->
+                                <span class="label label-info" style="display:inline"
+                                      data-bind="text: LeaveDaysLabelString"></span>
+                                
+                                <!-- /ko -->
+                                <!-- ko if: ManualVM.IsShowLeaveTypesInGrid == '2.00' -->
+                                <span class="label label-info" style="display:inline"
+                                      data-bind="text: LeaveType"></span>
+                                <!-- /ko -->
+                            </a>
+                            <!-- ko if: ManualVM.IsShowLeaveTypesInGrid == '0.00' -->
+                            <a style="padding-top: 5px;" href="#"
+                               data-bind="visible: InOutRecordType() == 1, event: {click: ManualVM.OnApplyLeaveClick.bind($data, EmpNumber(), DatInDate())}">
+                                <i class="fa fa-external-link fa-lg"></i>
+                            </a>
+                            <!-- /ko -->
+                        </td>
+                        <td data-bind="visible: ManualVM.ConfigData().IsDynamicColumnVisible, text: DynamicColumnText">
+                        </td>
+
+                        <!-- ko foreach: DynamicGridDataList() -->
+                        <td data-bind="visible: IsVisible, attr: {id: 'DynamicGridField_' + SeqNo}, text: ColumnValue">
+                        </td>
+                        <!-- /ko -->
+                        <!-- ko if:ManualVM.IsShowAbsantee()==1-->
+                        <td data-bind="text: AbsentDays().toFixed(2)"></td>
+                        <!-- /ko -->
+                        <!-- ko if:ManualVM.ShowNopayAsHours()==true-->
+                        <td data-bind="text: NopayHours()"></td>
+                        <!-- /ko -->
+                        <td data-bind="visible: ManualVM.IsGridMessageVisible()">
+                            <a data-bind="visible: Message().length > 0, attr: {id: 'lnkGridMessage_' + $index()}, event: {mouseover: ManualVM.SetGridMessagePopOver.bind($data, $index(), Message())}"
+                               tabindex='0' data-bs-toggle='popover' data-bs-trigger="focus"
+                               data-bs-placement='left' data-bs-html='true'>
+                                <i class="fa fa-exclamation-triangle fa-lg"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- ko if:ManualVM.IsShowUpdatePurches()==1-->
+        <label>
+            <span style="color:darkorange">
+                Suggestion:
+        </span> Dear user, If you want to adjust the already captured IN Time or OUT Time, Please make sure to delete the lesser value than the updated  IN Time &amp; greater value than the updated OUT Time.
+    </label>
+    <!-- /ko -->
+    <div id="TNAV9-ManualInOut-Partial-35" class="col-md-12">
+        <div id="TNAV9-ManualInOut-Partial-36" data-bind="with: ManualVM.GridNavigatorVM">
+            
+<div id="TNAV9-pagenav-1" class="page-navigation-block" data-bind="visible: IsVisible()" style="display:none;"> 
+    <ul class="pagination mt-2 float-end">
+        <li class="page-item nav-prev" data-bind="css: { disabled: PageIndex() === 0 }"><a href="#" data-bind="click: PreviousPage"><span class="fa fa-angle-left"></span></a></li>
+        <li class="page-item" data-bind="css: { disabled: PageIndex() === 0 }"><a href="#" data-bind="click: QuickPreviousPage">...</a></li>
+        <!-- ko foreach: AllPages -->
+        <li class="page-item" data-bind="visible : (pageNumber - ($parent.PageIndex() + 1)) < 3 && (($parent.PageIndex() + 1) - pageNumber) < 3 ,css: { active: pageNumber === ($parent.PageIndex() + 1) }"><a href="#" class="page-link" data-bind="text: pageNumber, click: function() { $parent.MoveToPage(pageNumber-1); }"></a></li>
+        <!-- /ko -->
+        <li class="page-item nav-next" data-bind="css: { disabled: PageIndex() === MaxPageIndex() }"><a href="#" class="page-link" data-bind="click: NextPage"><span class="fa fa-angle-right"></span></a></li>
+        <li class="page-item ms-2">
+            <ul class="pagination page-size" data-bind="visible: PageName().length > 0">
+                <li class="page-item"><span>Page Size</span></li>
+                <li class="page-item"><input type='text' class="form-control form-control-sm" data-bind="value: PageSize" /></li>
+            </ul>
+        </li>
+        <li class="page-item">
+            <ul class="pagination button-change" data-bind="visible: PageName().length > 0">
+                <li class="page-item"><a href="#" data-bind="click: SavePageSize">Change</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+
+<script>$.ajaxSetup({ cache: true });</script>
+<script src="/hr/TNAV9/Scripts/app/Common/PageNavigator.js"></script>
+<script>$.ajaxSetup({ cache: false });</script>
+        </div>
+    </div>
+</div>
+</div>
+
+<div id="TNAV9-ManualInOut-Partial-37" class="row">
+    <div id="TNAV9-ManualInOut-Partial-38" class="col-md-12 ">
+        <div id="divButtonPanel" class="alert alert-danger V2_ButtonPanel" style="display:none;">
+            <div id="TNAV9-ManualInOut-Partial-39" class="float-end">
+                <button type="button" id="btnConfirmSubmit" style="display:none;" class="btn btn-primary btn-sm"
+                        data-bind="click: ManualVM.OnConfirmSubmitClick">
+                    Confirm &amp; Submit
+                    </button>
+                    <button type="button" id="btnSubmit" class="btn btn-primary btn-sm"
+                            data-bind="visible: ManualVM.RecordFilterType() != InOutRecordType.Pending, click: ManualVM.OnSubmitClick">
+                        Submit
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="TNAV9-ManualInOut-Partial-40" class="row">
+            <div id="TNAV9-ManualInOut-Partial-41" class="col-md-12">
+                <div id="divMessage" class="col-md-12 alert alert-danger" style="display:none;">
+                    <strong>Warning :  </strong>
+                    <label id="lblMessage"></label>
+                </div>
+            </div>
+        </div>
+
+        <!--Break Popup-->
+        <div id="divBreaks" class="modal fade" role="dialog">
+            <div id="TNAV9-ManualInOut-Partial-42" class="modal-dialog">
+                <div id="TNAV9-ManualInOut-Partial-43" class="modal-content">
+                    <div id="TNAV9-ManualInOut-Partial-44" class="modal-header">
+                        <h4 class="modal-title" id="AdditionalGridFields">
+                            View Breaks
+                    </h4>
+                    <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id="TNAV9-ManualInOut-Partial-45" class="modal-body">
+                    <div id="TNAV9-ManualInOut-Partial-46" class="mb-2">
+                        <div id="divBreakWarning" class="alert alert-warning" role="alert" style="display:none;"></div>
+
+                        <div id="TNAV9-ManualInOut-Partial-47" class="row">
+                            <div id="TNAV9-ManualInOut-Partial-48" class="col-lg-6 col-sm-6">
+                                <label>
+                                    Emp In Date Time
+                            </label>
+                        </div>
+                        <div id="TNAV9-ManualInOut-Partial-49" class="col-lg-6  col-sm-6">
+                            <label id="lblInDateTime"></label>
+                        </div>
+                    </div>
+                    <div id="TNAV9-ManualInOut-Partial-50" class="row">
+                        <div id="TNAV9-ManualInOut-Partial-51" class="col-lg-6 col-sm-6">
+                            <label>
+                                Emp Out Date Time
+                        </label>
+                    </div>
+                    <div id="TNAV9-ManualInOut-Partial-52" class="col-lg-6  col-sm-6">
+                        <label id="lblOutDateTime"></label>
+                    </div>
+                </div>
+
+                <div id="TNAV9-ManualInOut-Partial-53" class="row">
+                    <div id="TNAV9-ManualInOut-Partial-54" class="col-lg-3">
+                        <a id="lnkBreakAddNew" href="#"
+                           data-bind="event: {click: ManualVM.OnBreakAddNewClick}">
+                            <i class="fa fa-plus fa-lg"></i>Add New
+                        </a>
+                    </div>
+                </div>
+
+                <div id="TNAV9-ManualInOut-Partial-55" class="row">
+                    <div id="TNAV9-ManualInOut-Partial-56" class="col-lg-12">
+                        <div id="divSummary" class="table-responsive">
+                            <table id="tblBreaks" class="table table-bordered table-sm table-striped">
+                                <thead>
+                                    <tr>
+                                        <td>Start Date</td>
+                                        <td>Start Time (HH:mm) </td>
+                                        <td>End Date</td>
+                                        <td>End Time (HH:mm) </td>
+                                        <td colspan="2"></td>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach: ManualVM.BreakList">
+                                    <tr data-bind="visible: ActionType() != 3">
+                                        <td>
+                                            <label id="lblStartDate" class="view"
+                                                   data-bind="text: BStartDateText"></label>
+                                            <input id="txtStartDate" type='text'
+                                                   class="date-control form-control form-control-sm edit"
+                                                   style="display: none; width: 90px;"
+                                                   data-bind="datepicker:true,value: BStartDateText" />
+                                        </td>
+                                        <td>
+                                            <label id="lblStartTime" class="view"
+                                                   data-bind="text: BStartTimeText"></label>
+                                            <input id="txtStartTime" type="text"
+                                                   class="time-control form-control form-control-sm edit"
+                                                   style="display: none;"
+                                                   data-bind="value: BStartTimeText, event: {change: ManualVM.OnBStartTimeChange}">
+                                        </td>
+                                        <td>
+                                            <label id="lblEndDate" class="view"
+                                                   data-bind="text: BEndDateText"></label>
+                                            <input id="txtEndDate" type='text'
+                                                   class="date-control form-control form-control-sm edit"
+                                                   style="display: none; width: 90px;"
+                                                   data-bind="datepicker:true,value: BEndDateText" />
+                                        </td>
+                                        <td>
+                                            <label id="lblEndTime" class="view"
+                                                   data-bind="text: BEndTimeText"></label>
+                                            <input id="txtEndTime" type="text"
+                                                   class="time-control form-control form-control-sm edit"
+                                                   style="display: none"
+                                                   data-bind="value: BEndTimeText, event: {change: ManualVM.OnBEndTimeChange}">
+                                        </td>
+                                        <td style="text-align:center">
+                                            <input type="hidden" id="hdnBreakIndex"
+                                                   data-bind="value: $index()" />
+                                            <a id="lnkBreakEdit"
+                                               title='Edit'
+                                               onclick='ManualVM.OnBreakEditClick(this)'>
+                                                <i class="fa fa-edit fa-lg"></i>
+                                            </a>
+                                            <a id="lnkBreakSave"
+                                               title='Save'
+                                               onclick='ManualVM.OnBreakUpdateClick(this)'
+                                               style="display: none;"><i class="fa fa-check fa-lg"></i></a>
+                                            <a id="lnkBreakCancel"
+                                               title='Cancel'
+                                               onclick='ManualVM.OnBreakCancelClick(this)'
+                                               style="display: none;"><i class="fa fa-close fa-lg"></i></a>
+                                        </td>
+                                        <td style="text-align:center">
+                                            
+                                            <a id="lnkBreakDelete" title='Delete'
+                                               onclick='ManualVM.OnBreakDeleteClick(this)'>
+                                                <i class="fa  fa-trash-o fa-lg"></i>
+                                            </a>
+                                            
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="TNAV9-ManualInOut-Partial-57" class="modal-footer">
+            <button type="button" class="btn btn-primary btn-sm"
+                    data-bs-dismiss="modal">
+                Close
+                </button>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="hdnGridIndex" />
+</div>
+
+<!--Update Purches Popup-->
+<div id="divUpdatePurches" class="modal fade" role="dialog">
+    <div id="TNAV9-ManualInOut-Partial-58" class="modal-dialog">
+        <div id="TNAV9-ManualInOut-Partial-59" class="modal-content">
+            <div id="TNAV9-ManualInOut-Partial-60" class="modal-header">
+                <h4 class="modal-title" id="AdditionalGridFields">
+                    Captured Punches
+            </h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            </button>
+        </div>
+        <div id="TNAV9-ManualInOut-Partial-61" class="modal-body">
+            <div id="TNAV9-ManualInOut-Partial-62" class="mb-2">
+                <div id="divBreakWarning" class="alert alert-warning" role="alert" style="display:none;"></div>
+
+                <div id="TNAV9-ManualInOut-Partial-63" class="row">
+                    <div id="TNAV9-ManualInOut-Partial-64" class="col-lg-12">
+                        <div id="divSummary" class="table-responsive">
+                            <label data-bind="text: UPDeleteAlert"></label>
+                            <table id="tblBreaks" class="table table-bordered table-sm table-striped">
+                                <thead>
+                                    <tr>
+                                        <td>Date</td>
+                                        <td>Time</td>
+                                        <td colspan="2"></td>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach: ManualVM.UpdatedPurchesList">
+                                    <tr>
+                                        <td>
+                                            <label id="lblUPDate" class="view"
+                                                   data-bind="text: UPDateText"></label>
+                                            <input id="txtUPDate" type='text'
+                                                   class="date-control form-control form-control-sm edit"
+                                                   style="display:none;" data-bind="value: UPDateText" />
+                                        </td>
+                                        <td>
+                                            <label id="lblUPTime" class="view"
+                                                   data-bind="text: UPTimeText"></label>
+                                            <input id="txtUPTime" type="text"
+                                                   class="time-control form-control form-control-sm edit"
+                                                   style="display: none;" data-bind="value: UPTimeText">
+                                        </td>
+                                        <td style="text-align:center">
+                                            <input type="hidden" id="hdnUpdatePurchesIndex"
+                                                   data-bind="value: $index()" />
+                                            <a id="lnkUPDelete" title='Delete'
+                                               onclick='ManualVM.OnUpdatedPurchesDeleteClick(this)'>
+                                                <i class="fa fa-trash fa-lg"></i>
+                                            </a>
+                                        </td>
+                                        <!--<td style="text-align:center">-->
+                                        
+                                        
+                                        <!--<a id="lnkBreakCancel" title='Cancel' onclick='ManualVM.OnBreakCancelClick(this)' style="display: none;"><i class="fa fa-close fa-lg"></i></a>
+                                        </td>-->
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<input type="hidden" id="hdnGridIndex" />
+</div>
+
+<!--Grid Message-->
+<div id="divGridMessageContainer">
+    <div id="divGridMessageContent" class="hide">
+        <label id="lblGridMessage" class="normal_span"></label>
+    </div>
+</div>
+
+<!--Pending Approval-->
+<div id="divPendingApprovalContainer">
+    <div id="divPendingApprovalContent" class="hide">
+        <div id="TNAV9-ManualInOut-Partial-65" class="table-responsive">
+            <table id="tblPendingApproval" class="table table-striped"
+                   style="min-width: 300px; margin-bottom: 0px !important;">
+                <thead>
+                    <tr>
+                        <th>Previous Date</th>
+                        <th>Previous Time</th>
+                        <th>New Date</th>
+                        <th>New Time</th>
+                        <th>Time Mode</th>
+                        <th>Action Type</th>
+                        <th data-bind="visible: !ManualVM.ConfigData().IsReasonVisible">
+                            Comment
+                        </th>
+                        <th data-bind="visible: ManualVM.ConfigData().IsReasonVisible">
+                            Reason
+                        </th>
+                        <th>Approving Person</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: ManualVM.PendingApprovalList">
+                    <tr>
+                        <td data-bind="text: FormatDateToString(MClockData.OldDate)"></td>
+                        <td data-bind="text: FormatTimeDisplayValue(MClockData.OldTime)"></td>
+                        <td data-bind="text: FormatDateToString(MClockData.NewDate)"></td>
+                        <td data-bind="text: FormatTimeDisplayValue(MClockData.NewTime)"></td>
+                        <td data-bind="text: TimeModeText"></td>
+                        <td data-bind="text: ActionTypeText"></td>
+                        <td data-bind="visible: !ManualVM.ConfigData().IsReasonVisible, text: MClockData.Comment">
+                        </td>
+                        <td data-bind="visible: ManualVM.ConfigData().IsReasonVisible,text: ReasonText"></td>
+                        <td data-bind="text: AppEmpDisplayName"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!--Pending Process-->
+<div id="divPendingProcessContainer">
+    <div id="divPendingProcessContent" class="hide">
+        <div id="TNAV9-ManualInOut-Partial-66" class="table-responsive">
+            <table id="tblPendingProcess" class="table table-striped"
+                   style="min-width: 300px; margin-bottom: 0px !important;">
+                <thead>
+                    <tr>
+                        <th>Previous Date</th>
+                        <th>Previous Time</th>
+                        <th>New Date</th>
+                        <th>New Time</th>
+                        <th>Time Mode</th>
+                        <th>Action Type</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: ManualVM.PendingProcessList">
+                    <tr>
+                        <td data-bind="text: FormatDateToString(MClockData.OldDate)"></td>
+                        <td data-bind="text: FormatTimeDisplayValue(MClockData.OldTime)"></td>
+                        <td data-bind="text: FormatDateToString(MClockData.NewDate)"></td>
+                        <td data-bind="text: FormatTimeDisplayValue(MClockData.NewTime)"></td>
+                        <td data-bind="text: TimeModeText"></td>
+                        <td data-bind="text: ActionTypeText"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!--Grid Legend-->
+<div id="divGridLegendContainer" class="hide">
+    <div id="TNAV9-ManualInOut-Partial-67" class="table-responsive">
+        <table id="tblPendingProcess" class="table table-striped" style="margin-bottom: 0px !important;">
+            <tbody>
+                <tr>
+                    <td>
+                        <span class="label label-success">V/R</span>
+                    </td>
+                    <td>Valid Record</td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="label label-warning">P/A</span>
+                    </td>
+                    <td>Pending Approval</td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="label label-info">P/P</span>
+                    </td>
+                    <td>Pending Process</td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="label label-danger">R/R</span>
+                    </td>
+                    <td>Rejected Record</td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="label ManualTime_Highlight">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    </td>
+                    <td>Manually Fixed Times</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!--Grid Settings-->
+<div id="divGridSettingsContainer" class="hide">
+    <div id="TNAV9-ManualInOut-Partial-68" class="table-responsive">
+        <table id="tblGridSettings" class="table table-striped" style="margin-bottom: 0px !important;">
+            <tbody data-bind="foreach: ManualVM.DynamicGridFieldList">
+                <tr>
+                    <td>
+                        <input type="checkbox" data-bind="enable: !(IsMandatory == 1), checked: IsVisible">
+                    </td>
+                    <td data-bind="text: FieldName"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="TNAV9-ManualInOut-Partial-69" class="clear"></div>
+    <button type="button" id="btnApplySettings"
+            class="btn btn-primary btn-sm float-end">
+        Apply
+        </button>
+    </div>
+
+    
+<div id="divGridSettings" class="modal fade" role="dialog">
+    <div id="TNAV9-gridfields-1" class="modal-dialog">
+        <div id="TNAV9-gridfields-2" class="modal-content">
+            <div id="TNAV9-gridfields-3" class="modal-header">
+                <h4 class="modal-title" id="AdditionalGridFields">Additional Column Settings</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="TNAV9-gridfields-4" class="modal-body">
+                <div id="TNAV9-gridfields-5" class="mb-3">
+                    <div id="TNAV9-gridfields-6" class="row">
+                        <div id="TNAV9-gridfields-7" class="col-lg-12">
+                            <table id="tblGridSettings" class="table table-striped"
+                                style="margin-bottom: 0px !important;">
+                                <thead>
+                                    <tr>
+                                        <th class="text-start"><input class="me-1" id="chkSelectAllDynamicFields" type="checkbox"
+                                                data-bind="event: {change: GridVM.OnSelectAllDynamicFieldsClick}">
+                                            Visibility</th>
+                                        <th>Field Name</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach: GridVM.ModifiedDynamicGridFieldList">
+                                    <tr>
+                                        <td style="align-items: center"><input type="checkbox"
+                                                data-bind="checked: IsVisible, event:{change: GridVM.OnChangeVisibility}">
+                                        </td>
+                                        <!-- ko if:GridVM.IsShowAbsantee()==1 && FieldName() === 'Nopay' && GridVM.pageId() !=2 -->
+                                        <td>Absent
+                                        </td>
+                                        <td>Absent value</td>
+                                        <!-- /ko -->
+                                        <!-- ko if:GridVM.IsShowAbsantee()==1 && FieldName() === 'Nopay' && GridVM.pageId() ==2 -->
+                                        <td data-bind="text: FieldName"></td>
+                                        <td data-bind="text: Description"></td>
+                                        <!-- /ko -->
+                                        <!-- ko if:GridVM.IsShowAbsantee()==1 && FieldName() !== 'Nopay'-->
+                                        <td data-bind="text: FieldName"></td>
+                                        <td data-bind="text: Description"></td>
+                                        <!-- /ko -->
+                                        <!-- ko if:GridVM.IsShowAbsantee()==0-->
+                                        <td data-bind="text: FieldName"></td>
+                                        <td data-bind="text: Description"></td>
+                                        <!-- /ko -->
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="TNAV9-gridfields-8" class="modal-footer">
+                <button type="button" id="btnApplySettings" class="btn btn-primary btn-sm" data-bind="click: GridVM.OnApplySettingsClick">Apply</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    
+        var gridFieldModel = {"PageId":0,"ApplyCallBack":"ManualVM.ApplyDynamicGridFieldSettings","DynamicGridFieldList":[{"PageId":1,"SeqNo":1,"FieldName":"Pre OT (HH:mm) ","Description":"Pre OT Amount","UniqueId":"DAT_SOT","ColumnId":1,"DataType":4,"Format":"0.00","IsMandatory":0,"IsVisible":true},{"PageId":1,"SeqNo":2,"FieldName":"Post OT (HH:mm) ","Description":"Post OT Amount","UniqueId":"DAT_EOT","ColumnId":1,"DataType":4,"Format":"0.00","IsMandatory":0,"IsVisible":true},{"PageId":1,"SeqNo":3,"FieldName":"Late (HH:mm) ","Description":"Late Amount","UniqueId":"DAT_SLATE","ColumnId":1,"DataType":5,"Format":"0.00","IsMandatory":0,"IsVisible":true},{"PageId":1,"SeqNo":4,"FieldName":"Early (HH:mm) ","Description":"Early Amount","UniqueId":"DAT_ELATE","ColumnId":1,"DataType":5,"Format":"0.00","IsMandatory":0,"IsVisible":true},{"PageId":1,"SeqNo":5,"FieldName":"Nopay (d) ","Description":"No Pay value","UniqueId":"DAT_NPY_DAYS","ColumnId":1,"DataType":3,"Format":"0.00","IsMandatory":0,"IsVisible":true},{"PageId":1,"SeqNo":6,"FieldName":"Work Hours (HH:mm) ","Description":"Work Hours","UniqueId":"DAT_WORKHRS","ColumnId":1,"DataType":4,"Format":"0.00","IsMandatory":0,"IsVisible":true}],"IsShowAbsantee":0,"pageId":1};
+</script>
+
+<script>$.ajaxSetup({ cache: true });</script>
+<script src="/hr/TNAV9/Scripts/app/Common/DynamicGridFields.js"></script>
+<script>$.ajaxSetup({ cache: false });</script>
+
+    <div id="divLeaveStatusContainer">
+    <div id="divLeaveStatusContent" class="hide">
+        <div id="TNAV9-LeaveStatus-1" class="table-responsive">
+            <table id="tblLeaveStatus" class="table table-striped" style="min-width: 300px; margin-bottom: 0px !important;">
+                <thead>
+                    <tr>
+                        <th>Leave Date</th>
+                        <th>Leave Type</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: LStatusVM.LeaveList">
+                    <tr>
+                        <td data-bind="text: FormatDateToString(LeaveDate)"></td>
+                        <td data-bind="text: LeaveType"></td>
+                        <td data-bind="text: (CountedAs == 'd' ? (Number(LeaveDays).toFixed(2) + '(' + CountedAs + ')') : (CountedAs == 'h' ? (LeaveDays + '(' + CountedAs + ')') : (LeaveDays.toFixed(0) + '(' + CountedAs + ')')))"></td>
+                        <td data-bind="text: LeaveStatus"></td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    
+                    <tr><th colspan="4" style="color: #fff; background-color: mediumturquoise; padding: 1px; text-align: center;">Legend Details : d-Days, h-Hours, m-Minutes</th></tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var LStatusVM = {
+        LeaveList: ko.observableArray([])
+    }
+</script>
+
+    <!--Common. Used in Manual In Out and Attendance Summary pages-->
+<div id="divCommentHistoryContainer">
+    <div id="divCommentHistoryContent" class="hide">
+        <div id="TNAV9-ManualCommentHistory-Partial-1" class="table-responsive">
+            <table id="tblComment" class="table table-striped" style="min-width: 300px; margin-bottom: 0px !important;">
+                <thead>
+                    <tr>
+                        <th>Edit Date</th>
+                        <th>Edit Employee</th>
+                        <th>Manual Time</th>
+                        <th>Time Mode</th>  <!-- from the database-->
+                        <th>Status</th>  <!-- from the database-->
+                        <th>Submit Comment</th>
+                        <th>Approval Comment</th>  <!-- from the database-->
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: CommentVM.CommentList">
+                    <tr>
+                        <td data-bind="text: FormatDateTimeToString(EditDateTime)"></td>
+                        <td data-bind="text: EmpDisplayName"></td>
+                        <td data-bind="text: FormatDateToString(NewDate) + ' ' + FormatTimeDisplayValue(NewTime)"></td>
+                        <td data-bind="text: TimeModeText"></td>
+                        <td data-bind="text: Status"></td>
+                        <td data-bind="text: SubmitComment"></td>
+                        <td data-bind="text: ApprovalComment"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var CommentVM = {
+        CommentList: ko.observableArray([])
+    }
+</script>
+
+
+</div>
+
+<!--Leave Status-->
+<div id="divLeaveStatus"></div>
+
+<!--Cancel Pending Grid-->
+<div id="divCancelPending"></div>
+
+<!--Localized messages-->
+<input id="hdnInitialDataLoadingDisabled" type="hidden"
+       value="Please use search criteria to load data." />
+<input id="dateLocalizedValue" type="hidden" value="Date: " />
+<input id="dayLocalizedValue" type="hidden" value="Day: " />
+<input id="daytypeLocalizedValue" type="hidden"
+       value="Day Type: " />
+
+<script type="text/javascript">
+    
+      var model = {"PageMode":1,"DataFilter":null,"EmployeeList":null,"ManualInOutDetailList":null,"ReasonList":[{"ReasonCode":"-1","ReasonName":"Select a reason","ReasonType":null},{"ReasonCode":"00007","ReasonName":"Miss IN and Out Time","ReasonType":null}],"RegularizeSwipeCount":0,"PendingSwipeCount":0,"ValidSwipeCount":0,"OffShiftSwipeCount":0,"TotalRecordCount":0,"ConfigData":{"IsReasonCompulsory":false,"IsCommentCompulsory":false,"IsApprovalCommentCompulsory":false,"IsReasonVisible":false,"EnableInitialDataLoading":false,"EnableShiftAdjustment":false,"IsDynamicColumnVisible":false,"IsDDSLinkEnabled":false,"EnableManualInOutBulkInsert":true,"EnableExceedingShiftGrace":false,"ConfirmOnExceedingShiftGrace":true,"IsBreakDeleteEnabled":false,"MaxAttemptsPerMonth":0,"IsShowOTAsPercentage":false,"EnableManualInOutOffShiftTab":true},"DynamicEmployeeSummary":null,"DynamicGridFieldList":null,"OptionalGridFieldCount":0,"GridPageData":{"ModuleId":65,"PageName":"ManualInOut","GridName":"Summary","UserId":"Ava","PageSize":20},"IsMobile":false,"IsShowAbsantee":0,"ShowNopayAsHours":false,"IsShowUpdatePurches":0,"IsShowLeaveTypesInGrid":null,"DisplayUnitForLeave":false,"DisplayUnitForNoPay":false,"ExcludeBreakHours":false,"ShowActualWorkHours":false,"NoPayControlAccess":0};
+</script>
+
+<script>$.ajaxSetup({ cache: true });</script>
+<script src="/hr/TNAV9/Scripts/app/ManualInOut/ManualInOut.js"></script>
+<script>$.ajaxSetup({ cache: false });</script>
+
+<style type="text/css">
+    ul.ui-autocomplete.ui-menu {
+        font-family: Inter, Arial;
+        font-size: 12px;
+        color: #626262;
+    }
+
+    .clockpicker-popover {
+        z-index: 9999;
+    }
+
+    .icon-vector-trello:before {
+        content: "\f181";
+    }
+</style>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div id="divEmployeeFilterToolBar">
+    <!--Employee Filter Modal-->
+    <div id="empFilterModal" class="modal fade" tabindex="-1" aria-labelledby="SearchResultHeader" aria-hidden="true">
+        <div class="modal-dialog modal-sm" id="divPopEmployeeFilterModal">
+
+            <!-- Modal content-->
+            <div id="TNAV9-EmployeeFilter-ToolBar-1" class="modal-content">
+                <div id="TNAV9-EmployeeFilter-ToolBar-2" class="modal-header">
+                    <h4 class="modal-title" id="SearchResultHeader">Search Result</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id="TNAV9-EmployeeFilter-ToolBar-3" class="modal-body">
+                    <div id="TNAV9-EmployeeFilter-ToolBar-4" class="mb-2">
+                        <div id="TNAV9-EmployeeFilter-ToolBar-5" class="row">
+                            <div id="TNAV9-EmployeeFilter-ToolBar-6" class="col-lg-12">
+                                <div id="TNAV9-EmployeeFilter-ToolBar-7" class="input-group input-group-sm">
+                                    <input id="txtSearchTextToolBar" type="text" class="form-control" data-bind="event: {keyup: EmpFilterVM.OnSearchTextKeyUpToolBar}" placeholder="Employee Name/No:">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="TNAV9-EmployeeFilter-ToolBar-8" data-bind="visible: EmpFilterVM.AllowMultiSelect() == 1"
+                        class="row">
+                        <div id="TNAV9-EmployeeFilter-ToolBar-9" class="col-lg-12">
+                            <div id="TNAV9-EmployeeFilter-ToolBar-10" class="">
+                                <ul class="list-inline">
+                                    <li><a id="lnkSelectAllToolBar" href="#" data-bind="event: {click: EmpFilterVM.OnSelectAllClickToolBar}">Select All</a></li>
+                                    <li><span>|</span></li>
+                                    <li><a href="#" data-bind="event: {click: EmpFilterVM.OnEmployeeViewClick}">View</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="divEmployeeList" data-bind="foreach: EmpFilterVM.EmployeeFilterList">
+                        <div id="TNAV9-EmployeeFilter-ToolBar-11" class="checkbox">
+                            <label style="display: block;"
+                                data-bind="css: EmpFilterVM.AllowMultiSelect() == 1 ? '' : 'V2_HideFilterChkBox'">
+                                <input type="checkbox" id="chkEmpSelect" class="V2_SrhChk"
+                                    data-bind="value: EmpDisplayNumber, checked: IsSelected, visible: EmpFilterVM.AllowMultiSelect() == 1">
+                                <img data-bind="attr:{src:EmpFilterVM.GetEmpPictureURL(EmpNumber())}" class="AttenSrhImgList">
+                                <p data-bind="text: EmpCompleteName(), event: {click: EmpFilterVM.OnEmployeeClick.bind(EmpDisplayNumber())}" class="normal" style="display:inline-block;"></p>
+                            </label>
+                        </div>
+                    </div>
+                    <div id="TNAV9-EmployeeFilter-ToolBar-12">
+                        <div id="TNAV9-EmployeeFilter-ToolBar-13" data-bind="with: EmpFilterVM.EmployeeNavigatorVM">
+                            
+<div id="TNAV9-pagenav-1" class="page-navigation-block" data-bind="visible: IsVisible()" style="display:none;"> 
+    <ul class="pagination mt-2 float-end">
+        <li class="page-item nav-prev" data-bind="css: { disabled: PageIndex() === 0 }"><a href="#" data-bind="click: PreviousPage"><span class="fa fa-angle-left"></span></a></li>
+        <li class="page-item" data-bind="css: { disabled: PageIndex() === 0 }"><a href="#" data-bind="click: QuickPreviousPage">...</a></li>
+        <!-- ko foreach: AllPages -->
+        <li class="page-item" data-bind="visible : (pageNumber - ($parent.PageIndex() + 1)) < 3 && (($parent.PageIndex() + 1) - pageNumber) < 3 ,css: { active: pageNumber === ($parent.PageIndex() + 1) }"><a href="#" class="page-link" data-bind="text: pageNumber, click: function() { $parent.MoveToPage(pageNumber-1); }"></a></li>
+        <!-- /ko -->
+        <li class="page-item nav-next" data-bind="css: { disabled: PageIndex() === MaxPageIndex() }"><a href="#" class="page-link" data-bind="click: NextPage"><span class="fa fa-angle-right"></span></a></li>
+        <li class="page-item ms-2">
+            <ul class="pagination page-size" data-bind="visible: PageName().length > 0">
+                <li class="page-item"><span>Page Size</span></li>
+                <li class="page-item"><input type='text' class="form-control form-control-sm" data-bind="value: PageSize" /></li>
+            </ul>
+        </li>
+        <li class="page-item">
+            <ul class="pagination button-change" data-bind="visible: PageName().length > 0">
+                <li class="page-item"><a href="#" data-bind="click: SavePageSize">Change</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+
+<script>$.ajaxSetup({ cache: true });</script>
+<script src="/hr/TNAV9/Scripts/app/Common/PageNavigator.js"></script>
+<script>$.ajaxSetup({ cache: false });</script>
+                        </div>
+                    </div>
+                </div>
+                <div id="TNAV9-EmployeeFilter-ToolBar-14" class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="TNAV9-ManualInOut-8" class="hide">
+    <input id="hdnHideSearchPanel" type="hidden" value="Hide Search Panel" />
+    <input id="hdnShowSearchPanel" type="hidden" value="Show Search Panel" />
+</div>
+        
+
+
+
+
+
+
+        
+
+    </div>
+
+</div>
+<div id="applicationModal" style="display:none"></div>
+
+<div class="modal fade" id="divmodalpopupSearchMain" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document" id="attendance-shared-partial-layout-1">
+        <div class="modal-content" id="attendance-shared-partial-layout-2">
+            <div class="modal-header" id="attendance-shared-partial-layout-3">
+                <h4 class="modal-title" id="modal-title-label-SearchMain"></h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="attendance-shared-partial-layout-4">
+                <iframe src="" frameborder="0" width="100%" height="500px" id="applicationModalSearchMain"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Define a custom locale
+    bootbox.addLocale('custom', {
+        OK: GetLocalizedMessage('BtnBootBoxOK', null, 'TNAAlerts'),
+        CANCEL: GetLocalizedMessage('BtnBootBoxCANCEL', null, 'TNAAlerts'),
+        CONFIRM: GetLocalizedMessage('BtnBootBoxCONFIRM', null, 'TNAAlerts')
+    });
+
+    // Set the default locale to the custom one
+    bootbox.setDefaults({
+        locale: 'custom'
+    });
+
+    var jsalertOKbutton = GetLocalizedMessage('BtnBootBoxOK', null, 'TNAAlerts');
+    window.HbsConfirmOk = GetLocalizedMessage('BtnBootBoxOK', null, 'TNAAlerts');
+    window.HbsConfirmCancel = GetLocalizedMessage('BtnBootBoxCANCEL', null, 'TNAAlerts');
+    window.HbsAlertOk = jsalertOKbutton;
+
+</script>
+
+

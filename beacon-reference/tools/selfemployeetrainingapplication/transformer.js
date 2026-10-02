@@ -1,8 +1,5 @@
 (async function (data, args, reqOptions) {
   try {
-    // Defensive: guard every step so a missing/malformed BeaconBar context resolves to
-    // a clean NO_ACCESS response instead of an opaque synchronous exception (same
-    // pattern as every other drafts/* tool in this build).
     const menus = (typeof BeaconBar !== "undefined" && BeaconBar.user && BeaconBar.user.metaData && BeaconBar.user.metaData.menus) || [];
     const hasAccess = Array.isArray(menus) && menus.some((menu) => typeof menu === "string" && menu.includes("TNDV9/ApplyTraining/Index?mvc=1&bs=4&App=000001"));
     if (!hasAccess) {
@@ -22,21 +19,6 @@
 
     if (!scheduleId && !courseNameQuery) {
       return { status: "VALIDATION_ERROR", message: "Either scheduleId or courseName is required to identify which training schedule to apply for." };
-    }
-    // Same four fields as the Supervisor/Admin nomination flows, each independently
-    // required server-side - confirmed live via ValidateApplyTraining's own rejection
-    // messages (see New_PeoplesHR_Feature/selfEmployeeTrainingApplication/ValidateApplyTraining.txt).
-    if (!objective) {
-      return { status: "VALIDATION_ERROR", message: "objective is required - the training system rejects applications without it." };
-    }
-    if (!relevanceToJob) {
-      return { status: "VALIDATION_ERROR", message: "relevanceToJob is required - the training system rejects applications without it." };
-    }
-    if (!benefitToEmployee) {
-      return { status: "VALIDATION_ERROR", message: "benefitToEmployee is required - the training system rejects applications without it." };
-    }
-    if (!benefitToCompany) {
-      return { status: "VALIDATION_ERROR", message: "benefitToCompany is required - the training system rejects applications without it." };
     }
 
     const headers = new Headers();
@@ -70,10 +52,6 @@
       return parsed;
     }
 
-    // Step 1: locate the full course/schedule object - identical mechanism to
-    // getSelfEmployeeTrainings / supervisorEmployeeTrainingNomination /
-    // adminEmployeeTrainingNomination. Confirmed to return the same schedule catalog
-    // regardless of self/supervisor/admin context.
     const scheduleData = await postJson("TNDV9/ApplyTraining/GetScheduleCourseDetails", undefined);
     if (!scheduleData || !scheduleData.Status || scheduleData.Status.IsSuccessfull !== true || !Array.isArray(scheduleData.crs)) {
       return {
@@ -143,16 +121,6 @@
     const cutdateConv = toIsoAndDisplay(courseItem.cutdate);
     const pardateConv = toIsoAndDisplay(courseItem.pardate);
 
-    // Step 2: fetch this course's conditions for the logged-in employee. Confirmed live
-    // (New_PeoplesHR_Feature/selfEmployeeTrainingApplication/GetAppyCourseConditions.txt):
-    // unlike the Supervisor flow, the request carries AppType: null (same as Supervisor's
-    // own request - the persona isn't sent here, only in the later Validate/Save calls),
-    // and the response's SubList contains exactly ONE entry - the logged-in employee's own
-    // record ({empno (opaque), displayempno, empname, designame, status, appstatus,
-    // selected, LeaveAppList, EvalPendList, OtherCosList}), not a list of other people.
-    // This is used purely to check eligibility/already-applied status and to surface
-    // pre-submission info - it is NOT used to build an outgoing NomiList (self-application
-    // sends an empty NomiList, confirmed live - see Step 4).
     const conditionsPayload = {
       coscode: courseItem.coscode,
       cosname: courseItem.cosname,
@@ -207,8 +175,6 @@
 
     const selfRecord = (Array.isArray(conditionsData.SubList) && conditionsData.SubList[0]) || null;
     if (selfRecord && selfRecord.appstatus === 1) {
-      // Confirmed pattern from the Supervisor/Admin flows: appstatus 1 means this
-      // schedule specifically rejects the applicant (e.g. already applied/attended).
       return {
         status: "NOT_ELIGIBLE",
         message: selfRecord.status || "You are not eligible to apply for this training.",
@@ -217,32 +183,16 @@
       };
     }
 
-    // Confirmed live: "levlist" (top-level on GetAppyCourseConditions' response, a
-    // sibling of SubList/PendEvalList - NOT the SubList entry's own, always-empty
-    // LeaveAppList field) is the "clash" data shown on the real screen as "1 clash found
-    // for this application" with a Leave Date / Leave Type table. Real example:
-    // {"empno": null, "LevDate": "/Date(1788978600000+0530)/", "LevType": "Test Leave"}
-    // matched a real screenshot showing "10/09/2026" / "Test Leave" exactly. This is
-    // informational, not blocking - the real screen still allows submission alongside the
-    // warning banner, so this tool surfaces it in the response rather than stopping.
     const leaveClashes = (Array.isArray(conditionsData.levlist) ? conditionsData.levlist : []).map((lv) => ({
       leaveDate: toIsoAndDisplay(lv.LevDate).display,
       leaveType: lv.LevType || ""
     }));
 
-    // Course materials, when present - metadata only, the real "attachfile" field is a
-    // large base64-encoded document blob not useful to surface here.
     const courseMaterials = (Array.isArray(conditionsData.PreMaterial) ? conditionsData.PreMaterial : []).map((m) => ({
       fileName: m.FileName || "",
       fileType: m.attachtype || ""
     }));
 
-    // Step 3: build the final submission payload. Confirmed live
-    // (New_PeoplesHR_Feature/selfEmployeeTrainingApplication/SaveApplyTraining.txt): for
-    // self-application NomiList is sent EMPTY - unlike the Supervisor/Admin flows, no
-    // employee needs to be marked "selected" in an outgoing list; the applicant is
-    // resolved purely from session identity server-side. AppType "000001" is confirmed
-    // directly from these captures (matches the App=000001 Applicant menu convention).
     const tempSnapshot = {
       SchList: courseItem.SchList,
       NeedList: courseItem.NeedList,
@@ -302,17 +252,41 @@
       Temp: tempSnapshot
     });
 
-    // Step 4: validate before saving - same real server-side safety check confirmed on
-    // the Supervisor/Admin flows.
     const validation = await postJson("TNDV9/ApplyTraining/ValidateApplyTraining", submissionPayload);
     if (!validation || validation.IsSuccessfull !== true) {
+      const validationMessage = (validation && validation.Message) || "The training system rejected this application during validation.";
+      const fieldRequiredMessages = [
+        { field: "objective", value: objective, phrase: "specify the objective" },
+        { field: "relevanceToJob", value: relevanceToJob, phrase: "specify the relevance to job" },
+        { field: "benefitToEmployee", value: benefitToEmployee, phrase: "specify the benefit to you" },
+        { field: "benefitToCompany", value: benefitToCompany, phrase: "specify the benefit to the company" }
+      ];
+      const isFieldRequiredRejection = fieldRequiredMessages.some((f) => validationMessage.toLowerCase().includes(f.phrase));
+      if (isFieldRequiredRejection) {
+        const stillMissing = fieldRequiredMessages.filter((f) => !f.value).map((f) => f.field);
+        return {
+          status: "VALIDATION_ERROR",
+          message: stillMissing.length > 0
+            ? `You're eligible for this training. Please provide the following before submitting: ${stillMissing.join(", ")}.`
+            : validationMessage,
+          courseName: courseItem.cosname,
+          scheduleId: String(courseItem.schid),
+          missingFields: stillMissing.length > 0 ? stillMissing : undefined
+        };
+      }
+      // Not a missing-field complaint - a genuine ineligibility (already applied, cut-off
+      // passed, etc.), surfaced without ever having required the narrative fields.
       return {
-        status: "VALIDATION_ERROR",
-        message: (validation && validation.Message) || "The training system rejected this application during validation."
+        status: "NOT_ELIGIBLE",
+        message: validationMessage,
+        courseName: courseItem.cosname,
+        scheduleId: String(courseItem.schid)
       };
     }
 
-    // Step 5: save - the actual write. Only reached after every check above passed.
+    // Step 5: save - the actual write. Only reached after Validate above succeeded with
+    // this exact payload, so a second validate call right before saving would be
+    // redundant.
     const saveResult = await postJson("TNDV9/ApplyTraining/SaveApplyTraining", submissionPayload);
     if (!saveResult || saveResult.IsSuccessfull !== true) {
       return {

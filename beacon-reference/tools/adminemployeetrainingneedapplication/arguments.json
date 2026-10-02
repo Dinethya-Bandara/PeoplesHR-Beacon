@@ -6,15 +6,14 @@
       "type": "array",
       "required": true,
       "defaultValue": null,
-      "description": "The employee(s) to submit this training need application for, company-wide - not restricted to any reporting line. Pass each employee exactly as the Admin named them (a name or an employee number), e.g. [\"Charlotte Taylor\"] or [\"000012\"] - do NOT resolve these yourself with any other tool first. This tool runs the same employee search the real 'Select Employee' modal uses internally. If a name matches more than one employee, the tool returns status AMBIGUOUS with the matching candidates (employee number, name, date joined, active status) - ask the Admin to be more specific (e.g. use the exact employee number) and retry. If a name matches no one, the tool returns status NOT_FOUND.",
+      "description": "The employee(s) to submit this training need application for, company-wide - not restricted to any reporting line. Pass each employee exactly as the Admin named them (a name or an employee number), e.g. [\"Charlotte Taylor\"] or [\"000012\"] - do NOT resolve these yourself with any other tool first. This tool runs the same employee search the real 'Select Employee' modal uses internally, and this is checked before anything else - the moment the Admin names who the need is for, call this tool with employees set (existingNeedName/newNeedName and the narrative fields all omitted) to resolve them first. If a name matches more than one employee, the tool returns status AMBIGUOUS with the matching candidates (employee number, name, date joined, active status) - ask the Admin to be more specific (e.g. use the exact employee number) and retry. If a name matches no one, the tool returns status NOT_FOUND - resolve that before asking about the need itself or any narrative field.",
       "advanced": true,
       "raw": {
         "type": "array",
-        "minItems": 1,
-        "description": "The employee(s) to submit this training need application for, company-wide - not restricted to any reporting line. Pass each employee exactly as the Admin named them (a name or an employee number), e.g. [\"Charlotte Taylor\"] or [\"000012\"] - do NOT resolve these yourself with any other tool first. This tool runs the same employee search the real 'Select Employee' modal uses internally. If a name matches more than one employee, the tool returns status AMBIGUOUS with the matching candidates (employee number, name, date joined, active status) - ask the Admin to be more specific (e.g. use the exact employee number) and retry. If a name matches no one, the tool returns status NOT_FOUND.",
         "items": {
           "type": "string"
-        }
+        },
+        "description": "The employee(s) to submit this training need application for, company-wide - not restricted to any reporting line. Pass each employee exactly as the Admin named them (a name or an employee number), e.g. [\"Charlotte Taylor\"] or [\"000012\"] - do NOT resolve these yourself with any other tool first. This tool runs the same employee search the real 'Select Employee' modal uses internally, and this is checked before anything else - the moment the Admin names who the need is for, call this tool with employees set (existingNeedName/newNeedName and the narrative fields all omitted) to resolve them first. If a name matches more than one employee, the tool returns status AMBIGUOUS with the matching candidates (employee number, name, date joined, active status) - ask the Admin to be more specific (e.g. use the exact employee number) and retry. If a name matches no one, the tool returns status NOT_FOUND - resolve that before asking about the need itself or any narrative field."
       }
     },
     {
@@ -22,11 +21,11 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "The name (or partial name) of an already-existing training need category to attach this application to, e.g. 'Database & Data Management' - matches case-insensitively against the category list from getAdminTrainingNeeds' existingNeedCategories. Use this when the employee's need matches a category already on file rather than describing something new. If more than one category matches, the tool returns status AMBIGUOUS with the candidates - ask which one and retry with the exact name. Either existingNeedName or newNeedName must be provided, not both.",
+      "description": "The name (or partial name) of an already-existing training need category to attach this application to, e.g. 'Database & Data Management' - matches case-insensitively against the category list from getAdminTrainingNeeds' existingNeedCategories. Use this when the employee's need matches a category already on file rather than describing something new. If more than one category matches, the tool returns status AMBIGUOUS with the candidates - ask which one and retry with the exact name. Either existingNeedName or newNeedName must be provided, not both. Only required once every named employee is already confirmed to exist - do not collect or pass this on the employees-only resolution call.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The name (or partial name) of an already-existing training need category to attach this application to, e.g. 'Database & Data Management' - matches case-insensitively against the category list from getAdminTrainingNeeds' existingNeedCategories. Use this when the employee's need matches a category already on file rather than describing something new. If more than one category matches, the tool returns status AMBIGUOUS with the candidates - ask which one and retry with the exact name. Either existingNeedName or newNeedName must be provided, not both."
+        "description": "The name (or partial name) of an already-existing training need category to attach this application to, e.g. 'Database & Data Management' - matches case-insensitively against the category list from getAdminTrainingNeeds' existingNeedCategories. Use this when the employee's need matches a category already on file rather than describing something new. If more than one category matches, the tool returns status AMBIGUOUS with the candidates - ask which one and retry with the exact name. Either existingNeedName or newNeedName must be provided, not both. Only required once every named employee is already confirmed to exist - do not collect or pass this on the employees-only resolution call."
       }
     },
     {
@@ -34,11 +33,11 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "The requested need, in the Admin's own words, when what's needed isn't already an existing category, e.g. 'Advanced Excel Macros' (the 'Requested Need' field). Either existingNeedName or newNeedName must be provided, not both.",
+      "description": "The requested need, in the Admin's own words, when what's needed isn't already an existing category, e.g. 'Advanced Excel Macros' (the 'Requested Need' field). Either existingNeedName or newNeedName must be provided, not both. Only required once every named employee is already confirmed to exist - do not collect or pass this on the employees-only resolution call.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The requested need, in the Admin's own words, when what's needed isn't already an existing category, e.g. 'Advanced Excel Macros' (the 'Requested Need' field). Either existingNeedName or newNeedName must be provided, not both."
+        "description": "The requested need, in the Admin's own words, when what's needed isn't already an existing category, e.g. 'Advanced Excel Macros' (the 'Requested Need' field). Either existingNeedName or newNeedName must be provided, not both. Only required once every named employee is already confirmed to exist - do not collect or pass this on the employees-only resolution call."
       }
     },
     {
@@ -56,49 +55,49 @@
     {
       "name": "objective",
       "type": "string",
-      "required": true,
+      "required": false,
       "defaultValue": null,
-      "description": "The objective of this training need. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the objective.' when blank - the same ValidateNeedApplication endpoint is used here). There is no goal-linking option here (confirmed live from a real Admin submission capture: IsGoalObject false, no ongoing-goals data) - always provide free text.",
+      "description": "The objective of this training need. There is no goal-linking option here (confirmed live from a real Admin submission capture: IsGoalObject false, no ongoing-goals data) - always free text. Whether this is mandatory is a per-client Training & Development configuration setting (IsObjectiveMandatory) and can change between orgs - do not assume it's required and do not ask the Admin for it upfront. Call this tool with whatever is known once every named employee is confirmed to exist and the need is identified; if ValidateNeedApplication rejects the submission with 'Please specify the objective.', that confirms it's mandatory for this org - ask the Admin for it then and call this tool again with the same arguments plus objective filled in.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The objective of this training need. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the objective.' when blank - the same ValidateNeedApplication endpoint is used here). There is no goal-linking option here (confirmed live from a real Admin submission capture: IsGoalObject false, no ongoing-goals data) - always provide free text."
+        "description": "The objective of this training need. There is no goal-linking option here (confirmed live from a real Admin submission capture: IsGoalObject false, no ongoing-goals data) - always free text. Whether this is mandatory is a per-client Training & Development configuration setting (IsObjectiveMandatory) and can change between orgs - do not assume it's required and do not ask the Admin for it upfront. Call this tool with whatever is known once every named employee is confirmed to exist and the need is identified; if ValidateNeedApplication rejects the submission with 'Please specify the objective.', that confirms it's mandatory for this org - ask the Admin for it then and call this tool again with the same arguments plus objective filled in."
       }
     },
     {
       "name": "relevanceToJob",
       "type": "string",
-      "required": true,
+      "required": false,
       "defaultValue": null,
-      "description": "How this training need relates to the employee(s)' job. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the relevance to job.' when blank).",
+      "description": "How this training need relates to the employee(s)' job. Whether this is mandatory is a per-client Training & Development configuration setting (IsRelToJobMandatory) and can change between orgs - do not assume it's required and do not ask the Admin for it upfront. Call this tool with whatever is known once every named employee is confirmed to exist and the need is identified; if ValidateNeedApplication rejects the submission with 'Please specify the relevance to job.', that confirms it's mandatory for this org - ask the Admin for it then and call this tool again with the same arguments plus relevanceToJob filled in.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "How this training need relates to the employee(s)' job. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the relevance to job.' when blank)."
+        "description": "How this training need relates to the employee(s)' job. Whether this is mandatory is a per-client Training & Development configuration setting (IsRelToJobMandatory) and can change between orgs - do not assume it's required and do not ask the Admin for it upfront. Call this tool with whatever is known once every named employee is confirmed to exist and the need is identified; if ValidateNeedApplication rejects the submission with 'Please specify the relevance to job.', that confirms it's mandatory for this org - ask the Admin for it then and call this tool again with the same arguments plus relevanceToJob filled in."
       }
     },
     {
       "name": "benefitToEmployee",
       "type": "string",
-      "required": true,
+      "required": false,
       "defaultValue": null,
-      "description": "The benefit of this training need to the employee(s). Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the benefit to you.' when blank).",
+      "description": "The benefit of this training need to the employee(s). Whether this is mandatory is a per-client Training & Development configuration setting (IsPotentialToYouMandatory) and can change between orgs - do not assume it's required and do not ask the Admin for it upfront. Call this tool with whatever is known once every named employee is confirmed to exist and the need is identified; if ValidateNeedApplication rejects the submission with 'Please specify the benefit to you.', that confirms it's mandatory for this org - ask the Admin for it then and call this tool again with the same arguments plus benefitToEmployee filled in.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The benefit of this training need to the employee(s). Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the benefit to you.' when blank)."
+        "description": "The benefit of this training need to the employee(s). Whether this is mandatory is a per-client Training & Development configuration setting (IsPotentialToYouMandatory) and can change between orgs - do not assume it's required and do not ask the Admin for it upfront. Call this tool with whatever is known once every named employee is confirmed to exist and the need is identified; if ValidateNeedApplication rejects the submission with 'Please specify the benefit to you.', that confirms it's mandatory for this org - ask the Admin for it then and call this tool again with the same arguments plus benefitToEmployee filled in."
       }
     },
     {
       "name": "benefitToCompany",
       "type": "string",
-      "required": true,
+      "required": false,
       "defaultValue": null,
-      "description": "The benefit of this training need to the company. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the benefit to the company.' when blank).",
+      "description": "The benefit of this training need to the company. Whether this is mandatory is a per-client Training & Development configuration setting (IsPotentialToCompMandatory) and can change between orgs - do not assume it's required and do not ask the Admin for it upfront. Call this tool with whatever is known once every named employee is confirmed to exist and the need is identified; if ValidateNeedApplication rejects the submission with 'Please specify the benefit to the company.', that confirms it's mandatory for this org - ask the Admin for it then and call this tool again with the same arguments plus benefitToCompany filled in.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The benefit of this training need to the company. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the benefit to the company.' when blank)."
+        "description": "The benefit of this training need to the company. Whether this is mandatory is a per-client Training & Development configuration setting (IsPotentialToCompMandatory) and can change between orgs - do not assume it's required and do not ask the Admin for it upfront. Call this tool with whatever is known once every named employee is confirmed to exist and the need is identified; if ValidateNeedApplication rejects the submission with 'Please specify the benefit to the company.', that confirms it's mandatory for this org - ask the Admin for it then and call this tool again with the same arguments plus benefitToCompany filled in."
       }
     }
   ]

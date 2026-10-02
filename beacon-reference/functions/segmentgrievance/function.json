@@ -1,0 +1,24 @@
+{
+  "id": "6aa374afae3620512a1a3c84",
+  "slug": "segmentgrievance",
+  "name": "segmentGrievance",
+  "status": "live",
+  "createdAt": "2026-09-11T03:25:35.216Z",
+  "updatedAt": "2026-09-11T03:25:35.216Z",
+  "contentHash": "5a2bcf46f17fa780848b00778e6e30f6c34598f5650cd88d48f25f9169d04b57",
+  "lastExportedAt": "2026-09-30T11:10:50.223Z",
+  "raw": {
+    "branch": {
+      "id": null,
+      "sourceId": null,
+      "sourceVersion": null,
+      "discardedByConflictResolution": false
+    },
+    "_id": "6aa374afae3620512a1a3c84",
+    "name": "segmentGrievance",
+    "status": "live",
+    "code": "(function () {\r\n    const enabledAgents = JSON.parse(\r\n        localStorage.getItem('enabledAgents') || '[]'\r\n    );\r\n        return enabledAgents\r\n        .map(agent => String(agent).toLowerCase())\r\n        .includes('grievance'.toLowerCase());\r\n})",
+    "by": "27739",
+    "__v": 0
+  }
+}

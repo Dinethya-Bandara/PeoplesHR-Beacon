@@ -6,11 +6,11 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "The specific training schedule ID, when already known (e.g. carried over from getSelfEmployeeTrainings or getTrainingCalendarCourseDetails, or from a prior AMBIGUOUS response from this same tool). Either scheduleId or courseName must be provided - prefer courseName when the Admin only named a course, since this tool resolves the schedule itself.",
+      "description": "The specific training schedule ID, when already known (e.g. carried over from getSelfEmployeeTrainings or getTrainingCalendarCourseDetails, or from a prior AMBIGUOUS response from this same tool). Either scheduleId or courseName must be provided - prefer courseName when the Admin only named a course, since this tool resolves the schedule itself. Only required once every named employee is already resolved - do not collect or pass this on the employees-only resolution call.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The specific training schedule ID, when already known (e.g. carried over from getSelfEmployeeTrainings or getTrainingCalendarCourseDetails, or from a prior AMBIGUOUS response from this same tool). Either scheduleId or courseName must be provided - prefer courseName when the Admin only named a course, since this tool resolves the schedule itself."
+        "description": "The specific training schedule ID, when already known (e.g. carried over from getSelfEmployeeTrainings or getTrainingCalendarCourseDetails, or from a prior AMBIGUOUS response from this same tool). Either scheduleId or courseName must be provided - prefer courseName when the Admin only named a course, since this tool resolves the schedule itself. Only required once every named employee is already resolved - do not collect or pass this on the employees-only resolution call."
       }
     },
     {
@@ -18,11 +18,11 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "The course name (or partial name) the Admin mentioned, e.g. 'First Aid'. Matches case-insensitively against the open schedule catalog - do not resolve this to a scheduleId yourself first; pass the course name directly and let this tool resolve it. Either scheduleId or courseName must be provided. If more than one open schedule matches, the tool returns status AMBIGUOUS with a list of candidates (each with its own scheduleId) - ask the Admin to pick one and retry with scheduleId.",
+      "description": "The course name (or partial name) the Admin mentioned, e.g. 'First Aid'. Matches case-insensitively against the open schedule catalog - do not resolve this to a scheduleId yourself first; pass the course name directly and let this tool resolve it. Either scheduleId or courseName must be provided. If more than one open schedule matches, the tool returns status AMBIGUOUS with a list of candidates (each with its own scheduleId) - ask the Admin to pick one and retry with scheduleId. Only required once every named employee is already resolved - do not collect or pass this on the employees-only resolution call.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The course name (or partial name) the Admin mentioned, e.g. 'First Aid'. Matches case-insensitively against the open schedule catalog - do not resolve this to a scheduleId yourself first; pass the course name directly and let this tool resolve it. Either scheduleId or courseName must be provided. If more than one open schedule matches, the tool returns status AMBIGUOUS with a list of candidates (each with its own scheduleId) - ask the Admin to pick one and retry with scheduleId."
+        "description": "The course name (or partial name) the Admin mentioned, e.g. 'First Aid'. Matches case-insensitively against the open schedule catalog - do not resolve this to a scheduleId yourself first; pass the course name directly and let this tool resolve it. Either scheduleId or courseName must be provided. If more than one open schedule matches, the tool returns status AMBIGUOUS with a list of candidates (each with its own scheduleId) - ask the Admin to pick one and retry with scheduleId. Only required once every named employee is already resolved - do not collect or pass this on the employees-only resolution call."
       }
     },
     {
@@ -30,15 +30,14 @@
       "type": "array",
       "required": true,
       "defaultValue": null,
-      "description": "The employee(s) to nominate, company-wide - not restricted to any reporting line. Pass each employee exactly as the Admin named them (a name or an employee number), e.g. [\"Charlotte Taylor\"] or [\"000012\"] - do NOT resolve these yourself with any other tool first. This tool runs the same employee search the real 'Select Employee' modal uses internally. If a name matches more than one employee, the tool returns status AMBIGUOUS with the matching candidates (employee number, name, date joined, active status) - ask the Admin to be more specific (e.g. use the exact employee number) and retry. If a name matches no one, the tool returns status NOT_FOUND.",
+      "description": "The employee(s) to nominate, company-wide - not restricted to any reporting line. Pass each employee exactly as the Admin named them (a name or an employee number), e.g. [\"Charlotte Taylor\"] or [\"000012\"] - do NOT resolve these yourself with any other tool first. This tool runs the same employee search the real 'Select Employee' modal uses internally, and this is checked before anything else - the moment the Admin names who to nominate, call this tool with employees set (scheduleId/courseName and the narrative fields all omitted) to resolve them first. If a name matches more than one employee, the tool returns status AMBIGUOUS with the matching candidates (employee number, name, date joined, active status) - ask the Admin to be more specific (e.g. use the exact employee number) and retry. If a name matches no one, the tool returns status NOT_FOUND, and if none of the named employees are currently eligible for nomination it returns NOT_ELIGIBLE - resolve any of these before asking which course this is for.",
       "advanced": true,
       "raw": {
         "type": "array",
-        "minItems": 1,
-        "description": "The employee(s) to nominate, company-wide - not restricted to any reporting line. Pass each employee exactly as the Admin named them (a name or an employee number), e.g. [\"Charlotte Taylor\"] or [\"000012\"] - do NOT resolve these yourself with any other tool first. This tool runs the same employee search the real 'Select Employee' modal uses internally. If a name matches more than one employee, the tool returns status AMBIGUOUS with the matching candidates (employee number, name, date joined, active status) - ask the Admin to be more specific (e.g. use the exact employee number) and retry. If a name matches no one, the tool returns status NOT_FOUND.",
         "items": {
           "type": "string"
-        }
+        },
+        "description": "The employee(s) to nominate, company-wide - not restricted to any reporting line. Pass each employee exactly as the Admin named them (a name or an employee number), e.g. [\"Charlotte Taylor\"] or [\"000012\"] - do NOT resolve these yourself with any other tool first. This tool runs the same employee search the real 'Select Employee' modal uses internally, and this is checked before anything else - the moment the Admin names who to nominate, call this tool with employees set (scheduleId/courseName and the narrative fields all omitted) to resolve them first. If a name matches more than one employee, the tool returns status AMBIGUOUS with the matching candidates (employee number, name, date joined, active status) - ask the Admin to be more specific (e.g. use the exact employee number) and retry. If a name matches no one, the tool returns status NOT_FOUND, and if none of the named employees are currently eligible for nomination it returns NOT_ELIGIBLE - resolve any of these before asking which course this is for."
       }
     },
     {
@@ -46,11 +45,11 @@
       "type": "string",
       "required": true,
       "defaultValue": null,
-      "description": "The objective of this training nomination. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the objective.' when blank - the same ValidateApplyTraining endpoint is used here).",
+      "description": "The objective of this training nomination. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the objective.' when blank - the same ValidateApplyTraining endpoint is used here). Only enforced once every named employee is resolved and the schedule is identified - do not ask the Admin for this before that.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The objective of this training nomination. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the objective.' when blank - the same ValidateApplyTraining endpoint is used here)."
+        "description": "The objective of this training nomination. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the objective.' when blank - the same ValidateApplyTraining endpoint is used here). Only enforced once every named employee is resolved and the schedule is identified - do not ask the Admin for this before that."
       }
     },
     {
@@ -58,11 +57,11 @@
       "type": "string",
       "required": true,
       "defaultValue": null,
-      "description": "How the training relates to the employee's job. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the relevance to job.' when blank).",
+      "description": "How the training relates to the employee's job. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the relevance to job.' when blank). Only enforced once every named employee is resolved and the schedule is identified - do not ask the Admin for this before that.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "How the training relates to the employee's job. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the relevance to job.' when blank)."
+        "description": "How the training relates to the employee's job. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the relevance to job.' when blank). Only enforced once every named employee is resolved and the schedule is identified - do not ask the Admin for this before that."
       }
     },
     {
@@ -70,11 +69,11 @@
       "type": "string",
       "required": true,
       "defaultValue": null,
-      "description": "The benefit of this training to the employee. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the benefit to you.' when blank).",
+      "description": "The benefit of this training to the employee. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the benefit to you.' when blank). Only enforced once every named employee is resolved and the schedule is identified - do not ask the Admin for this before that.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The benefit of this training to the employee. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the benefit to you.' when blank)."
+        "description": "The benefit of this training to the employee. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the benefit to you.' when blank). Only enforced once every named employee is resolved and the schedule is identified - do not ask the Admin for this before that."
       }
     },
     {
@@ -82,11 +81,11 @@
       "type": "string",
       "required": true,
       "defaultValue": null,
-      "description": "The benefit of this training to the company. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the benefit to the company.' when blank).",
+      "description": "The benefit of this training to the company. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the benefit to the company.' when blank). Only enforced once every named employee is resolved and the schedule is identified - do not ask the Admin for this before that.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The benefit of this training to the company. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the benefit to the company.' when blank)."
+        "description": "The benefit of this training to the company. Required - the training system itself rejects a submission without this (confirmed live on the Supervisor flow: it returns 'Please specify the benefit to the company.' when blank). Only enforced once every named employee is resolved and the schedule is identified - do not ask the Admin for this before that."
       }
     },
     {

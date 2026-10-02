@@ -1,14 +1,9 @@
 {
   "sampleRequest": {
     "subordinates": [
-      "000027",
+      "000041",
       "Mia"
-    ],
-    "existingNeedName": "Need 01",
-    "objective": "Verify the supervisor existing-need submission path works.",
-    "relevanceToJob": "Directly relevant to validating this integration.",
-    "benefitToEmployee": "Confirms the flow works for the subordinate.",
-    "benefitToCompany": "Ensures the Training & Development agent can submit need applications for direct reports."
+    ]
   },
   "sanity": {
     "apiResponse": []

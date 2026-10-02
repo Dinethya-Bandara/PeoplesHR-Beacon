@@ -22,6 +22,11 @@
     const status = args.status !== undefined && args.status !== "" ? args.status : "1";
     // Optional specific date (YYYY-MM-DD) to narrow results to a single day (UAC 1.2).
     const filterDate = args.date || "";
+    // Optional course name (or partial name) - case-insensitive substring match against
+    // cosname, applied client-side same as getSelfEmployeeTrainings/
+    // supervisorEmployeeTrainingNomination's own courseName resolution, since the
+    // underlying GetCourseDetails endpoint only filters server-side by CosCode/Status.
+    const courseNameQuery = args.courseName ? String(args.courseName).trim() : "";
 
     const headers = new Headers();
     headers.append("Accept", "*/*");
@@ -134,12 +139,21 @@
       schedules = schedules.filter((s) => s.date === filterDate);
     }
 
+    // courseName filter: case-insensitive substring match, applied after the date
+    // filter - same combinable-filters behavior as the rest of this tool.
+    if (courseNameQuery) {
+      const needle = courseNameQuery.toLowerCase();
+      schedules = schedules.filter((s) => s.courseName.toLowerCase().includes(needle));
+    }
+
     if (schedules.length === 0) {
       return {
         status: "SUCCESS",
-        message: filterDate
-          ? `No scheduled training programs were found for ${filterDate}.`
-          : "No matching training programs are currently available.",
+        message: courseNameQuery
+          ? `No scheduled training programs were found matching courseName "${courseNameQuery}"${filterDate ? ` on ${filterDate}` : ""}.`
+          : filterDate
+            ? `No scheduled training programs were found for ${filterDate}.`
+            : "No matching training programs are currently available.",
         totalCount: 0,
         schedules: []
       };

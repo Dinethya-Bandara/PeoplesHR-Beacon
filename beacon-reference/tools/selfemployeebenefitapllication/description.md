@@ -1,19 +1,19 @@
-# selfEmployeeBenefitApllication
+# benefitSelfTool
 
 **Task:** Self Employee Benefit Application
 
-**Tags:** BenefitManagement
+**Tags:** BenefitManagement, renamed
 
-**Status:** unlive
+**Status:** draft
 
 ## Description
 
-selfEmployeeBenefitApllication
+the existed selfEmployeeBenefitApllication tool is renamed
 
 ## Signature
 
 ```
-selfEmployeeBenefitApllication
+benefitSelfTool
 ```
 
 ## Arguments
@@ -31,7 +31,3 @@ _None._
 - `vehicleNumberRegistration` (object, optional) — First, execute the 'getApplicationStructure' tool to retrieve related data. if the user any format you convert in this format dd/mm/yyy example '27/05/2025'
 - `healthPlan` (object, optional) — First, execute the 'healthPlanDependentDetails' tool to retrieve related data.
 
-
-## Assigned agents
-
-- BenefitManagement (`690dc571931a2d61ba0b1be9`)

@@ -9,18 +9,18 @@
     "EIM",
     "Headers"
   ],
-  "status": "unlive",
+  "status": "live",
   "signature": "editOrUpdateQualification",
   "createdAt": "2025-04-28T07:48:05.221Z",
-  "updatedAt": "2026-01-31T15:12:34.072Z",
+  "updatedAt": "2026-09-17T05:38:46.238Z",
   "assignedAgents": [
     {
       "id": "690dc571931a2d61ba0b1bc2",
       "name": "EIM Administration"
     }
   ],
-  "contentHash": "e319d1c373a77dbb64fe0d4367040be7d1216759dc6358af2aa3be68de68a698",
-  "lastExportedAt": "2026-09-10T09:08:51.190Z",
+  "contentHash": "6e03820bbfa417cb47e39534163138e0093991d12a0ed5bee4bc180802701aa2",
+  "lastExportedAt": "2026-09-17T11:32:35.348Z",
   "raw": {
     "basic": {
       "_id": "690dc562931a2d61ba0b12a0",
@@ -46,7 +46,7 @@
         "advancedArgs": "{\n  \"type\":  \"object\",\n  \"properties\": {},\n  \"required\": []\n}",
         "_id": "680f32b5f6ef15e616462fee"
       },
-      "by": "10308",
+      "by": "7854",
       "fetcher": "(function (args, reqOptions) {\n  return {\n    code: `(function(){\n        return [];\n      })`\n  };\n})",
       "transformer": "(async function (data, args, reqOptions) {\n  if (!BeaconBar.user.metaData.menus.includes(\"EIM/QualificationType.aspx\")) {\n    return \"It seems you don't have access. Please check with the HR Admin\";\n  }\n  const updateurl = await BeaconBar.executeFunction(\"updateUrlParams\")('EIM/QualificationType.aspx');\n  let url;\n\n  if (updateurl.updateUrl) {\n    url = `${window.origin}/${reqOptions.sl}/${updateurl.updateUrl}`\n  } else {\n    url = `${window.origin}/${reqOptions.sl}/EIM/QualificationType.aspx`\n  }\n  const myHeaders = new Headers();\n  myHeaders.append(\"accept\", \"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7\");\n  myHeaders.append(\"accept-language\", \"en-US,en;q=0.9\");\n  myHeaders.append(\"x-requested-with\", \"XMLHttpRequest\");\n\n\n  const initialFormData = new FormData();\n  initialFormData.append(\"scrollLeft\", \"0\");\n  initialFormData.append(\"scrollTop\", \"0\");\n  initialFormData.append(\"__EVENTTARGET\", \"\");\n  initialFormData.append(\"__EVENTARGUMENT\", \"\");\n  initialFormData.append(\"__VIEWSTATE\", window.qt.viewState);\n  initialFormData.append(\"__VIEWSTATEGENERATOR\", window.qt.viewStateGen);\n  initialFormData.append(\"__VIEWSTATEENCRYPTED\", \"\");\n  initialFormData.append(\"__EVENTVALIDATION\", window.qt.eventValidation);\n  initialFormData.append(\"ctl00$hdnDateFormat\", \"m/d/yy\");\n  initialFormData.append(\"ctl00$hdnQuickmenu\", \"\");\n  // initialFormData.append(\"ctl00$body$hdnIsHead\", \"\");\n  // initialFormData.append(\"ctl00$body$hdnEditItemIndex\", \"\");\n  // initialFormData.append(\"ctl00_body_RadWindowManager1_ClientState\", \"\");\n  // initialFormData.append(\"ctl00$body$txtHeadName\", \"\");\n  // initialFormData.append(\"ctl00$body$txtAdminName\", \"\");\n  initialFormData.append(\"ctl00$body$butEdit\", \"Edit\");\n\n  const fetchEditResponse = await fetch(url, {\n    method: \"POST\",\n    headers: myHeaders,\n    body: initialFormData,\n    redirect: \"follow\"\n  });\n\n  const html = await fetchEditResponse.text();\n  const parser = new DOMParser();\n  const document = parser.parseFromString(html, 'text/html');\n\n  const viewState = document.querySelector('#__VIEWSTATE')?.value || '';\n  const eventValidation = document.querySelector('#__EVENTVALIDATION')?.value || '';\n  const viewStateGen = document.querySelector('#__VIEWSTATEGENERATOR')?.value || '';\n\n  const finalFormData = new FormData();\n  finalFormData.append(\"scrollLeft\", \"0\");\n  finalFormData.append(\"scrollTop\", \"0\");\n  finalFormData.append(\"__EVENTTARGET\", \"\");\n  finalFormData.append(\"__EVENTARGUMENT\", \"\");\n  // finalFormData.append(\"__LASTFOCUS\", \"\");\n  finalFormData.append(\"__VIEWSTATE\", viewState);\n  finalFormData.append(\"__VIEWSTATEGENERATOR\", viewStateGen);\n  finalFormData.append(\"__VIEWSTATEENCRYPTED\", \"\");\n  finalFormData.append(\"__EVENTVALIDATION\", eventValidation);\n  finalFormData.append(\"ctl00$hdnDateFormat\", \"m/d/yy\");\n  finalFormData.append(\"ctl00$hdnQuickmenu\", \"\");\n  finalFormData.append(\"ctl00$body$txtName\", args.qualification);\n  finalFormData.append(\"ctl00$body$butSave\", \"Save\");\n\n\n\n\n  const saveResponse = await fetch(url, {\n    method: \"POST\",\n    headers: myHeaders,\n    body: finalFormData,\n    redirect: \"follow\"\n  });\n\n  await saveResponse.text();\n\n  if (saveResponse.status === 200) {\n    return \"Successfully updated!\";\n  } else {\n    return \"try again api is fail.\"\n  }\n\n});\n",
       "groupName": "",
@@ -56,11 +56,27 @@
       ],
       "taskName": "Updating Qualification",
       "sourceConstructor": "(function(data, args, reqOptions) {\n  return [\n    {\n      url: \"\",\n      title: \"\",\n      subTitle: \"\",\n      icon: \"\"\n    }\n  ];\n})",
-      "status": "unlive",
+      "status": "live",
       "createdAt": "2025-04-28T07:48:05.221Z",
-      "updatedAt": "2026-01-31T15:12:34.072Z",
-      "__v": 1,
+      "updatedAt": "2026-09-17T05:38:46.238Z",
+      "__v": 2,
       "sampleRequest": {},
+      "apiConfig": {
+        "method": "GET"
+      },
+      "apiFlowConfig": {
+        "steps": []
+      },
+      "branch": {
+        "discardedByConflictResolution": false
+      },
+      "etl": false,
+      "isFromKG": false,
+      "outputExample": {},
+      "sanity": {
+        "apiResponse": []
+      },
+      "toolType": "code",
       "agents": [
         {
           "_id": "690dc571931a2d61ba0b1bc2",
@@ -88,7 +104,10 @@
     "transformer": "(async function (data, args, reqOptions) {\n  if (!BeaconBar.user.metaData.menus.includes(\"EIM/QualificationType.aspx\")) {\n    return \"It seems you don't have access. Please check with the HR Admin\";\n  }\n  const updateurl = await BeaconBar.executeFunction(\"updateUrlParams\")('EIM/QualificationType.aspx');\n  let url;\n\n  if (updateurl.updateUrl) {\n    url = `${window.origin}/${reqOptions.sl}/${updateurl.updateUrl}`\n  } else {\n    url = `${window.origin}/${reqOptions.sl}/EIM/QualificationType.aspx`\n  }\n  const myHeaders = new Headers();\n  myHeaders.append(\"accept\", \"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7\");\n  myHeaders.append(\"accept-language\", \"en-US,en;q=0.9\");\n  myHeaders.append(\"x-requested-with\", \"XMLHttpRequest\");\n\n\n  const initialFormData = new FormData();\n  initialFormData.append(\"scrollLeft\", \"0\");\n  initialFormData.append(\"scrollTop\", \"0\");\n  initialFormData.append(\"__EVENTTARGET\", \"\");\n  initialFormData.append(\"__EVENTARGUMENT\", \"\");\n  initialFormData.append(\"__VIEWSTATE\", window.qt.viewState);\n  initialFormData.append(\"__VIEWSTATEGENERATOR\", window.qt.viewStateGen);\n  initialFormData.append(\"__VIEWSTATEENCRYPTED\", \"\");\n  initialFormData.append(\"__EVENTVALIDATION\", window.qt.eventValidation);\n  initialFormData.append(\"ctl00$hdnDateFormat\", \"m/d/yy\");\n  initialFormData.append(\"ctl00$hdnQuickmenu\", \"\");\n  // initialFormData.append(\"ctl00$body$hdnIsHead\", \"\");\n  // initialFormData.append(\"ctl00$body$hdnEditItemIndex\", \"\");\n  // initialFormData.append(\"ctl00_body_RadWindowManager1_ClientState\", \"\");\n  // initialFormData.append(\"ctl00$body$txtHeadName\", \"\");\n  // initialFormData.append(\"ctl00$body$txtAdminName\", \"\");\n  initialFormData.append(\"ctl00$body$butEdit\", \"Edit\");\n\n  const fetchEditResponse = await fetch(url, {\n    method: \"POST\",\n    headers: myHeaders,\n    body: initialFormData,\n    redirect: \"follow\"\n  });\n\n  const html = await fetchEditResponse.text();\n  const parser = new DOMParser();\n  const document = parser.parseFromString(html, 'text/html');\n\n  const viewState = document.querySelector('#__VIEWSTATE')?.value || '';\n  const eventValidation = document.querySelector('#__EVENTVALIDATION')?.value || '';\n  const viewStateGen = document.querySelector('#__VIEWSTATEGENERATOR')?.value || '';\n\n  const finalFormData = new FormData();\n  finalFormData.append(\"scrollLeft\", \"0\");\n  finalFormData.append(\"scrollTop\", \"0\");\n  finalFormData.append(\"__EVENTTARGET\", \"\");\n  finalFormData.append(\"__EVENTARGUMENT\", \"\");\n  // finalFormData.append(\"__LASTFOCUS\", \"\");\n  finalFormData.append(\"__VIEWSTATE\", viewState);\n  finalFormData.append(\"__VIEWSTATEGENERATOR\", viewStateGen);\n  finalFormData.append(\"__VIEWSTATEENCRYPTED\", \"\");\n  finalFormData.append(\"__EVENTVALIDATION\", eventValidation);\n  finalFormData.append(\"ctl00$hdnDateFormat\", \"m/d/yy\");\n  finalFormData.append(\"ctl00$hdnQuickmenu\", \"\");\n  finalFormData.append(\"ctl00$body$txtName\", args.qualification);\n  finalFormData.append(\"ctl00$body$butSave\", \"Save\");\n\n\n\n\n  const saveResponse = await fetch(url, {\n    method: \"POST\",\n    headers: myHeaders,\n    body: finalFormData,\n    redirect: \"follow\"\n  });\n\n  await saveResponse.text();\n\n  if (saveResponse.status === 200) {\n    return \"Successfully updated!\";\n  } else {\n    return \"try again api is fail.\"\n  }\n\n});\n",
     "source": "(function(data, args, reqOptions) {\n  return [\n    {\n      url: \"\",\n      title: \"\",\n      subTitle: \"\",\n      icon: \"\"\n    }\n  ];\n})",
     "test": {
-      "sampleRequest": {}
+      "sampleRequest": {},
+      "sanity": {
+        "apiResponse": []
+      }
     }
   }
 }

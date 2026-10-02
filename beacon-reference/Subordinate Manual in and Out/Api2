@@ -1,0 +1,517 @@
+curl --url 'https://hrmmainphqa.phrsandbox.dev/hr/CommonComponents/Search/Search?empNumber=68ZsXBu8T3dS9vacfcY32h82laOkA2KZDazEYlrfGibOrjeukTYUF3SbY786K4azzowGHsbgvmJyDZdKm-udZBkjl5G1AdS9yKhmc5EZvN-R5qW-hpWd2urclTSD2rk5yhX2edBxmYZjgAiDgpBCb7nat-jqyUJAKwvXrcp2lzfojtq1mR5Op4j57ww5dIe9ATyxCAmdlH7pjG3vLXJ-G2gxiyaKHOwPf-PCcPFI2x_2AmCB0rcq5saw_6JBEGbxs8pJdESOAUKJ2QZScGB6PWE7-tOrjhKNHTIZJfed6ukKJms5sZfe046TYuAbW5WuBabutamLwGX-q-5ArhDRWwqsw0YKPWmT_rVRavMlk0_ikUZkR3pDZvJdk8nhxLMhP1DpMVS11M9vF3dI6nzBuHNgDs3h57jJoh9PS_gFcH1ct1LJm5bbMz7KtBd_3lTu&callBack=NgA1ACwAMQA%3D&searchMode=2&searchQueryMode=All&searchQueryState=ActiveOnly&isMultiple=1&breadCrumbEnable=0&isDivLoading=0&displayName=&elgmodid=65&elggrpid=15&ElgParam=000024&searchToken=HP8Y0IfkpdpClpCzEII2YqhH9I9jrdCVn3me1I8cvmI8hQ1KKDyaRr2i_JlcqgBKEO53gDiSrl4Ws840upa925P_Ajq_vOxkLF04dmULxU70vuMjG_PlwPsVwYc4vopwNaoMMLPZig5AOsGQHdaEkriqzoB-DxZepGwhmFXs8SnLVj_GVW5l2pQhb-Fe6UumJ0pEbSi_F2Bc3YJoLMDRbWlBF3Csr3koZ43MthTdy29B-2xyFUZEvUvDWTLoLjNM_SHnLAd8Ad2jltO98CUpreiXFGK1uySAc__ijfvr9z7HNcasoNz8GTjWEcmhOMjxL6Gk9FtYZrQGaCYwo55YBqiuiRZQB8ukEa-h_ZTs_dZnHmYwwiA1zmn38o1uJywBeZb4DDC7GhTHI51Nf42wmZIe5QwkaUn5ShFaYd-IcanvBXl5j33ouJ5KZ7UpUVb_GOJdpgLvkB5HCYwyMfP3BCDWrTgXnpRcy2R1QwZ1sMU&_=1789968521773' \
+  -H 'accept: text/html, */*; q=0.01' \
+  -H 'accept-language: en-GB,en;q=0.9,en-US;q=0.8' \
+  -b 'ASP.NET_SessionId=3uqu1451asvcq1kscv4joua0; __RequestVerificationToken_L2hy0=lwpHoAnjFZnwEo4RbU2se58WAnSXhDQvBmiGswV3WTGjgDEmRcYwsw4uFdiiMQrlCI-lN-VlK6oYZ-0P4wudHspxvf01; THEME_V8=default; .ASPXAUTH=F0845D15873FDE018611C2E49C194A6BFF468F52234511BEEA5E00A207E374F946332315C0AC2DBC7E8D0B884BEC1966891F0908C9CBDFA0EFC32BFEA8C8E7FAD6C80B6B02A84E9850080E9B1F90889F0EB0BEA4E1EB1A2C9093DE264E650BC8; my-application-browser-tab={"guid":"e0fafde7-4502-967d-48fa-26390c80c08e","timestamp":1789970446358}; ehrm85=EAAAAC4ZMUxv5Wvc7grKS7W4vtsz9LI8ilSl2lWuL0Ogu7rBo9d06R041WumWeQbAkqameysCfysSO4Kp2MGo8xr7uvL40baDsGjuKbFR45Ljmg7ubtzA3YRhQuATmhpWYAe2g4TiRCtQwMWUe8Psi/pPqEP0W6PAZfPAdGvGSUJfK4gzkr3YXj09jv1nwCoWPS9TDXijVg+g3vChU77OBGR1ueSnvVbmS31Mcc/PM6dR9LXfORCFB7iv/7vyjdyd4N/pFyoeGz26DZhke1luUz+U1aBk+x2ZI2nuM5cWvsPIDDURLmmio3e1+5vIP64FkAy9adBg7SItArfXl9QVY1NzPlHsUqJ/4bi5sR2QM7FhXFeD21j7Bbbm9hf0+KUczTF1ylMPGTfyQ6Vl3ZxmNw7OC45ozKuyR2C8x0X7nBvTaGeK55jYYahlEMdzeD6Wa4drwz+efUWpnHVEK6Ogtg64xyY3sbQKZrzgzBKJgTkBr0SB+cU055jhuYni78pdLtNqJD9B+YUi3vnW2hYLUsXeudzYf/flRUhHrXCv1NQt0lxTHFRagTaPpS2RIwxo9FC/ExibED8ptgy2wcYyYj30EC1rsiSVASCgvm/rbAKn1Pmy59CW9YDaJclR3tEZrXv8GO2ALpR6DBlztXz/CFiP4KZ4Focu4Ym/1vm50K72FxUS4AOhqUyv5Ro7sA4fShRp8YBnOHWiZmCbIrsVeAzFwR7GJCmNcR1uRUe8OXp4OKi0pWzn4sO0aAfNsTeJzhiKeCj1fe/GWMI4mvQMGPoUYTT7uvD7UK1ux2qIquEZkNkZiXhECSSdIIP5YU0tP9qmGoBFN5ODBGbUSoIn3dzjo1jM0Cg3PcXMldUHOArPbsACTY0mK3iR8QnjjJat8f+pcxzGTABMP/FcsTZwMoTeC6QAQU5iF3BuRFgV133F7Ns1j8B1i677a3MB1QuUIQcD3h4+EpyxUlFvwDsaYub7ff0KM3Kj96+hDAQ/kUE7c6HfPu76SRKqhc0+NAUUX7pg9+2TjY84WX87w9ENbA0BskOpQK0zHFGqC7mWLAJBKUwYOgGQfqVKBugH0zSSuZ8Q+gekntza171eN9V31k7P8Y=' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://hrmmainphqa.phrsandbox.dev/hr/home/index' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="153", "Not_A Brand";v="8", "Chromium";v="153"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0' \
+  -H 'x-requested-with: XMLHttpRequest'
+
+  payload
+
+  empNumber
+68ZsXBu8T3dS9vacfcY32h82laOkA2KZDazEYlrfGibOrjeukTYUF3SbY786K4azzowGHsbgvmJyDZdKm-udZBkjl5G1AdS9yKhmc5EZvN-R5qW-hpWd2urclTSD2rk5yhX2edBxmYZjgAiDgpBCb7nat-jqyUJAKwvXrcp2lzfojtq1mR5Op4j57ww5dIe9ATyxCAmdlH7pjG3vLXJ-G2gxiyaKHOwPf-PCcPFI2x_2AmCB0rcq5saw_6JBEGbxs8pJdESOAUKJ2QZScGB6PWE7-tOrjhKNHTIZJfed6ukKJms5sZfe046TYuAbW5WuBabutamLwGX-q-5ArhDRWwqsw0YKPWmT_rVRavMlk0_ikUZkR3pDZvJdk8nhxLMhP1DpMVS11M9vF3dI6nzBuHNgDs3h57jJoh9PS_gFcH1ct1LJm5bbMz7KtBd_3lTu
+callBack
+NgA1ACwAMQA=
+searchMode
+2
+searchQueryMode
+All
+searchQueryState
+ActiveOnly
+isMultiple
+1
+breadCrumbEnable
+0
+isDivLoading
+0
+displayName
+elgmodid
+65
+elggrpid
+15
+ElgParam
+000024
+searchToken
+HP8Y0IfkpdpClpCzEII2YqhH9I9jrdCVn3me1I8cvmI8hQ1KKDyaRr2i_JlcqgBKEO53gDiSrl4Ws840upa925P_Ajq_vOxkLF04dmULxU70vuMjG_PlwPsVwYc4vopwNaoMMLPZig5AOsGQHdaEkriqzoB-DxZepGwhmFXs8SnLVj_GVW5l2pQhb-Fe6UumJ0pEbSi_F2Bc3YJoLMDRbWlBF3Csr3koZ43MthTdy29B-2xyFUZEvUvDWTLoLjNM_SHnLAd8Ad2jltO98CUpreiXFGK1uySAc__ijfvr9z7HNcasoNz8GTjWEcmhOMjxL6Gk9FtYZrQGaCYwo55YBqiuiRZQB8ukEa-h_ZTs_dZnHmYwwiA1zmn38o1uJywBeZb4DDC7GhTHI51Nf42wmZIe5QwkaUn5ShFaYd-IcanvBXl5j33ouJ5KZ7UpUVb_GOJdpgLvkB5HCYwyMfP3BCDWrTgXnpRcy2R1QwZ1sMU
+_
+1789968521773
+
+response
+
+<script>$.ajaxSetup({ cache: true });</script>
+<script src="/hr/CommonComponents/bundles/Scripts/Search?v=dsuSUKXYUd-WPyczcNyT72Pz8HK3WcCDwndRED5Wslg1"></script>
+
+<link href="/hr/CommonComponents/bundles/Content/css/Search?v=P2XnuFdBKt-wHjJZrxQFjt0_9RUfRYOF0S7pEra2SU81" rel="stylesheet"/>
+
+<link href="/hr/CommonComponents/bundles/Content/css/EmpSearch?v=NFxI56W50Xy9IX9IYCKXeC-EacUfUfKyaifEJD2feSQ1" rel="stylesheet"/>
+
+<script>$.ajaxSetup({ cache: false });</script>
+
+<script>
+    window.$CultureCommonComponents = 'en-GB';
+    window.$MomentDateFormatCommonComponents = 'DD/MM/YYYY';
+    window.$DateFormatCommonComponents = 'dd/mm/yyyy';
+    window.$DateFormatCommonComponentsShort = 'dd/mm/yy';
+    $.fn.dataTable.moment(window.$MomentDateFormatCommonComponents, window.$CultureCommonComponents);
+</script>
+<script>
+    window.HbsConfirmOk = 'OK';
+    window.HbsConfirmCancel = 'Cancel';
+    window.HbsAlertOk = 'OK';
+</script>
+
+      
+
+<div id="CommonComponents-MainSearch-1" class="row">
+    <div id="CommonComponents-MainSearch-2" class="col-md-12 col-sm-12 col-lg-12">
+        <input type="hidden" id="SearchSubordinateText" value="Search Employees" />
+        <input type="hidden" id="SubordinatesNotAvailText" value="No employees are available to display for this user" />
+        <input type="hidden" id="PreviousText" value="Previous" />
+        <input type="hidden" id="NextText" value="Next" />
+        <input type="hidden" id="First" value="First" />
+        <input type="hidden" id="Last" value="Last" />
+
+                <div id="typeaheadSearchMain"><link href="/hr/CommonComponents/bundles/select2css?v=U_1Mc5g0vY1SPm0Y9qehuten3Ftv-UMwTSs1VpHv1mk1" rel="stylesheet"/>
+
+<script src="/hr/CommonComponents/bundles/select2js?v=hazsa3QzPlRMDd4H5AismzpZRNVH3V5Vs6hZ4mNmWPU1"></script>
+
+
+<style type="text/css">
+    .twitter-typeahead, .tt-hint, .tt-input, .tt-menu {
+        width: 100% !important;
+    }
+
+    .select2 {
+        width: 100% !important; /* overrides computed width, 100px in your demo */
+    }
+
+    [class^='select2'] {
+        border-radius: 0px !important;
+        border-color: #dadada !important;
+    }
+</style>
+<div id="typeaheadSearch">
+    <form class="form-horizontal">
+
+            <div id="CommonComponents-_TypeaheadSearch-1" class="form-group">
+            </div>
+
+        <div id="CommonComponents-_TypeaheadSearch-7" class="form-group row">
+            <div id="CommonComponents-_TypeaheadSearch-8" class="col-10 p-r-0 cc_typhead_div1">
+                <select id="cc_typehead_advanced_select" class="typeahead" 
+                        data-key="24d4902b-4c9f-41cb-8c89-4b18ace10020" data-empnumber="IRie_Ok4yQ3MlcY1eVbVSuHM9YYyokwi_5c-dKi7AaZ14OT-RcZR8RqmOMiry2xPGVuzkzl0-HDVJntLGfAZYbvVxra7wpdggF1VKENHYrm6rPze5fXMTNIULBE_uaJdF2UTP9le07-FlwRXyrkSQVT1x-nu2K-24v_I4uK89NjwKc6ercNsN3ExbQ5i8vJ6oGgsgpHSHkOAONJQhSCCzWM0tFGNJsxMyU_J33FaQvOxP3Z1LO5rWK-PJ-zljDL1_OEzsqKI2bNnr36BULaouQ0VA8bznt7mwvPJzMygFELrrUT1A4S_-cHOACwrbPAls5yU1J_tXsDhwrpzsgd-tE4oTFQ_oQGln3tsVHeXw7oe3pFkFhfPykVdINBTCRpy4D70-Bd3DbvNnfLsNVqAOz8-O76fHxhKmmkmrtU3xv3skpZRPioEr8XGU0H-5pf3aFfjr5WbOyddJSvCYJ8_rU_-DLoxTH_tLHW9xwbwcG_c3J0b9epZPz2lOdfwaaAC"></select>
+            </div>
+
+                <div id="CommonComponents-_TypeaheadSearch-9" class="col-2 p-l-0">
+                    <div id="CommonComponents-_TypeaheadSearch-10" class="input-group form-check form-check-inline cc_typhead_div2 h-100">
+                        <span class="form-check-label input-group-addon" id="searchBtn" data-toggle="modal" data-target="#searchModal"><i class="glyphicon glyphicon-search"></i></span>
+                    </div>
+                </div>
+        </div>
+    </form>
+
+</div>
+<script type="text/javascript">
+
+    window.typeaheadModelObj = '{"EmpNumber":"IRie_Ok4yQ3MlcY1eVbVSuHM9YYyokwi_5c-dKi7AaZ14OT-RcZR8RqmOMiry2xPGVuzkzl0-HDVJntLGfAZYbvVxra7wpdggF1VKENHYrm6rPze5fXMTNIULBE_uaJdF2UTP9le07-FlwRXyrkSQVT1x-nu2K-24v_I4uK89NjwKc6ercNsN3ExbQ5i8vJ6oGgsgpHSHkOAONJQhSCCzWM0tFGNJsxMyU_J33FaQvOxP3Z1LO5rWK-PJ-zljDL1_OEzsqKI2bNnr36BULaouQ0VA8bznt7mwvPJzMygFELrrUT1A4S_-cHOACwrbPAls5yU1J_tXsDhwrpzsgd-tE4oTFQ_oQGln3tsVHeXw7oe3pFkFhfPykVdINBTCRpy4D70-Bd3DbvNnfLsNVqAOz8-O76fHxhKmmkmrtU3xv3skpZRPioEr8XGU0H-5pf3aFfjr5WbOyddJSvCYJ8_rU_-DLoxTH_tLHW9xwbwcG_c3J0b9epZPz2lOdfwaaAC","CallBack":"FilterVM.FillSearchEmployeeDetails","SearchMode":2,"SearchQueryMode":null,"SearchQueryState":null,"DisplayName":"","IsShowDisplayName":"1","BreadCrumbEnable":"0","IsDivLoading":"0","DivId":null,"Width":null,"Height":null,"Top":null,"Left":null,"IsElgLock":"0","KeyValue":"24d4902b-4c9f-41cb-8c89-4b18ace10020","DefaultTab":"0","IsMultiple":"1","MainDivId":"advanceSearch","TableId":"advancedTable","Options":[{"Code":"5","Value":"5"},{"Code":"10","Value":"10"},{"Code":"15","Value":"15"},{"Code":"25","Value":"25"},{"Code":"50","Value":"50"},{"Code":"100","Value":"100"},{"Code":"500","Value":"500"},{"Code":"1000","Value":"1000"}],"HideSearchBtn":"0"}';
+    window.typeaheadCallBack = FilterVM.FillSearchEmployeeDetails;
+    window.typeaheadDivId = '';
+</script>
+<script>$.ajaxSetup({ cache: true });</script>
+<script src="/hr/CommonComponents/bundles/TypeaheadSearch?v=_FPzbIpCnfNHqKkTRFJKQJ0HqqmTSBdc4gAP5s4Gu8Q1"></script>
+
+<script>$.ajaxSetup({ cache: false });</script>
+
+</div>
+                <!-- Modal -->
+                <div class="modal" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div id="CommonComponents-MainSearch-8" class="modal-dialog modal-lg" role="document">
+                        <div id="CommonComponents-MainSearch-9" class="modal-content">
+                            <div id="CommonComponents-MainSearch-10" class="modal-header">
+                                <h4 class="modal-title pull-left" id="myModalLabel">Search Employee</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div id="CommonComponents-MainSearch-11" class="modal-body">
+                                <div id="CommonComponents-MainSearch-12" class="row searchTableMain">
+
+<style>
+
+    #advancedTable_wrapper {
+        width: 100% !important;
+        display: block;
+    }
+
+    #advancedTableadvanceSearch_wrapper {
+        width: 100% !important;
+        display: block;
+    }
+
+    .dataTable no-footer {
+        width: 100% !important;
+    }
+
+    #advancedTable {
+        width: 100% !important;
+    }
+    #queryShow{padding:3px !important;}
+     #queryShow label {
+        margin: 0 !important;
+    }
+
+    .dataTables_scroll {
+        width: 100% !important;
+    }
+    .change-mode {
+        min-height:30px;
+    }
+    .emp-advance-search .form-item-select:not(:has(:first-child)) {
+        display: none;
+    }
+    .emp-advance-search select {
+        max-width: 180px !important;
+        width: 100% !important;
+    }
+    .emp-advance-search .search-criteria {
+        max-width: 205px !important;
+        width: 100% !important;
+    }
+
+</style>
+
+
+
+
+<div id="advanceSearch" class="col-sm-12 emp-advance-search" data-bind="visible:pageContentShow" style="display: none">
+    
+    <div id="CommonComponents-_AdvanceSearch-1" class="row" data-bind="if:(checkedItem()==2)">
+        <div id="CommonComponents-_AdvanceSearch-2" class="col-sm-12">
+            <div id="CommonComponents-_AdvanceSearch-3" class="change-mode">
+                <div id="CommonComponents-_AdvanceSearch-4" class="pull-right">
+                    <label data-bind="if:(checkedItem()==2)">Advanced Mode</label>
+                    <div id="CommonComponents-_AdvanceSearch-5" class="btn-group ml-2" data-bind="if:(checkedItem()==2)">
+                        <button type="button" class="btn btn-xs" data-bind="click:clickOnAdvancedModeOnBtn, css:{ 'btn-primary active': isAdvancedMode(), 'btn-default': (!isAdvancedMode())}">On</button>
+                        <button type="button" class="btn btn-xs" data-bind="click:clickOnAdvancedModeOffBtn, css:{ 'btn-default': isAdvancedMode(), 'btn-primary active': (!isAdvancedMode())}">Off</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="CommonComponents-_AdvanceSearch-6" class="row mt-2" data-bind="if:(checkedItem()==2)">
+        <div id="CommonComponents-_AdvanceSearch-7" class="col-sm-12">
+            <div id="CommonComponents-_AdvanceSearch-8" class="change-mode">
+                <div id="CommonComponents-_AdvanceSearch-9" class="pull-right">
+                    <label data-bind="if:(checkedItem()==2)">Cascade Mode</label>
+                    <div id="CommonComponents-_AdvanceSearch-10" class="btn-group ml-2" data-bind="if:(checkedItem()==2)">
+                        <button type="button" class="btn btn-xs" data-bind="click:clickOnCascadeModeOnBtn, css:{ 'btn-primary active': isCascadeMode(), 'btn-default': (!isCascadeMode())}">On</button>
+                        <button type="button" class="btn btn-xs" data-bind="click:clickOnCascadeModeOffBtn, css:{ 'btn-default': isCascadeMode(), 'btn-primary active': (!isCascadeMode())}">Off</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="CommonComponents-_AdvanceSearch-11" class="row mb-2">
+        <div id="CommonComponents-_AdvanceSearch-12" class="col-sm-6">
+            <div id="CommonComponents-_AdvanceSearch-13" class="radio" data-bind="visible:enableAllSearchRdb">
+                <label>
+                    <input type="radio" value="1" data-bind="checked:checkedItem,enable:enableAllSearchRdb">
+                    All Employees
+                </label>
+            </div>
+        </div>
+
+    </div>
+    <div id="CommonComponents-_AdvanceSearch-14" class="row">
+        <div id="CommonComponents-_AdvanceSearch-15" class="col-sm-2">
+            <div id="CommonComponents-_AdvanceSearch-16" class="radio">
+                <label class="">
+                    <input type="radio" value="2" data-bind="checked:checkedItem,event:{change:onFilterValueChange}">
+                    Filter Criteria
+                </label>
+            </div>
+        </div>
+        <div id="CommonComponents-_AdvanceSearch-17" class="col-sm-10">
+            <div id="CommonComponents-_AdvanceSearch-18" class="form-inline form-item-select" data-bind="if:(checkedItem()==1)">
+                <select class="input-sm form-control m-r-sm" style="width:48%" data-bind="enable:enableCheckedItem"></select>
+                <input type="text" class="form-control input-sm" style="width:48%" data-bind="enable:enableCheckedItem" />
+            </div>
+
+            <div id="CommonComponents-_AdvanceSearch-19" data-bind="if:(checkedItem()==2)">
+                <div id="CommonComponents-_AdvanceSearch-20" style="display:contents;" data-bind="template:{name:'searchItem-template',foreach:searchCriteriaList}, visible:(searchCriteriaList().length > 0 && (checkedItem()==2) )"></div>
+                <div id="CommonComponents-_AdvanceSearch-21" class="form-inline">
+
+                    <!-- ko if:(isAdvancedMode() && (checkedItem()==2)) -->
+                    
+                    <label class="mr-sm-2" style="display:inline-block;" data-bind="text:criteriaPreFix"></label>
+                    <button type="button" data-bind="click:clickOnAddLeftParenthese" class="btn btn-default btn-sm mr-sm-2">(</button>
+                    
+                    <!-- /ko -->
+
+                    <select class="input-sm form-control mr-sm-2" data-bind="options:searchCriterias,optionsValue:'CriteriaCode',optionsText:'CriteriaName', value:criteriaCode, event:{ change : onCriteriaChange }, enable:enableCheckedItem"></select>
+
+                    <!-- ko if:currentCriteria().IsTextBase()=='0' -->
+                    
+                    <select class="input-sm form-control mr-sm-2 search-criteria" style="" data-bind="options:currentCriteria().Items,optionsValue:'Id',optionsText:'Value',value:searchCriteriaValue, event:{change:onCriteriaValueChange}, enable:enableCheckedItem"></select>
+                    
+                    <!-- /ko -->
+                    <!-- ko if: currentCriteria().IsTextBase()=='1' -->
+                    
+                    <!-- ko if: currentCriteria().CriteriaControlType() == '4' && clearDateRange() != true -->
+                    
+                    <input type="text" class="form-control input-sm" style=" width: 90px;" data-bind="dateTimePickerAdvanceSerach:currentCriteria(),textInput:searchCriteriaFromDate, event:{keyup:onCriteriaValueChange,blur:onChangeFromdate},attr: { placeholder: window.$DateFormatCommonComponents } , enable:enableCheckedItem">
+                    <div id="CommonComponents-_AdvanceSearch-26" style="display: inline-block; background: #f1f1f1; padding: 6.5px;">to</div>
+                    <input type="text" class="form-control input-sm mr-2" style=" width: 90px;" data-bind="dateTimePickerAdvanceSerach:currentCriteria(), textInput:searchCriteriaToDate, event:{keyup:onCriteriaValueChange,blur:onChangeTodate},attr: { placeholder: window.$DateFormatCommonComponents } , enable:enableCheckedItem">
+                    
+                    <!-- /ko -->
+                    <!-- ko if: currentCriteria().CriteriaControlType() != '4' -->
+                    <input type="text" class="form-control input-sm search-criteria mr-2" data-bind="textInput:searchCriteriaValue, event:{keyup:onCriteriaValueChange}, enable:(enableCheckedItem() && criteriaCode() != '')" />
+                    <!-- /ko -->
+                    
+                    <!-- /ko -->
+                    <!-- ko if: enableAddSearchCriteriaToList -->
+                    
+                    <button type="button" data-bind="click:$root.OrClick" class="btn btn-sm btn-default">OR</button>
+                    <button type="button" data-bind="click:$root.AndClick" class="btn btn-sm btn-default mr-2">AND</button>
+                    
+                    <!-- /ko -->
+
+                    <button type="button" data-bind="visible:(isAdvancedMode() && (checkedItem()==2)),click:clickOnAddRightParenthese" class="btn btn-default btn-sm mr-2">)</button>
+                    <button type="button" data-bind="visible:checkedItem()==2,click:removeSearchCriteria" class="btn btn-sm btn-default btn-icon"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
+
+
+
+
+                </div>
+
+
+                <div id="CommonComponents-_AdvanceSearch-28" class="m-t-xs" data-bind="visible:(isAdvancedMode() && (checkedItem()==2))">
+
+                    <div class="alert alert-info" id="queryShow">
+
+                        <div id="CommonComponents-_AdvanceSearch-29" data-bind="template:{name:'query-template'}"></div>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+    <div id="CommonComponents-_AdvanceSearch-30" class="row m-b-lg">
+        <div id="CommonComponents-_AdvanceSearch-31" class="col-sm-2"></div>
+
+        <div id="CommonComponents-_AdvanceSearch-32" class="col-sm-10">
+            <button type="button" class="btn btn-primary btn-sm" data-bind="click:$root.searchEmployees, enable:enableSearchButton">Search</button>
+            <button type="button" class="btn btn-secondary btn-sm" data-bind="click:$root.resetEmployees">Reset</button>
+        </div>
+
+    </div>
+
+
+
+
+    <div id="CommonComponents-_AdvanceSearch-33" class="row">
+        <div id="CommonComponents-_AdvanceSearch-34" class="col-sm-12" data-bind="if:breadCrumbList().length > 0">
+            <ol class="breadcrumb">
+                
+                <li data-bind="click:$root.clickOnBreadCrumbAll"><a data-bind="text:currentBreadCrumb().Name"></a></li>
+                <!-- ko foreach: breadCrumbList -->
+                <!-- ko ifnot: State() -->
+                <li data-bind="click:$root.clickOnBreadCrumbItem"><a data-bind="text:Name"></a></li>
+                <!-- /ko -->
+                <!-- ko if: State() -->
+                <li class="active" data-bind="text:Name"></li>
+                <!-- /ko -->
+                <!-- /ko -->
+            </ol>
+        </div>
+    </div>
+
+    <div id="CommonComponents-_AdvanceSearch-35" class="row" style="display:none;">
+        <div id="CommonComponents-_AdvanceSearch-36" class="col-sm-12" data-bind="if:(showAdvLnkAlert && (selectedRowCount() > 1 || allRowCount() > 1))">
+            <div id="CommonComponents-_AdvanceSearch-37" class="alert alert-info SchAlrt">
+                <span data-bind="if:showSelectedAdvLnk"><span data-bind="text:selectedRowCount"></span> <span data-bind="if:selectedRowCount()>1">Employees are</span><span data-bind="if:selectedRowCount()==1">Employee is</span> selected.</span>
+                <a class="EmpSchSelectAll" data-bind="if:showSelectAllAdvLnk,click:$root.clickSelectAllLnkAdv">Select all <span data-bind="text:allRowCount"></span> Employees in the List</a>
+
+                <span data-bind="if:showClearAllSelectAdvLnk">|<a data-bind="click:$root.clickClearAllLnkAdv"> Clear selection</a></span>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="CommonComponents-_AdvanceSearch-38" class="row m-b-md" data-bind="visible:TableLoaded()">
+
+
+        <div id="CommonComponents-_AdvanceSearch-39" class="col-sm-4">
+            <div id="CommonComponents-_AdvanceSearch-40" class="input-group">
+                <input type="text" class="form-control input-sm" id="txtSearchKey" placeholder="Search Employee.." data-bind="event:{ keyup: search}" /><span class="input-group-addon cc_emp_search_searchkey_span"><span class="glyphicon glyphicon-search"></span></span>
+            </div>
+        </div>
+    </div>
+
+
+    
+    <div id="CommonComponents-_AdvanceSearch-41" class="row">
+        <div id="CommonComponents-_AdvanceSearch-42" class="col-sm-12">
+            <div id="CommonComponents-_AdvanceSearch-43" class="tblwrapper loadingTbl">
+                <table id="advancedTable" class="table table-striped" cellspacing="0" style="width:100%"></table>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="CommonComponents-_AdvanceSearch-44" class="row m-b-md mt-2" data-bind="visible:TableLoaded()">
+        <div id="CommonComponents-_AdvanceSearch-45" class="col-sm-2 ">
+            <label> Page size</label>
+        </div>
+        <div id="CommonComponents-_AdvanceSearch-46" class="col-sm-2">
+            <select class="form-control input-sm" id="pagesize" data-bind="options:PageSizeList,optionsText:'Value',optionsValue:'Code',
+                                                 value: SelectedPageSizeList,event:{ change: PagesizeIndexChanged}"></select>
+        </div>
+
+        <div id="CommonComponents-_AdvanceSearch-47" class="col-sm-8 pull-right">
+            <nav aria-label="Page navigation flex-wrap" class="cc_paginationNavi pull-right">
+                <ul class="pagination pagination-sm no-margins" id="cc_pagination"></ul>
+            </nav>
+        </div>
+    </div>
+    <div id="CommonComponents-_AdvanceSearch-48" class="row m-b-md" data-bind="visible:TableLoaded()">
+        <div id="CommonComponents-_AdvanceSearch-49" class="col-sm-12 ">
+            <label data-bind="text: totalcountstr">Total record(s)</label>
+        </div>
+    </div>
+    <hr data-bind="visible:TableLoaded()" />
+    <div id="CommonComponents-_AdvanceSearch-50" class="row m-b-md">
+        <div id="CommonComponents-_AdvanceSearch-51" class="col-sm-12">
+            <button type="button" class="btn btn-primary btn-sm" data-bind="visible:showMultiSubmitBtn,enable:enableMultiSubmitBtn,click:$root.onSubmitClick">Submit</button>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="query-template">
+    <!-- ko foreach: searchCriteriaList -->
+    <!-- ko foreach: LeftParentheses -->
+    <button type="button" data-bind="click:$parent.ClickOnRemoveLeftParenthese" class="btn btn-default btn-sm">(</button>
+    <!-- /ko -->
+    <label data-bind="text:CriteriaPreFix"></label>
+    <!-- ko foreach: RightParentheses -->
+    <button type="button" data-bind="click:$parent.ClickOnRemoveRightParenthese" class="btn btn-default btn-sm">)</button>
+    <!-- /ko -->
+    <!-- ko if:$root.enableCheckedItem()-->
+    <label data-bind="text:OperatorType" class="operators"></label>
+    <!-- /ko -->
+    <!-- /ko -->
+    <!-- ko foreach: leftParentheses -->
+    <button type="button" data-bind="click:$parent.clickOnRemoveLeftParenthese" class="btn btn-default btn-sm">(</button>
+    <!-- /ko -->
+    <label data-bind="text:criteriaPreFix"></label>
+    <!-- ko foreach: rightParentheses -->
+    <button type="button" data-bind="click:$parent.clickOnRemoveRightParenthese" class="btn btn-default btn-sm">)</button>
+    <!-- /ko -->
+</script>
+<script type="text/html" id="searchItem-template">
+    <div data-bind="attr: { id: 'CommonComponents-_AdvanceSearch-52-' + $index() }" class="form-inline">
+
+        <!-- ko if:$root.isAdvancedMode() -->
+        
+
+        <label class="mr-sm-2" style="display:inline-block;" data-bind="text:CriteriaPreFix"></label>
+        <button type="button" data-bind="click:ClickOnAddLeftParenthese" class="btn btn-default btn-sm mr-sm-2">(</button>
+
+        
+        <!-- /ko -->
+        <select class="input-sm form-control mr-sm-2" data-bind="options:CriteriaList,optionsValue:'CriteriaCode',optionsText:'CriteriaName',value:CriteriaCode, event:{change:onItemCriteriaChange}, enable:$root.enableCheckedItem"></select>
+
+        <!-- ko if:CurrentItem().IsTextBase()=='0' -->
+        
+
+        <select class="input-sm form-control mr-sm-2 search-criteria" style="" data-bind="options:CurrentItem().Items,optionsValue:'Id',optionsText:'Value',value:SearchCriteriaValue, event:{change:onCriteriaValueChange}, enable:$root.enableCheckedItem"></select>
+
+        
+        <!-- /ko -->
+        <!-- ko if:CurrentItem().IsTextBase()=='1' -->
+        
+
+        <!-- ko if: CurrentItem().CriteriaControlType()=='4' && ClearDateRange()!=true-->
+        
+        <input type="text" class="form-control input-sm" style=" width: 90px;" data-bind="dateTimePickerAdvanceSerach:CurrentItem(), textInput:SearchCriteriaFromDate, event:{keyup:onCriteriaValueChange}, enable:$root.enableCheckedItem">
+        <div data-bind="attr: { id: 'CommonComponents-_AdvanceSearch-57-' + $index() }" style="display: inline-block; background: #f1f1f1; padding: 6.5px;">to</div>
+        <input type="text" class="form-control input-sm mr-2" style=" width: 90px;" data-bind="dateTimePickerAdvanceSerach:CurrentItem(), textInput:SearchCriteriaToDate, event:{keyup:onCriteriaValueChange}, enable:$root.enableCheckedItem">
+        
+        <!-- /ko -->
+        <!-- ko if: CurrentItem().CriteriaControlType()!='4' -->
+        <input type="text" class="form-control input-sm mr-sm-2 search-criteria" style="" data-bind="textInput:SearchCriteriaValue, event:{keyup:onCriteriaValueChange}, enable:$root.enableCheckedItem" />
+        <!-- /ko -->
+        
+        <!-- /ko -->
+        
+
+        <!-- ko if:($root.enableCheckedItem())-->
+        <div id="CommonComponents-_AdvanceSearch-59" class="btn-group">
+            <button type="button" data-bind="click:CurrentItemOrClick, visible:$root.enableCheckedItem(),css:{ 'btn-primary': (IsOrSelected() && $root.enableCheckedItem()), 'btn-default': (!IsOrSelected() || !$root.enableCheckedItem())}" class="btn btn-sm enable-checked-or">OR</button>
+            <button type="button" data-bind="click:CurrentItemAndClick, visible:$root.enableCheckedItem(),css:{ 'btn-primary': (IsAndSelected() && $root.enableCheckedItem()), 'btn-default': (!IsAndSelected() || !$root.enableCheckedItem())}" class="btn btn-sm enable-checked-and mr-2">AND</button>
+        </div>
+        <!-- /ko -->
+        <button type="button" data-bind="visible:$root.isAdvancedMode(),click:ClickOnAddRightParenthese" class="btn btn-default btn-sm mr-2">)</button>
+        <button type="button" data-bind="click:$root.removeSearchCriteriaFromList, enable:$root.enableCheckedItem" class="btn btn-sm btn-default btn-icon"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
+
+        
+
+    </div>
+
+
+</script>
+<script type="text/javascript">
+    window.advancedModelObj = '{"EmpNumber":"IRie_Ok4yQ3MlcY1eVbVSuHM9YYyokwi_5c-dKi7AaZ14OT-RcZR8RqmOMiry2xPGVuzkzl0-HDVJntLGfAZYbvVxra7wpdggF1VKENHYrm6rPze5fXMTNIULBE_uaJdF2UTP9le07-FlwRXyrkSQVT1x-nu2K-24v_I4uK89NjwKc6ercNsN3ExbQ5i8vJ6oGgsgpHSHkOAONJQhSCCzWM0tFGNJsxMyU_J33FaQvOxP3Z1LO5rWK-PJ-zljDL1_OEzsqKI2bNnr36BULaouQ0VA8bznt7mwvPJzMygFELrrUT1A4S_-cHOACwrbPAls5yU1J_tXsDhwrpzsgd-tE4oTFQ_oQGln3tsVHeXw7oe3pFkFhfPykVdINBTCRpy4D70-Bd3DbvNnfLsNVqAOz8-O76fHxhKmmkmrtU3xv3skpZRPioEr8XGU0H-5pf3aFfjr5WbOyddJSvCYJ8_rU_-DLoxTH_tLHW9xwbwcG_c3J0b9epZPz2lOdfwaaAC","CallBack":"FilterVM.FillSearchEmployeeDetails","SearchMode":2,"SearchQueryMode":null,"SearchQueryState":null,"DisplayName":"","IsShowDisplayName":"1","BreadCrumbEnable":"0","IsDivLoading":"0","DivId":null,"Width":null,"Height":null,"Top":null,"Left":null,"IsElgLock":"0","KeyValue":"24d4902b-4c9f-41cb-8c89-4b18ace10020","DefaultTab":"0","IsMultiple":"1","MainDivId":"advanceSearch","TableId":"advancedTable","Options":[{"Code":"5","Value":"5"},{"Code":"10","Value":"10"},{"Code":"15","Value":"15"},{"Code":"25","Value":"25"},{"Code":"50","Value":"50"},{"Code":"100","Value":"100"},{"Code":"500","Value":"500"},{"Code":"1000","Value":"1000"}],"HideSearchBtn":"0"}';
+    window.advancedDivId = '';
+    window.advancedCallBack = FilterVM.FillSearchEmployeeDetails;
+    window.MainDivId = advanceSearch;
+    window.TableId = advancedTable;
+
+</script>
+<style>
+    .dataTables_length {
+        float: right !important;
+    }
+    
+    /* Ensure Select2 dropdown appears above modals */
+    .select2-container--open .select2-dropdown {
+        z-index: 9999 !important;
+    }
+    .select2-container--open {
+        z-index: 9999 !important;
+    }
+
+    .select2-search__field {
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+    }
+    
+    .select2-container--default .select2-selection--single {
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+    }
+    
+</style>
+<script>$.ajaxSetup({ cache: true });</script>
+<script src="/hr/CommonComponents/bundles/AdvanceSearch?v=IXi8AXfMlpWONoDuou_obi7kEArTRkJ_qS7adYkOhUk1"></script>
+
+<script>$.ajaxSetup({ cache: false });</script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+    </div>
+</div>

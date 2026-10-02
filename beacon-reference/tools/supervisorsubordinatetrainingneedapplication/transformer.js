@@ -1,16 +1,13 @@
 (async function (data, args, reqOptions) {
   try {
-    // Defensive: guard every step so a missing/malformed BeaconBar context resolves to
-    // a clean NO_ACCESS response instead of an opaque synchronous exception (same
-    // pattern as every other drafts/* tool in this build).
-    const menus = (typeof BeaconBar !== "undefined" && BeaconBar.user && BeaconBar.user.metaData && BeaconBar.user.metaData.menus) || [];
-    const hasAccess = Array.isArray(menus) && menus.some((menu) => typeof menu === "string" && menu.includes("TNDV9/TrainingNeed/Index?mvc=1&bs=4&App=000002"));
-    if (!hasAccess) {
-      return {
-        status: "NO_ACCESS",
-        message: "It seems you don't have access. Please check with the HR Admin"
-      };
+    if (
+      !BeaconBar.user?.metaData?.menus?.some(menu =>
+        menu.includes("TNDV9/TrainingNeed/Index?mvc=1&bs=4&App=000002")
+      )
+    ) {
+      return { error: true, message: "You do not have access to apply for grievance. Please contact HR Admin." };
     }
+
 
     const subordinateQueries = Array.isArray(args.subordinates)
       ? args.subordinates.map((s) => String(s).trim()).filter((s) => s.length > 0)
@@ -22,25 +19,6 @@
     const relevanceToJob = args.relevanceToJob ? String(args.relevanceToJob).trim() : "";
     const benefitToEmployee = args.benefitToEmployee ? String(args.benefitToEmployee).trim() : "";
     const benefitToCompany = args.benefitToCompany ? String(args.benefitToCompany).trim() : "";
-
-    if (subordinateQueries.length === 0) {
-      return {
-        status: "VALIDATION_ERROR",
-        message: "subordinates is required - provide at least one direct report's name or employee number."
-      };
-    }
-    if (!existingNeedName && !newNeedName) {
-      return {
-        status: "VALIDATION_ERROR",
-        message: "Provide either existingNeedName (to attach this application to an existing training need - see getSupervisorTrainingNeeds) or newNeedName (to submit a brand new one), not neither."
-      };
-    }
-    if (existingNeedName && newNeedName) {
-      return {
-        status: "VALIDATION_ERROR",
-        message: "Provide either existingNeedName or newNeedName, not both - the real form's Training Need Type is either 'Existing Need' or 'New Need', never both at once."
-      };
-    }
 
     const headers = new Headers();
     headers.append("Accept", "*/*");
@@ -73,16 +51,6 @@
       return parsed;
     }
 
-    // Step 1: fetch the existing-need master list (MainNeed) and the full subordinate
-    // roster (SuborList) - confirmed live: for the Supervisor persona, GetTrainingNeedDetails'
-    // SuborList lists every direct report (each already selected: 0), not just one self
-    // record - matching the same "Select Employee" grid shown on the real "Add" form.
-    // Note: the real page-load sequence also calls TNDV9/TrainingNeed/LoadPageData (the
-    // background applications list, already covered by getSupervisorTrainingNeeds) and
-    // TNDV9/Common/GetTndResource (a static UI confirmation string, "Are you sure you
-    // want to submit this training need?") - neither feeds the submission payload, so
-    // neither is called here; this tool's own conversational confirmation (UAC 3.8)
-    // substitutes for GetTndResource's popup text.
     const detailsData = await postJson("TNDV9/TrainingNeed/GetTrainingNeedDetails", { requestType: "000002", WFMainID: "", PerfEmpNo: "" });
     if (!detailsData || !detailsData.Status || detailsData.Status.IsSuccessfull !== true) {
       return {
@@ -99,11 +67,22 @@
       };
     }
 
-    // Step 2: resolve every requested subordinate against the live roster - exact
-    // employee-number match first, else a case-insensitive substring match against name
-    // (same convention as supervisorEmployeeTrainingNomination's UAC 2.3/2.4 handling).
-    // All problems are collected across every requested name before returning, so the
-    // supervisor can fix everything in one round trip rather than one name at a time.
+    const eligibleSubordinates = suborList.map((s) => ({ displayempno: s.displayempno, empname: s.empname, designation: s.designame }));
+
+    // subordinates is optional on this call specifically so "who are my subordinates?"
+    // can be answered without already knowing a name - GetTrainingNeedDetails' SuborList
+    // (fetched above) already contains the full direct-report roster regardless of what
+    // was passed in, so there is nothing to gain by requiring a name just to look it up.
+    // Nothing is submitted on this listing path; call this tool again with subordinates
+    // set (plus the need/narrative fields) once the supervisor has picked who it's for.
+    if (subordinateQueries.length === 0) {
+      return {
+        status: "LISTED",
+        message: "Here are your direct reports. Ask which one(s) this training need application is for, then call this tool again with subordinates set to their exact name(s) or employee number(s) (along with existingNeedName/newNeedName and the other required fields).",
+        eligibleSubordinates: eligibleSubordinates
+      };
+    }
+
     const notFound = [];
     const ambiguous = [];
     const resolvedRecords = [];
@@ -125,11 +104,7 @@
       }
     });
 
-    const eligibleSubordinates = suborList.map((s) => ({ displayempno: s.displayempno, empname: s.empname, designation: s.designame }));
-
     if (notFound.length > 0) {
-      // UAC 2.4-equivalent for training needs: at least one requested name isn't a
-      // subordinate of the logged-in supervisor.
       return {
         status: "NOT_SUBORDINATE",
         message: `${notFound.map((q) => `"${q}"`).join(", ")} ${notFound.length === 1 ? "does" : "do"} not appear to be a subordinate you can submit a training need for. Please check the name(s) or employee number(s) and try again.`,
@@ -144,12 +119,19 @@
       };
     }
 
-    // Step 3: resolve the Training Need Type selection - Existing (typecode 1, a real
-    // needcode, blank needname/needdescription) or New (typecode 0, needcode "000000",
-    // free-text needname/needdescription) - the Existing path is confirmed live for this
-    // Supervisor flow directly; the New path mirrors selfEmployeeTrainingNeedApplication's
-    // confirmed New Need shape against the same SaveNeedApplication endpoint (not yet
-    // independently captured for a Supervisor submission - see description.md).
+    if (!existingNeedName && !newNeedName) {
+      return {
+        status: "VALIDATION_ERROR",
+        message: "Provide either existingNeedName (to attach this application to an existing training need - see getSupervisorTrainingNeeds) or newNeedName (to submit a brand new one), not neither."
+      };
+    }
+    if (existingNeedName && newNeedName) {
+      return {
+        status: "VALIDATION_ERROR",
+        message: "Provide either existingNeedName or newNeedName, not both - the real form's Training Need Type is either 'Existing Need' or 'New Need', never both at once."
+      };
+    }
+
     let typecode;
     let needcode;
     let needname;
@@ -182,14 +164,169 @@
       needdescription = newNeedDescription;
     }
 
-    // Step 4: build the outgoing EmpList - the FULL subordinate roster, not just the
-    // selected ones. Confirmed live: a real 3-of-many-subordinate submission sent every
-    // entry from SuborList (same field subset as the self-application tool - it omits
-    // reqtypecode/editable, which SuborList itself carries), with selected: 1 only on the
-    // chosen three and selected: 0 on everyone else; the server's own Results array then
-    // echoed back exactly those three. Sending only the selected subset (as the
-    // self-application tool does, since it only ever has one entry) has not been tested
-    // for this multi-employee flow and is not what the real capture shows.
+    // Attachments - read files from the Beacon chat's own upload mechanism, the same
+    // source every other write tool in this build reads from (see
+    // submitMyGrievanceApplication, selfEmployeeLeaveApplication,
+    // selfEmployeeTrainingNeedApplication). Entirely optional: with no files attached,
+    // Attach/FileNameAttached/AttchList stay at their original "no attachment" values below
+    // and none of PrepareNeedAttachments/UploadFile is ever called. Confirmed live that the
+    // same TNDV9/TrainingNeed endpoints apply regardless of persona (Applicant vs
+    // Supervisor) - PrepareNeedAttachments/UploadFile/DeleteFile/AttchList's shape were all
+    // captured from the same TNDV9 module the self-application tool already uses (Dev in
+    // progress Features/T&D/), and this screen shares that module's tna_id/typecode
+    // convention (tna_id always -1 for a new application record, typecode from the
+    // Existing/New Need Type choice resolved just above).
+    function uploadedFiles() {
+      try {
+        if (typeof BeaconBar !== "undefined" && typeof BeaconBar.getUploadedBaoFiles === "function") {
+          const bao = BeaconBar.getUploadedBaoFiles();
+          return Array.isArray(bao) ? bao.filter(Boolean) : (bao ? [bao] : []);
+        }
+      } catch (e) {
+        // Degrade to "no files" rather than throw.
+      }
+      return [];
+    }
+
+    const attachedFiles = uploadedFiles();
+    const attchList = [];
+
+    // Confirmation gate - confirmed live via TNDV9/Common/GetTndResource ({resource:
+    // "TndNeedApplicationSaveConfirm"} -> "Are you sure you want to submit this training
+    // need?"): the real form always shows this confirm dialog right before Save, after
+    // every field has already been filled in. Nothing is uploaded, validated, or saved
+    // until the supervisor has reviewed this exact application and confirmed - placed
+    // here (after subordinates/need/attachment-detection, before any write call) so the
+    // preview reflects exactly what would be submitted. The prompt text is fetched live
+    // rather than hardcoded, same reasoning as the file-type/size messages below.
+    if (!args.confirmed) {
+      let confirmPrompt = "Are you sure you want to submit this training need?";
+      try {
+        const promptResource = await postJson("TNDV9/Common/GetTndResource", { resource: "TndNeedApplicationSaveConfirm" });
+        if (typeof promptResource === "string" && promptResource.trim()) {
+          confirmPrompt = promptResource.trim();
+        }
+      } catch (resourceError) {
+        // Keep the fallback text above - this lookup is best-effort only.
+      }
+
+      return {
+        status: "CONFIRMATION_REQUIRED",
+        message: `Review this training need application with the supervisor before submitting. ${confirmPrompt} Call this tool again with confirmed:true (and the same arguments) once they agree.`,
+        confirmationPrompt: confirmPrompt,
+        preview: {
+          subordinates: resolvedRecords.map((r) => ({ employeeNumber: r.displayempno, name: r.empname })),
+          needSelectionType: existingNeedName ? "Existing" : "New",
+          needName: existingNeedName ? mainNeed.find((n) => n.needcode === needcode).needname : newNeedName,
+          objective: objective,
+          relevanceToJob: relevanceToJob,
+          benefitToEmployee: benefitToEmployee,
+          benefitToCompany: benefitToCompany,
+          attachments: attachedFiles.map((f) => ({ fileName: f.name }))
+        }
+      };
+    }
+
+    if (attachedFiles.length) {
+      // PrepareNeedAttachments gates whether attachments can be added for this need
+      // (tna_id/typecode) before any file is actually uploaded - confirmed live
+      // (Dev in progress Features/T&D/PrepareNeedAttachments), returning
+      // {IsSuccessfull, IsExceed, BudgetExceed, Message}. Bail out here rather than upload
+      // files that would just be orphaned by a save the server was always going to reject.
+      const prepared = await postJson("TNDV9/TrainingNeed/PrepareNeedAttachments", { tna_id: -1, typecode: typecode });
+      if (!prepared || prepared.IsSuccessfull !== true || prepared.IsExceed === true) {
+        return {
+          status: "ERROR",
+          message: (prepared && prepared.Message) || "Could not prepare attachments for this training need application."
+        };
+      }
+
+      // Confirmed live (Dev in progress Features/T&D/UploadFile, UploadFile-2,
+      // UploadFile-3 - repeated for 3 separate files in one application, confirmed
+      // multi-attachment works via SaveNeedApplication-round2's 3-entry AttchList): each
+      // file is uploaded individually as multipart/form-data with two fields - "fname" (a
+      // ddMMyyyyHHmmss_ timestamp prefix plus the original file name, which becomes the
+      // server-side filepath) and "file" (the binary itself) - and the endpoint responds
+      // with the plain text "True" on success, not JSON. The generated fname is exactly
+      // what AttchList's filepath must reference below, so it's captured once per file here.
+      const uploadedEntries = [];
+      for (const file of attachedFiles) {
+        const now = new Date();
+        const pad = (n) => String(n).padStart(2, "0");
+        const timestamp = `${pad(now.getDate())}${pad(now.getMonth() + 1)}${now.getFullYear()}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+        const serverFileName = `${timestamp}_${file.name}`;
+
+        const uploadFormData = new FormData();
+        uploadFormData.append("fname", serverFileName);
+        uploadFormData.append("file", file, file.name);
+
+        let uploadText = "";
+        try {
+          const uploadRes = await fetch(`${window.origin}/${reqOptions.sl}/TNDV9/TrainingNeed/UploadFile`, {
+            method: "POST",
+            headers: { "Accept": "*/*", "x-requested-with": "XMLHttpRequest" },
+            body: uploadFormData
+          });
+          uploadText = (await uploadRes.text()).trim();
+        } catch (networkError) {
+          uploadText = "";
+        }
+
+        if (uploadText.toLowerCase() !== "true") {
+          // No fixed max size or allowed-type list is hardcoded here - both can differ per
+          // client/tenant, so the only real-time source of truth is this UploadFile call
+          // itself. On rejection, the resource keys confirmed live via TNDV9/Common/
+          // GetTndResource (Dev in progress Features/T&D/GetTndResource - type,
+          // GetTndResource-size validation) - "TndFileTypeNotAllowed" ->
+          // "File type not allowed" and "TndFileSizeExceeded" -> "Maximum file size
+          // exceeded." - line up with exactly this kind of rejection, so a non-"True"
+          // response is treated as one of these resource keys and translated into a
+          // human-readable message. Not confirmed live that UploadFile's failure body IS
+          // literally the resource key (no failing upload was captured) - if the lookup
+          // comes back empty/fails, the raw response text is shown instead so nothing is
+          // ever silently swallowed.
+          let friendlyMessage = uploadText;
+          if (uploadText) {
+            try {
+              const resourceMessage = await postJson("TNDV9/Common/GetTndResource", { resource: uploadText });
+              if (typeof resourceMessage === "string" && resourceMessage.trim()) {
+                friendlyMessage = resourceMessage.trim();
+              }
+            } catch (resourceError) {
+              // Keep the raw uploadText - this lookup is a best-effort translation only.
+            }
+          }
+
+          // Roll back whatever was already uploaded during this same call - confirmed live
+          // (Dev in progress Features/T&D/DeleteFile: POST {filepath} -> true) - so a failed
+          // attachment never leaves orphaned files behind on a submission that never happens.
+          for (const uploaded of uploadedEntries) {
+            try {
+              await postJson("TNDV9/TrainingNeed/DeleteFile", { filepath: uploaded.filepath });
+            } catch (cleanupError) {
+              // Best-effort only - the upload itself already failed, so a failed cleanup
+              // doesn't change the outcome, it just leaves a stray file server-side.
+            }
+          }
+          return {
+            status: "ERROR",
+            message: `Could not upload "${file.name}"${friendlyMessage ? `: ${friendlyMessage}` : " - the server rejected this file."}`
+          };
+        }
+
+        const dotIndex = file.name.lastIndexOf(".");
+        uploadedEntries.push({
+          attchid: uploadedEntries.length + 1,
+          attchname: file.name,
+          attchtype: dotIndex >= 0 ? file.name.slice(dotIndex + 1).toLowerCase() : "",
+          attchfile: "",
+          filepath: serverFileName
+        });
+      }
+
+      attchList.push(...uploadedEntries);
+    }
+
     const resolvedDisplayEmpNos = new Set(resolvedRecords.map((r) => r.displayempno));
     const empList = suborList.map((s) => ({
       tna_id: s.tna_id,
@@ -209,15 +346,10 @@
       EvalList: Array.isArray(s.EvalList) ? s.EvalList : []
     }));
 
-    // Step 5: build the submission payload - every fixed field below is confirmed
-    // identical to the real captured Supervisor submission, including reqtypecode
-    // "000002" (confirmed as the Supervisor marker, matching the App=000002 menu
-    // convention) and IsGoalObject/ExistingGoals/SelectedGoalCode staying false/[]/""
-    // (confirmed live: goal-linking is not exercised for multi-subordinate submissions -
-    // see the objective argument's own description). newneed is always 1 here (it marks
-    // this as a new application RECORD, unrelated to the Existing/New Need Type choice,
-    // which is typecode). File attachments are not supported by this tool (Attach stays
-    // "0"/no file), matching every other drafts/* tool's scope.
+    // Attach stays "0" and FileNameAttached stays "" even when files ARE attached -
+    // confirmed live for the self-application tool against the same TNDV9 module (Dev in
+    // progress Features/T&D/ValidateNeedApplication, SaveNeedApplication with a real
+    // attachment): the module links attachments purely through AttchList, populated above.
     const payload = {
       tna_id: -1,
       needtype: "",
@@ -250,16 +382,12 @@
       Attach: "0",
       FileNameAttached: "",
       EmpList: empList,
-      AttchList: [],
+      AttchList: attchList,
       IsGoalObject: false,
       ExistingGoals: [],
       SelectedGoalCode: ""
     };
 
-    // Step 6: validate, then save - confirmed live two-step flow
-    // (New_PeoplesHR_Feature/supervisorSubordinateTrainingNeedApplication/supervisor-subordinate
-    // application/{ValidateNeedApplication,SaveNeedApplication}.txt), same
-    // validate-then-save convention as every other write tool in this build.
     const validation = await postJson("TNDV9/TrainingNeed/ValidateNeedApplication", payload);
     if (!validation || validation.IsSuccessfull !== true) {
       return {
@@ -276,8 +404,6 @@
       };
     }
 
-    // Confirmed live: Results[] has one entry per selected subordinate, keyed by their
-    // own displayempno - same {success, empno, status} shape as every other write tool.
     const results = Array.isArray(saveResult.Results) ? saveResult.Results : [];
 
     return {
@@ -286,7 +412,8 @@
       needSelectionType: existingNeedName ? "Existing" : "New",
       needCode: needcode,
       needName: existingNeedName ? mainNeed.find((n) => n.needcode === needcode).needname : newNeedName,
-      submissions: results.map((r) => ({ employeeNumber: r.empno, success: r.success, status: r.status }))
+      submissions: results.map((r) => ({ employeeNumber: r.empno, success: r.success, status: r.status })),
+      attachments: attchList.map((a) => ({ fileName: a.attchname, type: a.attchtype }))
     };
 
   } catch (error) {

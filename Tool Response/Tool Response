@@ -1,0 +1,216 @@
+{
+  "discovery": true,
+  "employee": "Abigail Hill",
+  "employeeNumber": "000339",
+  "designation": "Senior QA Automation Engineer",
+  "benefitType": "SSS- Sickness Benefits",
+  "entitlement": null,
+  "entitlementAsAt": "29/09/2026",
+  "entitlementNote": "These figures are for 29/09/2026 (today) ONLY. Entitlement and utilized amount differ on every application date - Abigail Hill may have null today and nothing at all on another date. Never repeat these figures for a different date: if the user names or changes the date, or asks what the entitlement is then, call this tool again with fieldValues containing just that application date and report what comes back.",
+  "commentMandatory": false,
+  "showComment": true,
+  "confirmMessage": null,
+  "info": [
+    {
+      "displayName": "Employee ID",
+      "value": "000339"
+    },
+    {
+      "displayName": "Employee Name",
+      "value": "Abigail Hill"
+    },
+    {
+      "displayName": "Civil Status",
+      "value": null
+    },
+    {
+      "displayName": "Section",
+      "value": "TestAuto_Automation"
+    },
+    {
+      "displayName": "SSS Number",
+      "value": null
+    },
+    {
+      "displayName": "Mobile No",
+      "value": null
+    },
+    {
+      "displayName": "email address",
+      "value": null
+    },
+    {
+      "displayName": "Confinement Location",
+      "value": null
+    },
+    {
+      "displayName": "Work Related ?",
+      "value": null
+    }
+  ],
+  "attachment": {
+    "allowed": true,
+    "mandatory": true,
+    "allowedTypes": [
+      "pdf",
+      "txt",
+      "doc",
+      "docx"
+    ],
+    "maxSizeMb": 1,
+    "maxCount": null,
+    "filesInChat": [],
+    "note": "At least one attachment is REQUIRED for this benefit type (allowed file types: pdf, txt, doc, docx; maximum 1 MB per file). Ask the user to attach the file(s) in the chat - the tool picks them up, validates them and stages them when it builds the preview. Do not ask for file contents or base64."
+  },
+  "message": "The benefit type is settled - do not re-confirm it. Ask the user ONLY for the fields listed below: every mandatory one, plus any optional ones they want to set. Ask for nothing that is not in this list. Then call this tool again with the same benefitType plus a fieldValues object keyed by each field's displayName exactly as shown.",
+  "fields": [
+    {
+      "displayName": "Date of Submission",
+      "mandatory": true,
+      "dataType": "DATE",
+      "inputType": "date (DD/MM/YYYY)",
+      "currentValue": null,
+      "note": "Required. Entitlement, utilized amount and the total are calculated for this date, so ask the user which date to use - today (29/09/2026) is only a suggestion."
+    },
+    {
+      "displayName": "Date Start of Sick Leave",
+      "mandatory": true,
+      "dataType": "DATE",
+      "inputType": "date (DD/MM/YYYY)",
+      "currentValue": null,
+      "note": "Required. Entitlement, utilized amount and the total are calculated for this date, so ask the user which date to use - today (29/09/2026) is only a suggestion."
+    },
+    {
+      "displayName": "Date End of Sick Leave",
+      "mandatory": true,
+      "dataType": "DATE",
+      "inputType": "date (DD/MM/YYYY)",
+      "currentValue": null,
+      "note": "Required. Entitlement, utilized amount and the total are calculated for this date, so ask the user which date to use - today (29/09/2026) is only a suggestion."
+    },
+    {
+      "displayName": "Home",
+      "mandatory": false,
+      "dataType": "TEXT",
+      "inputType": "yes/no",
+      "currentValue": "0"
+    },
+    {
+      "displayName": "Yes",
+      "mandatory": false,
+      "dataType": "TEXT",
+      "inputType": "yes/no",
+      "currentValue": "0"
+    },
+    {
+      "displayName": "Hospital",
+      "mandatory": false,
+      "dataType": "TEXT",
+      "inputType": "yes/no",
+      "currentValue": "0"
+    },
+    {
+      "displayName": "Still Confined",
+      "mandatory": false,
+      "dataType": "TEXT",
+      "inputType": "yes/no",
+      "currentValue": "0"
+    },
+    {
+      "displayName": "Date of Check Available (HR PIC entry status)",
+      "mandatory": true,
+      "dataType": "DATE",
+      "inputType": "date (DD/MM/YYYY)",
+      "currentValue": null,
+      "note": "Required. Entitlement, utilized amount and the total are calculated for this date, so ask the user which date to use - today (29/09/2026) is only a suggestion."
+    },
+    {
+      "displayName": "Date of discharge (if confined)",
+      "mandatory": true,
+      "dataType": "DATE",
+      "inputType": "date (DD/MM/YYYY)",
+      "currentValue": null,
+      "note": "Required. Entitlement, utilized amount and the total are calculated for this date, so ask the user which date to use - today (29/09/2026) is only a suggestion."
+    },
+    {
+      "displayName": "No",
+      "mandatory": false,
+      "dataType": "TEXT",
+      "inputType": "yes/no",
+      "currentValue": "0"
+    },
+    {
+      "displayName": "PMM Status of Application",
+      "mandatory": false,
+      "dataType": "TEXT",
+      "inputType": "choice",
+      "currentValue": null,
+      "note": "Do not ask for this yet. Its options depend on the field it depends on: once the user has chosen that, call this tool again with it in fieldValues and the tool returns the \"PMM Status of Application\" options to pick from."
+    },
+    {
+      "displayName": "SSS Sickness Status of Application",
+      "mandatory": false,
+      "dataType": "TEXT",
+      "inputType": "choice",
+      "currentValue": null,
+      "note": "Do not ask for this yet. Its options depend on the field it depends on: once the user has chosen that, call this tool again with it in fieldValues and the tool returns the \"SSS Sickness Status of Application\" options to pick from."
+    },
+    {
+      "displayName": "Date of notification",
+      "mandatory": true,
+      "dataType": "DATE",
+      "inputType": "date (DD/MM/YYYY)",
+      "currentValue": null,
+      "note": "Required. Entitlement, utilized amount and the total are calculated for this date, so ask the user which date to use - today (29/09/2026) is only a suggestion."
+    },
+    {
+      "displayName": "Approved Date of SSS Sickness (From)",
+      "mandatory": true,
+      "dataType": "DATE",
+      "inputType": "date (DD/MM/YYYY)",
+      "currentValue": null,
+      "note": "Required. Entitlement, utilized amount and the total are calculated for this date, so ask the user which date to use - today (29/09/2026) is only a suggestion."
+    },
+    {
+      "displayName": "Date of employee return",
+      "mandatory": true,
+      "dataType": "DATE",
+      "inputType": "date (DD/MM/YYYY)",
+      "currentValue": null,
+      "note": "Required. Entitlement, utilized amount and the total are calculated for this date, so ask the user which date to use - today (29/09/2026) is only a suggestion."
+    },
+    {
+      "displayName": "Approved Date of SSS Sickness (To)",
+      "mandatory": true,
+      "dataType": "DATE",
+      "inputType": "date (DD/MM/YYYY)",
+      "currentValue": null,
+      "note": "Required. Entitlement, utilized amount and the total are calculated for this date, so ask the user which date to use - today (29/09/2026) is only a suggestion."
+    },
+    {
+      "displayName": "Still on Leave",
+      "mandatory": false,
+      "dataType": "TEXT",
+      "inputType": "yes/no",
+      "currentValue": "0"
+    },
+    {
+      "displayName": "SL Date of Coverage",
+      "mandatory": true,
+      "dataType": "DATE",
+      "inputType": "date (DD/MM/YYYY)",
+      "currentValue": null,
+      "note": "Required. Entitlement, utilized amount and the total are calculated for this date, so ask the user which date to use - today (29/09/2026) is only a suggestion."
+    },
+    {
+      "displayName": "Total Request",
+      "mandatory": false,
+      "dataType": "NUMERIC",
+      "inputType": "number",
+      "currentValue": "0.0000",
+      "readOnly": false,
+      "note": "This is the amount Benefit History records against the application. PeoplesHR fills it in from the amount field(s) above, so leave it out unless the user asks for a particular Total Request. They CAN set it directly: pass the figure they ask for in fieldValues under \"Total Request\" and leave the amount field(s) exactly as they gave them - never tell them it cannot be changed, and never ask them to change an amount to match it."
+    }
+  ],
+  "choiceNote": "Choice fields are pick-lists: show their options and let the user select one - never let them type a value of their own. \"PMM Status of Application\" depends on the field it depends on; \"SSS Sickness Status of Application\" depends on the field it depends on - do not ask for them yet; the tool lists their options once the parent is chosen."
+}

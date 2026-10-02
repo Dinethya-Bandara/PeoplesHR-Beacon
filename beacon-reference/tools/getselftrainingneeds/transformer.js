@@ -26,16 +26,23 @@
 
     const keyword = args.keyword ? String(args.keyword).trim().toLowerCase() : "";
 
-    // Word-based matching, not literal substring matching - same reasoning and helpers as
+    // Word-based matching, not literal substring matching - same reasoning as
     // getTrainingForNeed: a raw request's own wording rarely matches a category name
     // (or vice versa) as a literal substring, but does share the same underlying words.
+    //
+    // Fixed (2026-09-12): each query word now matches if it's a SUBSTRING of any
+    // haystack word, not only an exact whole-word match. Reported live failure:
+    // searching "backend dev" against the category "Backend Development" returned
+    // nothing, because "dev" !== "development" as an exact token even though
+    // "development" plainly contains "dev" - the whole point of a partial-match
+    // search. `containsAllWords` below is the fix; `tokenize` is unchanged.
     function tokenize(text) {
       return (text || "").toLowerCase().match(/[a-z0-9]+/g) || [];
     }
     function containsAllWords(haystackText, words) {
       if (words.length === 0) return false;
-      const haystackWords = new Set(tokenize(haystackText));
-      return words.every((w) => haystackWords.has(w));
+      const haystackWords = tokenize(haystackText);
+      return words.every((w) => haystackWords.some((hw) => hw.includes(w)));
     }
     const keywordWords = tokenize(keyword);
 
@@ -156,9 +163,8 @@
       };
     });
 
-    // Step 3: apply the optional keyword filter, word-based (see getTrainingForNeed for
-    // why literal substring matching misses real phrasing differences between what a
-    // user says and what's actually on file).
+    // Step 3: apply the optional keyword filter, word-based partial match (see above for
+    // why literal whole-word matching misses partial phrasing like "backend dev").
     if (keywordWords.length > 0) {
       existingNeedCategories = existingNeedCategories.filter((c) => containsAllWords(c.needName, keywordWords));
       trainingNeeds = trainingNeeds.filter((n) =>

@@ -29,28 +29,6 @@
       };
     }
 
-    // --- Step 1: obtain the per-employee encrypted "id" token every TNDV9/TrainingProfile
-    // and TNDV9/ProfileWidgets endpoint requires in its POST body. Live captures of the
-    // Training Profile page (New_PeoplesHR_Feature/getSelfEmployeeTrainingHistory/) show
-    // every one of its ~12 XHR calls sharing one identical opaque token per page load -
-    // it is not a session cookie, it travels in the JSON body.
-    //
-    // CONFIRMED (2026-09-07, live page capture): unlike the WebForms "encrypt client-side
-    // with a page-supplied RSA public key" pattern (tools/getworkexperiencedetails), this
-    // screen's server pre-computes the token and drops it straight into the page as a
-    // hidden input, `<input id="EmpNumber" type="hidden" value="<token>">` - no public key
-    // exists anywhere on the page (confirmed: zero hits searching 171KB of markup for
-    // "publickey"/"rsa"/"-----BEGIN"/etc.), and no client-side encryption step is needed
-    // at all. The token's shape matches the `empnumber` field already seen embedded in
-    // GetTrainingRecords' external-training-record rows, confirming this is the same kind
-    // of pre-encrypted employee identifier, just delivered a different way for this screen.
-    //
-    // The page itself is reached the same way tools/getworkexperiencedetails (confirmed
-    // live) reaches its own WebForms screen: resolve the full, digest-bearing URL straight
-    // from BeaconBar.user.metaData.menus via functions/updateurlparams (a live network
-    // capture showed the app's own navigation appending a per-session `&digest=...` query
-    // param that isn't something to compute or guess), then fetch that resolved path
-    // directly. This is confirmed working - the page fetch itself already succeeds.
     const updateUrlData = await BeaconBar.executeFunction("updateUrlParams")("TNDV9/TrainingProfile/Index");
     const pageUrl = updateUrlData.updateUrl || "TNDV9/TrainingProfile/Index";
 
@@ -84,11 +62,6 @@
       };
     }
 
-    // --- Shared TNDV9 JSON fetch helper, matching the plain-fetch pattern already used
-    // by drafts/gettrainingcalendarcoursedetails and tools/gettrainingbudgetallocation for
-    // this same module (Accept/Content-Type/x-requested-with headers, text-then-JSON-parse
-    // so a session-timeout HTML page or a non-2xx response surfaces as a clear error
-    // instead of an opaque JSON-parse exception).
     async function postJson(path, body) {
       const url = `${window.origin}/${reqOptions.sl}/${path}`;
       let response;
@@ -118,10 +91,6 @@
       return parsed || {};
     }
 
-    // ASP.NET JSON dates look like "/Date(1730658600000+0530)/" - same parser used by
-    // drafts/gettrainingcalendarcoursedetails, copied verbatim for consistency. The offset
-    // is the server's local offset the wall-clock date was recorded in, so it has to be
-    // applied to the epoch ms before reading the date parts back out.
     const parseAspNetDate = (dateStr) => {
       if (!dateStr) return "";
       const match = /\/Date\((-?\d+)([+-]\d{4})?\)\//.exec(dateStr);
@@ -139,8 +108,6 @@
       return `${local.getUTCFullYear()}-${pad(local.getUTCMonth() + 1)}-${pad(local.getUTCDate())}`;
     };
 
-    // --- Attended trainings (UAC 5.1) - confirmed via
-    // TNDV9/TrainingEnrollment/GetPastCourseDetails -> PastList[].
     let pastCourseData;
     try {
       pastCourseData = await postJson("TNDV9/TrainingEnrollment/GetPastCourseDetails", { id: empId });
@@ -160,34 +127,35 @@
       cpd: item.cpd || null
     }));
 
-    // --- Applied / registered / direct-enrolled / upcoming (UAC 5.2-5.4) - all
-    // confirmed live via TNDV9/TrainingProfile/TrainingProgramDetails, called repeatedly
-    // with different `apptype` values that each populate a different top-level field on
-    // the same shared response envelope. Confirmed codes (2026-09-07):
+    // --- Applied / nominated / registered / direct-enrolled / upcoming (UAC 5.2-5.4) -
+    // all confirmed live via TNDV9/TrainingProfile/TrainingProgramDetails, called
+    // repeatedly with different `apptype` values that each populate a different
+    // top-level field on the same shared response envelope. Confirmed codes:
     //   "RT" -> registered[]   (Registered Trainings - has a confirmed schedule)
     //   "T"  -> applied[]      (Applied Trainings - the actual UAC 5.2 "applied" list)
     //   "D"  -> directenroll[] (Direct Enrolled Trainings - enrolled without applying)
     //   "N"  -> needs[]        (Training Needs - see below)
-    // "nominated" (UAC 5.3) has no confirmed apptype code yet - every capture's
-    // top-level "nominate" field has been empty so far, including under these four
-    // confirmed codes. Given the pattern above, it almost certainly has its own code
-    // too; left as [] with a TODO rather than guessed, since a wrong code risks silently
-    // returning the wrong category's data under the "nominated" label.
+    //
+    // FIX (2026-09-15): "nominated" (UAC 5.3) was previously left as a hard-coded []
+    // with a TODO, since every earlier capture's top-level "nominate" field had been
+    // empty under all four confirmed apptype codes above - it looked like a dead field
+    // needing its own not-yet-found apptype code. A fresh capture (Dev in progress
+    // Features/T&D Feature/getSelfEmployeeTrainingHistory/TrainingProgramDetails-2)
+    // proved otherwise: calling with apptype "T" - the SAME call already made for
+    // applied[] - returns a real, non-empty "nominate" array (2 items, exactly matching
+    // the real screen's "Nominated Trainings 2" tab count). It is not a separate
+    // category needing its own apptype; it's a sibling field on the "T" response,
+    // identical item shape to applied/registered (confirmed by inspecting a real
+    // "nominate" entry - same schid/coscode/cosname/WFList/RBTList shape mapProgramItem
+    // already handles), so no new network call or mapper is needed - just read the field
+    // that was already sitting unread on a response already being fetched.
     const todayKey = parseAspNetDate(`/Date(${Date.now()})/`);
 
-    // Item shape is identical across "RT"/"T"/"D" - one shared mapper.
     function mapProgramItem(item) {
       const lastWfDetail = (item.WFList || [])
         .map((wf) => (wf.WFDetail || [])[0])
         .filter(Boolean)
         .pop();
-      // RBTList tags a course as a Role-Based Training (RBT) assignment - confirmed
-      // shape from a live TrainingRoleBasedDetails capture:
-      // { rbtid, rbtname, rbtcoscode, rbtcategorycode }. Every earlier capture of
-      // "applied"/"registered"/"directenroll" items had this field present but always
-      // empty; a live test (2026-09-07) confirmed it populates here too when the course
-      // is actually a role-based one (matching the "Role Based Trainings (RBT)" tab on
-      // the Training Profile screen) - it just wasn't being read out before.
       const roleBasedTraining =
         item.RBTList && item.RBTList.length > 0
           ? item.RBTList.map((rbt) => ({
@@ -216,49 +184,31 @@
       };
     }
 
-    async function fetchProgramList(apptype, fieldName) {
-      let programData;
-      try {
-        programData = await postJson("TNDV9/TrainingProfile/TrainingProgramDetails", { id: empId, apptype: apptype });
-      } catch (err) {
-        throw new Error(`${fieldName} (apptype:"${apptype}") - ${err.message}`);
-      }
-      return (programData[fieldName] || []).map(mapProgramItem);
+    async function fetchProgramData(apptype) {
+      return postJson("TNDV9/TrainingProfile/TrainingProgramDetails", { id: empId, apptype: apptype });
     }
 
-    let registered, applied, directEnrolled;
+    let registered, applied, nominated, directEnrolled;
     try {
-      registered = await fetchProgramList("RT", "registered");
-      applied = await fetchProgramList("T", "applied");
-      directEnrolled = await fetchProgramList("D", "directenroll");
+      const rtData = await fetchProgramData("RT");
+      registered = (rtData.registered || []).map(mapProgramItem);
+      const tData = await fetchProgramData("T");
+      applied = (tData.applied || []).map(mapProgramItem);
+      nominated = (tData.nominate || []).map(mapProgramItem);
+      const dData = await fetchProgramData("D");
+      directEnrolled = (dData.directenroll || []).map(mapProgramItem);
     } catch (err) {
       return { status: "ERROR", message: err.message };
     }
 
-    // Upcoming: union of every schedule-bearing category (registered/applied/direct
-    // enrolled), filtered to a future start date and deduplicated by scheduleId - the
-    // same course can legitimately appear in more than one of those three lists.
     const upcomingMap = new Map();
-    [...registered, ...applied, ...directEnrolled].forEach((item) => {
+    [...registered, ...applied, ...nominated, ...directEnrolled].forEach((item) => {
       if (item.startDate && item.startDate >= todayKey && !upcomingMap.has(item.scheduleId)) {
         upcomingMap.set(item.scheduleId, item);
       }
     });
     const upcoming = Array.from(upcomingMap.values());
 
-    // TODO: To Be Confirmed - see note above; no confirmed apptype code yet distinguishes
-    // a nominated-for application from a self-applied one.
-    const nominated = [];
-
-    // --- Training needs (UAC 5.5) - CONFIRMED via a live capture: the same
-    // TrainingProgramDetails endpoint populates "needs[]" instead of "registered[]" when
-    // called with apptype:"N" (Needs), rather than "RT" (Registered Trainings). Field
-    // shape confirmed from that capture: needid/needtype/needdesc identify the need,
-    // approve is the approval status, enroll is the enrollment status ("Not Applicable"
-    // when the need isn't tied to a schedule yet), coscode/cosname/schid (when non-null)
-    // are the related schedule, and jobrel/potenyou/potencomp/objective are the same four
-    // narrative fields used by UAC 2.6/3.7 (Job Relevance / Benefit to employee / Benefit
-    // to company / Objective).
     let needsData;
     try {
       needsData = await postJson("TNDV9/TrainingProfile/TrainingProgramDetails", { id: empId, apptype: "N" });
@@ -284,19 +234,6 @@
       applyDate: parseAspNetDate(item.applydate)
     }));
 
-    // --- External training records (self-reported courses taken outside PeoplesHR,
-    // e.g. an external certification submitted for approval/reimbursement) - confirmed
-    // via TNDV9/TrainingProfile/GetTrainingRecords -> trnrecds[]. Not one of UAC 5.1-5.6's
-    // named categories, but real employee training data worth surfacing (same pattern as
-    // the bonus "registered"/"directEnrolled" fields above).
-    //
-    // IMPORTANT: each record's AttchList[] entries carry an "attchfile" field containing
-    // the full attachment as base64 (a captured sample response was 5.4MB, almost
-    // entirely this field, across just a handful of records with PDF attachments) - that
-    // is binary file content, not something a chat answer should ever include. Only
-    // lightweight attachment metadata (name/type) is kept below; the file content itself
-    // is intentionally dropped. Non-fatal: a failure here doesn't block the UAC
-    // 5.1-5.6 lists above, which are the source of truth.
     let externalTrainingRecords = [];
     try {
       const recordsData = await postJson("TNDV9/TrainingProfile/GetTrainingRecords", { id: empId });
@@ -321,11 +258,38 @@
       externalTrainingRecords = [];
     }
 
-    // --- Optional, supplementary only (matches the solution doc's own note that the
-    // aggregate trainingWidgetData-style summary doesn't substitute for the itemized
-    // lists above): this-year/last-year hours/cost rollup, confirmed via
-    // TNDV9/ProfileWidgets/LoadRegisteredTraining. Failures here are non-fatal - the
-    // itemized lists above are the source of truth for UAC 5.1-5.5.
+    let roleBasedOrganizational = [];
+    let roleBasedCore = [];
+    try {
+      const rbtData = await postJson("TNDV9/TrainingProfile/TrainingRoleBasedDetails", { id: empId });
+      roleBasedOrganizational = (rbtData.RoleBasedOrg || []).map(mapProgramItem);
+      roleBasedCore = (rbtData.RoleBasedCore || []).map(mapProgramItem);
+    } catch (err) {
+      roleBasedOrganizational = [];
+      roleBasedCore = [];
+    }
+
+    let overview = null;
+    try {
+      const employeeDetailsData = await postJson("TNDV9/TrainingProfile/GetEmployeeDetails", { id: empId });
+      const ov = employeeDetailsData.overview || {};
+      overview = {
+        employeeNumber: ov.displayempno || empDisplayNo || "",
+        employeeName: (ov.empname || "").trim() || null,
+        designation: ov.designame || null,
+        joinDate: parseAspNetDate(ov.joindate) || null,
+        joinYear: ov.joinyear || null,
+        pendingApplicationCount: ov.stat_pen || 0,
+        courseCompletionRate: ov.cos_comprate || 0,
+        registeredCourseCount: ov.reg_course || null,
+        completedCourseCount: ov.comp_course || null,
+        applyRate: ov.apply_rate || 0,
+        overallStatusCount: ov.stat_over || 0
+      };
+    } catch (err) {
+      overview = null;
+    }
+
     let summary = null;
     try {
       const widgetData = await postJson("TNDV9/ProfileWidgets/LoadRegisteredTraining", { id: empId });
@@ -351,13 +315,16 @@
       nominated.length === 0 &&
       upcoming.length === 0 &&
       trainingNeeds.length === 0 &&
-      externalTrainingRecords.length === 0;
+      externalTrainingRecords.length === 0 &&
+      roleBasedOrganizational.length === 0 &&
+      roleBasedCore.length === 0;
 
     return {
       status: "SUCCESS",
       message: isEmpty
         ? "No relevant training information was found."
         : `Found training history for employee ${empDisplayNo || empNo}.`,
+      overview: overview,
       attended: attended,
       applied: applied,
       registered: registered,
@@ -366,6 +333,8 @@
       nominated: nominated,
       upcoming: upcoming,
       trainingNeeds: trainingNeeds,
+      roleBasedOrganizational: roleBasedOrganizational,
+      roleBasedCore: roleBasedCore,
       summary: summary
     };
 

@@ -1,8 +1,5 @@
 (async function (data, args, reqOptions) {
   try {
-    // Defensive: guard every step so a missing/malformed BeaconBar context resolves to
-    // a clean NO_ACCESS response instead of an opaque synchronous exception (same
-    // pattern as every other drafts/* tool in this build).
     const menus = (typeof BeaconBar !== "undefined" && BeaconBar.user && BeaconBar.user.metaData && BeaconBar.user.metaData.menus) || [];
     const hasAccess = Array.isArray(menus) && menus.some((menu) => typeof menu === "string" && menu.includes("TNDV9/TrainingNeed/Index?mvc=1&bs=4&App=000002"));
     if (!hasAccess) {
@@ -12,30 +9,17 @@
       };
     }
 
-    // UAC 3.1 ("Display Existing Training Needs") is one requirement covering three
-    // distinct real menu entries/views - Applicant (App=000001), Supervisor (App=000002),
-    // Admin (App=000007). Confirmed live: the same two endpoints (LoadPageData,
-    // GetTrainingNeedDetails) are called for all three, differing only in the
-    // "requestType" field sent in the request body - but WHO can see WHAT differs
-    // completely (an Admin sees company-wide entries no self-employee call ever returns),
-    // so this had to be three separate tools, one per fixed requestType, rather than one
-    // tool with a persona argument - a Supervisor should never be asked "are you an
-    // Admin?" to get their own view. This is the Supervisor variant: requestType
-    // "000002".
     const REQUEST_TYPE = "000002";
 
     const keyword = args.keyword ? String(args.keyword).trim().toLowerCase() : "";
 
-    // Word-based matching, not literal substring matching - same reasoning and helpers as
-    // getTrainingForNeed: a raw request's own wording rarely matches a category name
-    // (or vice versa) as a literal substring, but does share the same underlying words.
     function tokenize(text) {
       return (text || "").toLowerCase().match(/[a-z0-9]+/g) || [];
     }
     function containsAllWords(haystackText, words) {
       if (words.length === 0) return false;
-      const haystackWords = new Set(tokenize(haystackText));
-      return words.every((w) => haystackWords.has(w));
+      const haystackWords = tokenize(haystackText);
+      return words.every((w) => haystackWords.some((hw) => hw.includes(w)));
     }
     const keywordWords = tokenize(keyword);
 
@@ -93,13 +77,6 @@
       return { iso: new Date(parts.ms).toISOString(), display };
     }
 
-    // Step 1: fetch the master list of already-converted need categories
-    // (MainNeed: [{needcode, needname}]) - confirmed live to be identical regardless of
-    // requestType (the same six categories came back for Applicant/Supervisor/Admin
-    // captures alike), i.e. it's a shared company-wide reference list, not scoped per
-    // persona. This is the direct answer to "what existing training needs are available"
-    // when someone is about to log a new one and wants to check if a matching category
-    // already exists.
     const detailsData = await postJson("TNDV9/TrainingNeed/GetTrainingNeedDetails", { requestType: REQUEST_TYPE, WFMainID: "", PerfEmpNo: "" });
     if (!detailsData || !detailsData.Status || detailsData.Status.IsSuccessfull !== true) {
       return {
@@ -112,11 +89,6 @@
       needName: n.needname || ""
     }));
 
-    // Step 2: fetch every individual need entry (raw submissions and already-"Existing"
-    // category records alike) visible in this persona's scope, paginating through every
-    // page LoadPageData reports. Confirmed live: this is a small, low-volume list (single
-    // or low-double-digit TotalPages in every capture seen), so a generous but bounded
-    // page cap is a safety net, not an expected real limit.
     let allRecords = [];
     let pageNo = 1;
     let totalPages = 1;
@@ -156,14 +128,6 @@
       };
     });
 
-    // Note: LoadPageData's DataList entries carry no requester identity field (no
-    // empno/displayempno/empname) in any capture seen - confirmed by direct inspection,
-    // not an oversight here. This tool cannot say WHICH subordinate a given entry belongs
-    // to; it can only report what's visible in the Supervisor-scoped list as a whole.
-
-    // Step 3: apply the optional keyword filter, word-based (see getTrainingForNeed for
-    // why literal substring matching misses real phrasing differences between what a
-    // user says and what's actually on file).
     if (keywordWords.length > 0) {
       existingNeedCategories = existingNeedCategories.filter((c) => containsAllWords(c.needName, keywordWords));
       trainingNeeds = trainingNeeds.filter((n) =>

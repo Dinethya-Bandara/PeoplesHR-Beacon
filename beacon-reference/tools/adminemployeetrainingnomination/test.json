@@ -2,12 +2,12 @@
   "sampleRequest": {
     "courseName": "Database",
     "employees": [
-      "000007"
+      "000419"
     ],
-    "objective": "wefgwgg",
-    "relevanceToJob": "wefgwgg",
-    "benefitToEmployee": "wefgwgg",
-    "benefitToCompany": "wefgwgg"
+    "objective": "test 1",
+    "relevanceToJob": "test 2",
+    "benefitToEmployee": "test 3",
+    "benefitToCompany": "test 4"
   },
   "sanity": {
     "apiResponse": []

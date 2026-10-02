@@ -6,11 +6,11 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "The specific training schedule ID, when already known (e.g. carried over from getSelfEmployeeTrainings or getTrainingCalendarCourseDetails, or from a prior AMBIGUOUS response from this same tool). Either scheduleId or courseName must be provided - prefer courseName when the employee only named a course, since this tool resolves the schedule itself.",
+      "description": "The specific training schedule ID, when already known (e.g. carried over from getSelfEmployeeTrainings or getTrainingCalendarCourseDetails, or from a prior AMBIGUOUS response from this same tool). Either scheduleId or courseName must be provided - prefer courseName when the employee only named a course, since this tool resolves the schedule itself. Eligibility (NOT_ELIGIBLE, including already-applied) is checked as soon as the schedule is resolved, before objective/relevanceToJob/benefitToEmployee/benefitToCompany are required - so it is safe, and preferred, to call this tool first with just scheduleId/courseName to check eligibility before collecting those fields from the user. If eligible, the response has status VALIDATION_ERROR with a missingFields list - collect exactly those fields from the user, then call again with scheduleId (or courseName) plus the fields.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The specific training schedule ID, when already known (e.g. carried over from getSelfEmployeeTrainings or getTrainingCalendarCourseDetails, or from a prior AMBIGUOUS response from this same tool). Either scheduleId or courseName must be provided - prefer courseName when the employee only named a course, since this tool resolves the schedule itself."
+        "description": "The specific training schedule ID, when already known (e.g. carried over from getSelfEmployeeTrainings or getTrainingCalendarCourseDetails, or from a prior AMBIGUOUS response from this same tool). Either scheduleId or courseName must be provided - prefer courseName when the employee only named a course, since this tool resolves the schedule itself. Eligibility (NOT_ELIGIBLE, including already-applied) is checked as soon as the schedule is resolved, before objective/relevanceToJob/benefitToEmployee/benefitToCompany are required - so it is safe, and preferred, to call this tool first with just scheduleId/courseName to check eligibility before collecting those fields from the user. If eligible, the response has status VALIDATION_ERROR with a missingFields list - collect exactly those fields from the user, then call again with scheduleId (or courseName) plus the fields."
       }
     },
     {
@@ -30,11 +30,11 @@
       "type": "string",
       "required": true,
       "defaultValue": null,
-      "description": "The objective of this training application. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the objective.' when blank).",
+      "description": "The objective of this training application. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the objective.' when blank). Do not ask the user for this upfront - call this tool first with just scheduleId/courseName; only if the response is VALIDATION_ERROR with this field listed under missingFields should you ask the user for it and retry.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The objective of this training application. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the objective.' when blank)."
+        "description": "The objective of this training application. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the objective.' when blank). Do not ask the user for this upfront - call this tool first with just scheduleId/courseName; only if the response is VALIDATION_ERROR with this field listed under missingFields should you ask the user for it and retry."
       }
     },
     {
@@ -42,11 +42,11 @@
       "type": "string",
       "required": true,
       "defaultValue": null,
-      "description": "How the training relates to the employee's job. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the relevance to job.' when blank).",
+      "description": "How the training relates to the employee's job. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the relevance to job.' when blank). Do not ask the user for this upfront - call this tool first with just scheduleId/courseName; only if the response is VALIDATION_ERROR with this field listed under missingFields should you ask the user for it and retry.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "How the training relates to the employee's job. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the relevance to job.' when blank)."
+        "description": "How the training relates to the employee's job. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the relevance to job.' when blank). Do not ask the user for this upfront - call this tool first with just scheduleId/courseName; only if the response is VALIDATION_ERROR with this field listed under missingFields should you ask the user for it and retry."
       }
     },
     {
@@ -54,11 +54,11 @@
       "type": "string",
       "required": true,
       "defaultValue": null,
-      "description": "The benefit of this training to the employee. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the benefit to you.' when blank).",
+      "description": "The benefit of this training to the employee. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the benefit to you.' when blank). Do not ask the user for this upfront - call this tool first with just scheduleId/courseName; only if the response is VALIDATION_ERROR with this field listed under missingFields should you ask the user for it and retry.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The benefit of this training to the employee. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the benefit to you.' when blank)."
+        "description": "The benefit of this training to the employee. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the benefit to you.' when blank). Do not ask the user for this upfront - call this tool first with just scheduleId/courseName; only if the response is VALIDATION_ERROR with this field listed under missingFields should you ask the user for it and retry."
       }
     },
     {
@@ -66,11 +66,11 @@
       "type": "string",
       "required": true,
       "defaultValue": null,
-      "description": "The benefit of this training to the company. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the benefit to the company.' when blank).",
+      "description": "The benefit of this training to the company. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the benefit to the company.' when blank). Do not ask the user for this upfront - call this tool first with just scheduleId/courseName; only if the response is VALIDATION_ERROR with this field listed under missingFields should you ask the user for it and retry.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The benefit of this training to the company. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the benefit to the company.' when blank)."
+        "description": "The benefit of this training to the company. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the benefit to the company.' when blank). Do not ask the user for this upfront - call this tool first with just scheduleId/courseName; only if the response is VALIDATION_ERROR with this field listed under missingFields should you ask the user for it and retry."
       }
     },
     {

@@ -1,5 +1,10 @@
 [
   {
+    "toolId": "6a9fe0e71807392514f4c467",
+    "toolName": "subordinatesLeaveapplication",
+    "path": "tools/subordinatesleaveapplication"
+  },
+  {
     "toolId": "690dc56b931a2d61ba0b1ac6",
     "toolName": "selfEmployeeLeaveApplication",
     "path": "tools/selfemployeeleaveapplication"

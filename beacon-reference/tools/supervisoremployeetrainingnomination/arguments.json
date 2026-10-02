@@ -30,11 +30,11 @@
       "type": "string",
       "required": true,
       "defaultValue": null,
-      "description": "The subordinate's employee number or name, exactly as the supervisor said it. This tool validates it internally against the supervisor's actual direct reports for this specific schedule - do not attempt to resolve, guess, or reformat an employee number yourself, and do not ask the supervisor to confirm they are a subordinate first; the tool's response (NOT_SUBORDINATE/AMBIGUOUS/NOT_ELIGIBLE) already tells you that.",
+      "description": "The subordinate's employee number or name, exactly as the supervisor said it. This tool validates it internally against the supervisor's actual direct reports for this specific schedule - do not attempt to resolve, guess, or reformat an employee number yourself, and do not ask the supervisor to confirm they are a subordinate first; the tool's response (NOT_SUBORDINATE/AMBIGUOUS/NOT_ELIGIBLE) already tells you that. This check runs before objective/relevanceToJob/benefitToEmployee/benefitToCompany are required, so it is safe to call this tool with just scheduleId/courseName + subordinate to check eligibility before collecting the narrative fields from the user.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The subordinate's employee number or name, exactly as the supervisor said it. This tool validates it internally against the supervisor's actual direct reports for this specific schedule - do not attempt to resolve, guess, or reformat an employee number yourself, and do not ask the supervisor to confirm they are a subordinate first; the tool's response (NOT_SUBORDINATE/AMBIGUOUS/NOT_ELIGIBLE) already tells you that."
+        "description": "The subordinate's employee number or name, exactly as the supervisor said it. This tool validates it internally against the supervisor's actual direct reports for this specific schedule - do not attempt to resolve, guess, or reformat an employee number yourself, and do not ask the supervisor to confirm they are a subordinate first; the tool's response (NOT_SUBORDINATE/AMBIGUOUS/NOT_ELIGIBLE) already tells you that. This check runs before objective/relevanceToJob/benefitToEmployee/benefitToCompany are required, so it is safe to call this tool with just scheduleId/courseName + subordinate to check eligibility before collecting the narrative fields from the user."
       }
     },
     {
@@ -42,11 +42,11 @@
       "type": "string",
       "required": true,
       "defaultValue": null,
-      "description": "The objective of this training nomination. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the objective.' when blank).",
+      "description": "The objective of this training nomination. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the objective.' when blank). Only enforced once the subordinate is confirmed eligible - do not ask the user for this before that.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The objective of this training nomination. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the objective.' when blank)."
+        "description": "The objective of this training nomination. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the objective.' when blank). Only enforced once the subordinate is confirmed eligible - do not ask the user for this before that."
       }
     },
     {
@@ -54,11 +54,11 @@
       "type": "string",
       "required": true,
       "defaultValue": null,
-      "description": "How the training relates to the subordinate's job. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the relevance to job.' when blank).",
+      "description": "How the training relates to the subordinate's job. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the relevance to job.' when blank). Only enforced once the subordinate is confirmed eligible - do not ask the user for this before that.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "How the training relates to the subordinate's job. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the relevance to job.' when blank)."
+        "description": "How the training relates to the subordinate's job. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the relevance to job.' when blank). Only enforced once the subordinate is confirmed eligible - do not ask the user for this before that."
       }
     },
     {
@@ -66,11 +66,11 @@
       "type": "string",
       "required": true,
       "defaultValue": null,
-      "description": "The benefit of this training to the subordinate. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the benefit to you.' when blank).",
+      "description": "The benefit of this training to the subordinate. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the benefit to you.' when blank). Only enforced once the subordinate is confirmed eligible - do not ask the user for this before that.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The benefit of this training to the subordinate. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the benefit to you.' when blank)."
+        "description": "The benefit of this training to the subordinate. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the benefit to you.' when blank). Only enforced once the subordinate is confirmed eligible - do not ask the user for this before that."
       }
     },
     {
@@ -78,11 +78,11 @@
       "type": "string",
       "required": true,
       "defaultValue": null,
-      "description": "The benefit of this training to the company. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the benefit to the company.' when blank).",
+      "description": "The benefit of this training to the company. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the benefit to the company.' when blank). Only enforced once the subordinate is confirmed eligible - do not ask the user for this before that.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The benefit of this training to the company. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the benefit to the company.' when blank)."
+        "description": "The benefit of this training to the company. Required - the training system itself rejects a submission without this (confirmed live: it returns 'Please specify the benefit to the company.' when blank). Only enforced once the subordinate is confirmed eligible - do not ask the user for this before that."
       }
     },
     {

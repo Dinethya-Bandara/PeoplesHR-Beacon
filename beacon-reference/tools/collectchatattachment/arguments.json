@@ -1,0 +1,20 @@
+{
+  "arguments": [
+    {
+      "name": "fileSelection",
+      "type": "integer",
+      "required": true,
+      "defaultValue": null,
+      "description": "Use the document number from the existing conversation context. Do not ask the user to provide it again, as the entire conversation history is available. For the initial document, use DocumentNo 0.",
+      "advanced": false,
+      "raw": {
+        "name": "fileSelection",
+        "type": "integer",
+        "description": "Use the document number from the existing conversation context. Do not ask the user to provide it again, as the entire conversation history is available. For the initial document, use DocumentNo 0.",
+        "required": true,
+        "_id": "6aba4cd48cf909ad036cfe0a"
+      }
+    }
+  ],
+  "advancedArguments": []
+}

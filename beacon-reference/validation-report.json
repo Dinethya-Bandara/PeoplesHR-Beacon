@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-09-05T19:41:54.991Z",
-  "agentsDiscovered": 28,
-  "toolsDiscovered": 356,
-  "toolsExportedFull": 355,
+  "generatedAt": "2026-09-24T08:00:35.317Z",
+  "agentsDiscovered": 29,
+  "toolsDiscovered": 383,
+  "toolsExportedFull": 382,
   "toolsExportedPartial": 1,
   "toolsFailed": [],
   "missingSectionsByTool": {
@@ -12,8 +12,8 @@
       "source.js"
     ]
   },
-  "functionsDiscovered": 180,
-  "functionsExportedFull": 180,
+  "functionsDiscovered": 183,
+  "functionsExportedFull": 183,
   "functionsExportedPartial": 0,
   "functionsFailed": [],
   "missingSectionsByFunction": {},

@@ -1,5 +1,15 @@
 [
   {
+    "toolId": "690dc562931a2d61ba0b12a0",
+    "toolName": "editOrUpdateQualification",
+    "path": "tools/editorupdatequalification"
+  },
+  {
+    "toolId": "69855f0cf88a0de2d0e5ad25",
+    "toolName": "getBaseCountry",
+    "path": "tools/getbasecountry"
+  },
+  {
     "toolId": "695217fcda1bb97137b67cea",
     "toolName": "createCountry",
     "path": "tools/createcountry"
@@ -28,11 +38,6 @@
     "toolId": "698464ba03255c80cef5c0e6",
     "toolName": "getBaseCurrencyType",
     "path": "tools/getbasecurrencytype"
-  },
-  {
-    "toolId": "69855f0cf88a0de2d0e5ad25",
-    "toolName": "getBaseCountry",
-    "path": "tools/getbasecountry"
   },
   {
     "toolId": "6958f801b2007cecd208af00",
@@ -458,11 +463,6 @@
     "toolId": "6953af48fbe9c497d06f92b1",
     "toolName": "getExtraCurricularActivityType",
     "path": "tools/getextracurricularactivitytype"
-  },
-  {
-    "toolId": "690dc562931a2d61ba0b12a0",
-    "toolName": "editOrUpdateQualification",
-    "path": "tools/editorupdatequalification"
   },
   {
     "toolId": "690dc56b931a2d61ba0b1a67",

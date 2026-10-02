@@ -98,41 +98,15 @@
       }
     },
     {
-      "name": "attachment",
-      "type": "object",
-      "required": false,
-      "defaultValue": null,
-      "description": "Optional fallback for handing the file over as data when the chat's own upload is not available. Normally omit - a file attached to the chat is picked up automatically. Required only when the leave type makes an attachment mandatory and no file can be attached to the chat.",
-      "advanced": true,
-      "raw": {
-        "type": "object",
-        "description": "Optional fallback for handing the file over as data when the chat's own upload is not available. Normally omit - a file attached to the chat is picked up automatically. Required only when the leave type makes an attachment mandatory and no file can be attached to the chat.",
-        "properties": {
-          "fileName": {
-            "type": "string",
-            "description": "File name including its extension. Example: 'medical_certificate.pdf'"
-          },
-          "base64Data": {
-            "type": "string",
-            "description": "The file contents, base64 encoded. A data: prefix is accepted and stripped."
-          }
-        },
-        "required": [
-          "fileName",
-          "base64Data"
-        ]
-      }
-    },
-    {
       "name": "isAttachmentMandatory",
       "type": "boolean",
-      "required": false,
+      "required": true,
       "defaultValue": null,
-      "description": "Set to true when the chosen leave type requires an attachment - read IsAttachmentRequired from the selfEmployeeLeaveBalance response, never hardcode it. When true the tool refuses to submit until a file is attached.",
+      "description": "Set to true when the leave type requires a mandatory attachment (e.g., medical leave). Set this field to true if the user is applying for one of the following leave types: Annual Leave, Sick Leave, or Maternity Leave.",
       "advanced": true,
       "raw": {
         "type": "boolean",
-        "description": "Set to true when the chosen leave type requires an attachment - read IsAttachmentRequired from the selfEmployeeLeaveBalance response, never hardcode it. When true the tool refuses to submit until a file is attached."
+        "description": "Set to true when the leave type requires a mandatory attachment (e.g., medical leave). Set this field to true if the user is applying for one of the following leave types: Annual Leave, Sick Leave, or Maternity Leave."
       }
     },
     {

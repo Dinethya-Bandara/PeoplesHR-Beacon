@@ -1,0 +1,25 @@
+curl --url 'https://hrmmainphqa.phrsandbox.dev/hr/TNAV9/api/Common/GetLocalizedMessage/' \
+  -H 'accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'accept-language: en-GB,en;q=0.9,en-US;q=0.8' \
+  -H 'content-type: application/json' \
+  -b 'ASP.NET_SessionId=3uqu1451asvcq1kscv4joua0; __RequestVerificationToken_L2hy0=lwpHoAnjFZnwEo4RbU2se58WAnSXhDQvBmiGswV3WTGjgDEmRcYwsw4uFdiiMQrlCI-lN-VlK6oYZ-0P4wudHspxvf01; THEME_V8=default; .ASPXAUTH=02032E57286E28A64A3282B3AD6533DE720C72C5F9232AEEDC9ADBABD6C59118AA1F6CDC245E684A94068BA2FD10754570C6A38B51607D82EAC275828AF975AD24304DFB2B82100ABBF84B0D97D35741F85A0DE7048ECDA6B7134F045D652D71; ehrm85=EAAAAIPiGjb3uKDvMgX7BtHkWbkhGenmZ4GPo7c9wF1UmdNHPLOdyxVorvif2VsV99bkEJ2N5n0XWTAk/IHFvJ+ByS2jwFA4BAQ6vB3yWhFky2r8K6wl2+KnozdBq7ovKPBO2oQGdgAotIpzy0eaUa98B+rLM0LCJ+MVJNcpfKLQH+afW4xBIqNsUsGk+BGDMrD4WX6kO/viufhGGzlR4YRGdxro8hUldyRFMrTnFK+mbfRREZ1DiE8MpgRsbVn4XEAiTZ11amUNFD8PRJmWyPhbAWp9/Na+n7V/ZKl/MIeI1EthjFBbw2Ig9LGo41vV2cFP9vEUv5kKibzG78/N9yDWsOsNm3iY/l3K6vFnNDlPqi4yDpBo2NGYl9UNF8Dumkfa8wpxIDzfGKxxAa0OF0gRj/YJ4PWYielqxnAeMCkFgJoycOV4xO9ip6l8o1CAIb8YuJnEEALkog2M1mV1ZVJ5JWPT/n7TBI4RQ4Bv/5fwJC+hkWGlmAf9UlFR584vFoPnd8NZbuUPEpf1EPmk6PqoXXKp2N8ogm5l4T8Xll+GRK2O4RQli3130us/AL0bzb1q5LQ7KXBrhDkvE/XcF1kce+9mxEU6N9Sj5uMd5aEnf8p1Y/ZUvNtqh2UElwyB/twcHS5mEcl7+SKutLpaDHGMLK7p5zWKYZRd7qVhusOk2J0FdxwMjsWdpn59dwTRJlWFOE+xXnFwNJVyTiJpASwUcnvJ2dSUMY9QJ8D2EZg6g8V8LzfE0fY23yaqMJ+O+vGfrqNSonpqRywqcWI4DYjGYiQA7QIl/cqz8g8z326U0kCLv+VVMqkp4eWBYUU43YGIaLAdDlZzGfWT0d6hmtd7GwvcO3G0CkFw7N0WyyOLPCKpmpy5Fn2UfFNVLiYS+Oh2b6ePnNjG8BpnHhjppgyxOFXHVmLzlu/eWgL++2i15yeoSmYPOfzAyKcchCxWHGuCUUveWkPhQX/BiRA/+S+ADrsfaZNwk2eECCOeDxk/8a3s/8r+a/GWdNTqY8g0Givd00+Gn/zZQMYfsDcRIZi0MHoJ7w3XqnUQqzh5P09n2vUIZ2s87UBz2Rrc48UuPlvOiBkSGJeMZ92gONCB6Cpuwuc=; my-application-browser-tab={"guid":"e0fafde7-4502-967d-48fa-26390c80c08e","timestamp":1789971440563}' \
+  -H 'origin: https://hrmmainphqa.phrsandbox.dev' \
+  -H 'priority: u=0, i' \
+  -H 'referer: https://hrmmainphqa.phrsandbox.dev/hr/home/index' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="153", "Not_A Brand";v="8", "Chromium";v="153"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0' \
+  -H 'x-requested-with: XMLHttpRequest' \
+  --data-raw '{"resourceKey":"CommonSelectAllBtn","parameter":"","classKey":"Common"}'
+
+  payload
+  {"resourceKey":"CommonSelectAllBtn","parameter":"","classKey":"Common"}
+
+  response
+  "Select All"
+
+  

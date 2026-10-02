@@ -8,7 +8,7 @@
 
 ## Description
 
-Retrieves the logged-in employee's own training history and status: attended trainings, applied/registered trainings with enrollment and participation-confirmation status, and upcoming trainings. 
+Retrieves the logged-in employee's own training history and status: a profile overview, attended trainings, applied/nominated/registered/direct-enrolled trainings with enrollment and participation-confirmation status, upcoming trainings, training needs, external training records, and Role Based Trainings split into Organizational and Core.
 
 ## Signature
 

@@ -1,7 +1,7 @@
 {
   "sampleRequest": {
-    "courseName": "Dev Test Course 01",
-    "subordinate": "Samuel",
+    "courseName": "QA & Software Testing",
+    "subordinate": "abigail",
     "objective": "test 1",
     "relevanceToJob": "test 2",
     "benefitToEmployee": "test 3",

@@ -1,4 +1,14 @@
 (async function (data, args, reqOptions) {
+  if (
+    !BeaconBar.user?.metaData?.menus?.some(menu =>
+      menu.includes("AbsenceV9/LeaveApplication/LeaveApplication?mvc=1")
+    )
+  ) {
+    return {
+      error: true,
+      message: "You do not have access. Please contact HR Admin."
+    };
+  }
   const myHeaders = new Headers();
   myHeaders.append("__cfafvalue", window.csrf);
   myHeaders.append("accept", "*/*");
@@ -78,19 +88,6 @@
   const sum = args.dayModes.reduce((total, x) => total + x.dayValue, 0);
 
   if (calculateDetails.Status) {
-    /* -------------------------------------------------
-     * Confirmation gate.
-     *
-     * Everything above this point only reads: the approver is resolved and
-     * the leave days are calculated, but nothing has been written. The
-     * first call therefore stops here and hands back a preview, and the
-     * application is submitted only when the caller comes back with
-     * confirmed:true - which it may set only once the user has agreed.
-     *
-     * The gate sits above the attachment block on purpose: an application
-     * the user has not confirmed must not leave an uploaded file behind on
-     * the server.
-     * ------------------------------------------------- */
     const confirmed = args.confirmed === true
       || args.confirmed === 1
       || args.confirmed === "true";
@@ -123,34 +120,11 @@
       };
     }
 
-    // ── Resolve attachment: args.attachment (base64) takes priority, ──
-    // ── then fall back to BeaconBar uploaded files.                  ──
     let file1 = null;
-
-    // if (args.attachment?.base64Data && args.attachment?.fileName) {
-    //   const byteChars = atob(args.attachment.base64Data);
-    //   const byteArr = new Uint8Array(byteChars.length);
-    //   for (let i = 0; i < byteChars.length; i++) {
-    //     byteArr[i] = byteChars.charCodeAt(i);
-    //   }
-    //   const blob = new Blob([byteArr]);
-    //   file1 = new File([blob], args.attachment.fileName);
-    // } else {
-
-    // }
-
-    // ── Guard: block submission if attachment is mandatory but missing ──
     if (args.isAttachmentMandatory) {
       const baoFiles = BeaconBar.getUploadedBaoFiles();
       file1 = baoFiles[0] || null;
-    } else {
-      return {
-        Status: false,
-        Message: "This leave type requires a mandatory attachment. Please upload a file and try again."
-      };
     }
-
-    let attachmentResult;
 
     if (file1) {
       const formData = new FormData();
@@ -170,86 +144,50 @@
         redirect: "follow"
       });
 
-      attachmentResult = await response.json();
-    } else {
-      const saveResponse = await fetch(`${location.origin}/${reqOptions.sl}/AbsenceV9/api/LeaveApplication/SaveLeaveApplication/`, {
-        method: "POST",
-        headers: myHeaders,
-        body: JSON.stringify({
-          EmpNumber: window.logKey,
-          ApprovalEmpNumber: approverNumber,
-          LeaveGroup: args.leaveGroupCode,
-          LeaveYear: args.year,
-          LeaveType: args.leaveTypeCode,
-          FromDateText: args.fromDate,
-          ToDateText: args.toDate,
-          Comment: leaveComment,
-          IsAllDaysEditable: true,
-          LeaveAmount: sum,
-          LeaveAmountToVldt: sum,
-          BreakdownList: calculateDetails.BreakdownList,
-          EarnedLeaveList: [],
-          NotificationList: [],
-          IsMedicalLeave: false,
-          MedicalIssueDateText: "",
-          Attachment: { AttachmentName: "-1" },
-          Attachments: null,
-          Date_1_Text: "",
-          Date_2_Text: "",
-          Date_3_Text: "",
-          Date_4_Text: "",
-          Date_5_Text: "",
-          CoveringEmpNumber: args.coveringEmployeeCode,
-          LoginEmpNumber: window.logKey,
-          ApplicationPage: 1,
-          ExtraMaternityDays: 0
-        }),
-        redirect: "follow"
-      });
-
-      return await saveResponse.json();
+      const attachmentResult = await response.json();
+      if (attachmentResult.Status !== true) {
+        return attachmentResult;
+      }
     }
 
-    if (attachmentResult.Status === true) {
-      const saveResponse = await fetch(`${location.origin}/${reqOptions.sl}/AbsenceV9/api/LeaveApplication/SaveLeaveApplication/`, {
-        method: "POST",
-        headers: myHeaders,
-        body: JSON.stringify({
-          EmpNumber: window.logKey,
-          ApprovalEmpNumber: approverNumber,
-          LeaveGroup: args.leaveGroupCode,
-          LeaveYear: args.year,
-          LeaveType: args.leaveTypeCode,
-          FromDateText: args.fromDate,
-          ToDateText: args.toDate,
-          Comment: leaveComment,
-          IsAllDaysEditable: true,
-          LeaveAmount: sum,
-          LeaveAmountToVldt: sum,
-          BreakdownList: calculateDetails.BreakdownList,
-          EarnedLeaveList: [],
-          NotificationList: [],
-          IsMedicalLeave: false,
-          MedicalIssueDateText: "",
-          Attachments: [{ AttachmentName: file1.name }],
-          Attachment: { AttachmentName: "" },
-          Date_1_Text: "",
-          Date_2_Text: "",
-          Date_3_Text: "",
-          Date_4_Text: "",
-          Date_5_Text: "",
-          CoveringEmpNumber: args.coveringEmployeeCode,
-          LoginEmpNumber: window.logKey,
-          ApplicationPage: 1,
-          ExtraMaternityDays: 0
-        }),
-        redirect: "follow"
-      });
+    const hasAttachment = !!file1;
 
-      return await saveResponse.json();
-    } else {
-      return attachmentResult;
-    }
+    const saveResponse = await fetch(`${location.origin}/${reqOptions.sl}/AbsenceV9/api/LeaveApplication/SaveLeaveApplication/`, {
+      method: "POST",
+      headers: myHeaders,
+      body: JSON.stringify({
+        EmpNumber: window.logKey,
+        ApprovalEmpNumber: approverNumber,
+        LeaveGroup: args.leaveGroupCode,
+        LeaveYear: args.year,
+        LeaveType: args.leaveTypeCode,
+        FromDateText: args.fromDate,
+        ToDateText: args.toDate,
+        Comment: leaveComment,
+        IsAllDaysEditable: true,
+        LeaveAmount: sum,
+        LeaveAmountToVldt: sum,
+        BreakdownList: calculateDetails.BreakdownList,
+        EarnedLeaveList: [],
+        NotificationList: [],
+        IsMedicalLeave: false,
+        MedicalIssueDateText: "",
+        Attachment: hasAttachment ? { AttachmentName: file1.name } : { AttachmentName: "-1" },
+        Attachments: null,
+        Date_1_Text: "",
+        Date_2_Text: "",
+        Date_3_Text: "",
+        Date_4_Text: "",
+        Date_5_Text: "",
+        CoveringEmpNumber: args.coveringEmployeeCode,
+        LoginEmpNumber: window.logKey,
+        ApplicationPage: 1,
+        ExtraMaternityDays: 0
+      }),
+      redirect: "follow"
+    });
+
+    return await saveResponse.json();
   } else {
     return calculateDetails;
   }

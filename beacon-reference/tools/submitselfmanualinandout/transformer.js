@@ -13,7 +13,7 @@
       menu.includes("TNAV9/ManualInOut/ManualInOut/2?mvc=1")
     )
   ) {
-    return { error: true, message: "You do not have access to submit your manual In and Out. Please contact HR Admin." };
+    return { error: true, message: "You do not have access to edit your manual In and Out. Please contact HR Admin." };
   }
 
   function pad(n) { return String(n).padStart(2, "0"); }
@@ -63,23 +63,32 @@
     return Number(`${parsed.yyyy}${parsed.mm}${parsed.dd}`);
   }
 
-  // Comparable YYYYMMDDHHmm key, for checking a time against the grace window.
-  function toMinuteKey(parsed, hhmm) {
-    if (!parsed || !hhmm || hhmm.indexOf(":") === -1) return null;
-    const [h, m] = hhmm.split(":");
-    return Number(`${parsed.yyyy}${parsed.mm}${parsed.dd}${pad(h)}${pad(m)}`);
-  }
-
   // Rows carry DatInDate as an ISO string - the unambiguous way to match a day.
   function isoDayOf(value) {
     if (!value || typeof value !== "string") return null;
     return value.split("T")[0];
   }
 
+  // Comparable YYYYMMDDHHmm key, for checking a time against the shift window.
+  function toMinuteKey(parsed, hhmm) {
+    if (!parsed || !hhmm || hhmm.indexOf(":") === -1) return null;
+    const [h, m] = hhmm.split(":");
+    return Number(`${parsed.yyyy}${parsed.mm}${parsed.dd}${pad(h)}${pad(m)}`);
+  }
+
   /* -------------------------------------------------
-   * ShiftToolTip carries the window the server actually enforces:
+   * Everything this tool knows about the shift comes out of the row's
+   * own ShiftToolTip - nothing about it is assumed or hard-coded here:
    * "19.00 - 03.00 [Grace Start Time - 01/03/24 14:00 Grace End Time 02/03/24 13:00]"
    * The two-digit dates follow the same culture as everything else.
+   *
+   * spansNextDay is the fact that settles whether an Out time earlier on
+   * the clock than the In time is legal. When the API's own window runs
+   * past midnight the Out belongs to the following date, so "In before
+   * Out" is only ever true of the full In/Out date-times - never of the
+   * bare clock values. The captured UI submit proves it: a 09.00 - 18.00
+   * shift with IsMidNightShift 0, window 08/11/24 05:00 -> 09/11/24 03:00,
+   * was accepted with In 08/11 06:00 and Out 09/11 02:00.
    * ------------------------------------------------- */
   function parseGraceWindow(toolTip) {
     if (!toolTip || typeof toolTip !== "string") return null;
@@ -91,13 +100,103 @@
       const dd = isUsFormat ? b : a;
       const mm = isUsFormat ? a : b;
       const yyyy = String(y).length === 2 ? `20${y}` : String(y);
-      return Number(`${yyyy}${pad(mm)}${pad(dd)}${pad(h)}${pad(min)}`);
+      return {
+        dayKey: Number(`${yyyy}${pad(mm)}${pad(dd)}`),
+        key: Number(`${yyyy}${pad(mm)}${pad(dd)}${pad(h)}${pad(min)}`),
+        text: `${pad(dd)}/${pad(mm)}/${yyyy} ${pad(h)}:${pad(min)}`
+      };
     }
 
     const start = build(m[1], m[2], m[3], m[4], m[5]);
     const end = build(m[6], m[7], m[8], m[9], m[10]);
-    if (!Number.isFinite(start) || !Number.isFinite(end) || start > end) return null;
-    return { start, end, text: toolTip.split("[")[0].trim() };
+    if (!Number.isFinite(start.key) || !Number.isFinite(end.key) || start.key > end.key) return null;
+
+    // "09.00 - 18.00" - the shift's own start and end, as the API states them.
+    const shiftText = toolTip.split("[")[0].trim();
+    const clock = shiftText.match(/(\d{1,2})[.:](\d{2})\s*-\s*(\d{1,2})[.:](\d{2})/);
+
+    return {
+      start: start.key,
+      end: end.key,
+      startDayKey: start.dayKey,
+      endDayKey: end.dayKey,
+      startText: start.text,
+      endText: end.text,
+      spansNextDay: end.dayKey > start.dayKey,
+      shiftInClock: clock ? `${pad(clock[1])}:${clock[2]}` : null,
+      shiftOutClock: clock ? `${pad(clock[3])}:${clock[4]}` : null,
+      text: shiftText
+    };
+  }
+
+  /* -------------------------------------------------
+   * Which date a time belongs to is decided by the window the API
+   * returned, never by a rule of our own. resolveOutDate mirrors what
+   * the UI does when the user types an Out time that sits earlier on the
+   * clock than the In time: keep the same date while that is legal, and
+   * otherwise roll to the next date when - and only when - the shift the
+   * API described actually reaches there.
+   * ------------------------------------------------- */
+  function addDays(parsed, days) {
+    return fromJsDate(new Date(Number(parsed.yyyy), Number(parsed.mm) - 1, Number(parsed.dd) + days));
+  }
+
+  function resolveOutDate(inParsed, inHHMM, outHHMM, rowInDateText, rowOutDateText, window, isMidNightShift) {
+    const sameDay = { parsed: inParsed, text: formatCultureDate(inParsed), rolled: false, source: "sameDay" };
+
+    // What the grid itself pre-filled, when it already spans two dates.
+    let gridDay = null;
+    if (rowInDateText && rowOutDateText && rowInDateText !== rowOutDateText) {
+      const gridParsed = parseCultureDate(rowOutDateText);
+      if (gridParsed) gridDay = { parsed: gridParsed, text: rowOutDateText, rolled: true, source: "grid" };
+    }
+
+    const inKey = toMinuteKey(inParsed, inHHMM);
+    const sameKey = toMinuteKey(inParsed, outHHMM);
+    if (inKey === null || sameKey === null) return gridDay || sameDay;
+
+    if (!window) {
+      /* No parsable window - the grid's own dates, then IsMidNightShift,
+       * are all the API has said about whether this shift crosses midnight. */
+      if (gridDay) return gridDay;
+      if (isMidNightShift === 1 && sameKey <= inKey) {
+        const next = addDays(inParsed, 1);
+        return { parsed: next, text: formatCultureDate(next), rolled: true, source: "isMidNightShift" };
+      }
+      return sameDay;
+    }
+
+    // The same date is right whenever it is both after the In and inside the window.
+    if (sameKey > inKey && sameKey >= window.start && sameKey <= window.end) return sameDay;
+
+    // The window itself is what licenses rolling to the next date.
+    if (window.spansNextDay) {
+      const next = addDays(inParsed, 1);
+      const nextKey = toMinuteKey(next, outHHMM);
+      if (nextKey !== null && nextKey >= window.start && nextKey <= window.end) {
+        return { parsed: next, text: formatCultureDate(next), rolled: true, source: "graceWindow" };
+      }
+    }
+
+    return gridDay || sameDay;
+  }
+
+  /* A single time (a break edge) placed on whichever of the two dates the
+   * API's window puts it on. inside:false means it is on neither. */
+  function resolveTimeInWindow(baseParsed, hhmm, window) {
+    const sameKey = toMinuteKey(baseParsed, hhmm);
+    if (!window) return { parsed: baseParsed, key: sameKey, inside: true };
+    if (sameKey !== null && sameKey >= window.start && sameKey <= window.end) {
+      return { parsed: baseParsed, key: sameKey, inside: true };
+    }
+    if (window.spansNextDay) {
+      const next = addDays(baseParsed, 1);
+      const nextKey = toMinuteKey(next, hhmm);
+      if (nextKey !== null && nextKey >= window.start && nextKey <= window.end) {
+        return { parsed: next, key: nextKey, inside: true };
+      }
+    }
+    return { parsed: baseParsed, key: sameKey, inside: false };
   }
 
   /* -------------------------------------------------
@@ -124,6 +223,15 @@
 
   function hasTime(val) {
     return val !== undefined && val !== null && val !== -1;
+  }
+
+  /* SubmitManualAdjustment posts a time as the string "HH.MM" ("06.00",
+   * "17.30") - the same clock value the grid returns as the number HH.MM,
+   * spelled the way the captured payload spells it. */
+  function toWireTime(hhmm) {
+    if (!hhmm || typeof hhmm !== "string" || !hhmm.includes(":")) return null;
+    const [h, m] = hhmm.split(":");
+    return `${pad(h)}.${pad(m)}`;
   }
 
   /* -------------------------------------------------
@@ -192,21 +300,12 @@
   }
 
   /* -------------------------------------------------
-   * Shapes a grid row into the row the Submit button posts.
-   * GetGridDataByCriteria returns a read model; SubmitManualAdjustment
-   * wants the edit model, and they are not the same shape - the grid
-   * carries ShiftHTCode / RosterCode / SubmitStatus / WFMainId /
-   * IsTimeExceedsConfiguredGrace / IsShiftAdjustmentLocked / ErrMessage,
-   * none of which the real submit sends, and it omits the Old* snapshot
-   * and the enablement flags, all of which the real submit does send.
-   *
-   * Two details taken straight from the captured payload:
-   *   - ReasonCode is normalised to "-1" (the "no reason" dropdown value)
-   *     while OldReasonCode keeps the grid's raw "" - they differ on purpose.
-   *   - InTimeHighlightCSS rides along only on rows flagged IsHighlightInTime.
+   * Shapes a grid row the way the Valid Swipes tab posts it:
+   * empty lists instead of nulls, plus the Old* before-snapshot
+   * and the enablement flags the grid response does not carry.
    * ------------------------------------------------- */
-  function toSubmitRow(row) {
-    const shaped = {
+  function toValidSwipeRow(row) {
+    return {
       DatInDate: row.DatInDate,
       EmpNumber: row.EmpNumber,
       EmpDisplayNumber: row.EmpDisplayNumber,
@@ -230,7 +329,7 @@
       DAUpdatedPurchesList: Array.isArray(row.DAUpdatedPurchesList) ? row.DAUpdatedPurchesList : [],
       BreakCount: row.BreakCount,
       PunchesCount: row.PunchesCount,
-      ReasonCode: (row.ReasonCode === "" || row.ReasonCode === null || row.ReasonCode === undefined) ? "-1" : row.ReasonCode,
+      ReasonCode: row.ReasonCode,
       Comment: row.Comment,
       DynamicColumnText: row.DynamicColumnText,
       LeaveDays: row.LeaveDays,
@@ -276,9 +375,6 @@
       NopayHours: row.NopayHours,
       IsShiftOffShift: row.IsShiftOffShift === true
     };
-
-    if (shaped.IsHighlightInTime) shaped.InTimeHighlightCSS = "ManualTime_Highlight";
-    return shaped;
   }
 
   function pickRowDebug(row) {
@@ -296,14 +392,16 @@
       IsSelected: row.IsSelected,
       Comment: row.Comment,
       ReasonCode: row.ReasonCode,
-      OldReasonCode: row.OldReasonCode,
       InOutRecordType: row.InOutRecordType,
       RecordStatus: row.RecordStatus,
       IsEnabled: row.IsEnabled,
       IsAdjustmentEnabled: row.IsAdjustmentEnabled,
-      IsOutTimeExceedConfirmed: row.IsOutTimeExceedConfirmed,
+      OldBreakCount: row.OldBreakCount,
       BreakCount: row.BreakCount,
-      DABreakListCount: Array.isArray(row.DABreakList) ? row.DABreakList.length : 0
+      DABreakListCount: Array.isArray(row.DABreakList) ? row.DABreakList.length : 0,
+      // The break entries themselves - a break-only edit lives or dies on
+      // these, so a failure has to show what actually went out.
+      DABreakList: Array.isArray(row.DABreakList) ? row.DABreakList : null
     };
   }
 
@@ -313,7 +411,7 @@
   if (!args || !args.date) {
     return {
       needsInput: true,
-      message: `Please tell me the date (${dateFormatName}) you want to add your manual In and Out for.`,
+      message: `Please tell me the date (${dateFormatName}) of the manual In and Out you want to edit.`,
       missingFields: ["Date"],
       expectedDateFormat: dateFormatName
     };
@@ -333,6 +431,7 @@
     "content-type": "application/json",
     "x-requested-with": "XMLHttpRequest"
   };
+  // The break and summary calls go out as jQuery ajax, with its own accept.
   const ajaxHeaders = {
     "accept": "application/json, text/javascript, */*; q=0.01",
     "content-type": "application/json",
@@ -341,7 +440,7 @@
 
   /* -------------------------------------------------
    * Load the self ManualInOut page (PageMode 2) through the
-   * digest-aware URL and read filterModel from it.
+   * digest-aware URL and read filterModel / model from it.
    * ------------------------------------------------- */
   const updateUrl = await BeaconBar.executeFunction("updateUrlParams")(
     "TNAV9/ManualInOut/ManualInOut/2?mvc=1"
@@ -357,10 +456,11 @@
   });
   const pageHtml = await pageRes.text();
   const filterModel = parseJsonLiteral(pageHtml, "filterModel") || {};
+  const pageModel = parseJsonLiteral(pageHtml, "model") || {};
 
   const pageToken = filterModel.LoginEmpNumber || null;
   const selfToolToken = await BeaconBar.executeFunction("selfEmployeeManualInAndOutDetails")();
-  // Prefer the page token for this screen's search calls; fall back to the helper token.
+  // Prefer the page token for this screen's API calls; fall back to the helper token.
   const empNumber = pageToken || selfToolToken;
 
   if (!empNumber) {
@@ -385,7 +485,7 @@
   const rosterResult = await safePostJson(
     `${baseUrl}/TNAV9/api/Common/GetRostersByGroupId/`,
     { rosterGroup: String(rosterGroup) },
-    ajaxHeaders
+    { "accept": "application/json, text/javascript, */*; q=0.01", "content-type": "application/json", "x-requested-with": "XMLHttpRequest" }
   );
   const rosterList = Array.isArray(rosterResult.body) ? rosterResult.body : [];
 
@@ -471,19 +571,51 @@
   const gridData = gridResult.body;
   const recordList = (gridData && gridData.ManualInOutDetailList) || [];
 
-  const gridRow = recordList.find(function (item) {
+  /* -------------------------------------------------
+   * Page-load parity, in the order the screen itself calls them:
+   * GetRostersByGroupId (above) -> GetGridDataByCriteria ->
+   * GetManuallyTimeFixedData -> GetManualRejectedData ->
+   * GetDynamicEmployeeSummary.
+   *
+   * GetManuallyTimeFixedData and GetManualRejectedData are both posted
+   * the SAME array - the InOutRecordType 1 rows the grid is showing.
+   * The captured page load sends exactly that array to both: its first
+   * row is 2024-11-08, the first type 1 row, not 2024-11-01, the first
+   * row overall. GetManualRejectedData is not a {FilterMode, FromDateText,
+   * ToDateText, EmpNumber} search.
+   * ------------------------------------------------- */
+  const submittableRows = recordList
+    .filter(function (r) { return r.InOutRecordType === 1; })
+    .map(toValidSwipeRow);
+
+  const fixedResult = await safePostJson(
+    `${baseUrl}/TNAV9/api/ManualInOut/GetManuallyTimeFixedData/`,
+    submittableRows,
+    jsonHeaders
+  );
+  const fixedList = Array.isArray(fixedResult.body) ? fixedResult.body : [];
+
+  await safePostJson(
+    `${baseUrl}/TNAV9/api/ManualInOut/GetManualRejectedData/`,
+    submittableRows,
+    jsonHeaders
+  );
+
+  await safePostJson(`${baseUrl}/TNAV9/api/Common/GetDynamicEmployeeSummary/`, {
+    pageId: 1,
+    empNumber,
+    fromDateText,
+    toDateText
+  }, jsonHeaders);
+
+  const gridIndex = recordList.findIndex(function (item) {
     return isoDayOf(item.DatInDate) === targetIsoDay;
   });
 
-  /* -------------------------------------------------
-   * The day-state gate. Which grid the date landed in decides
-   * everything that follows, so it is settled here - before any time
-   * or reason is asked for - rather than after the user has typed them.
-   * ------------------------------------------------- */
-  if (!gridRow) {
+  if (gridIndex < 0) {
     return {
       error: true,
-      message: `${dateText} is not in the Manual In and Out page for you - there is no attendance day recorded for that date. Please check the date and try again.`,
+      message: `${dateText} is not in the system for you - there is no attendance day recorded for that date, so there is nothing to edit. Please check the date and try again.`,
       diagnostics: {
         searchedDate: dateText,
         dateSelectMode: requestedMode,
@@ -495,73 +627,44 @@
     };
   }
 
-  /* A day sitting in the Valid Swipes grid already has its In and Out
-   * recorded - it is an edit, not an add. Hand it to the edit tool with
-   * what is on the record so the user can decide. */
-  const EDIT_TOOL = "editSelfManualInAndOut";
-
-  function handOffToEdit(row) {
-    const inText = hasTime(row.InTime) ? (row.InTimeText || hhmmToText(row.InTime)) : null;
-    const outText = hasTime(row.OutTime) ? (row.OutTimeText || hhmmToText(row.OutTime)) : null;
-    return {
-      alreadyExists: true,
-      useTool: EDIT_TOOL,
-      message: `You have already submitted your manual In and Out for ${dateText} (In: ${inText || "-"}, Out: ${outText || "-"}). There is nothing to add - to change it, use the ${EDIT_TOOL} tool.`,
-      current: {
-        date: dateText,
-        inDate: row.InDateText || null,
-        outDate: row.OutDateText || null,
-        inTime: inText,
-        outTime: outText,
-        shift: row.ShiftAbbreviation || null,
-        status: row.RecordStatusText || null,
-        comment: row.Comment || null,
-        breakCount: row.BreakCount
-      }
-    };
-  }
-
-  if (gridRow.InOutRecordType === 3) {
-    return handOffToEdit(gridRow);
-  }
+  const gridRow = recordList[gridIndex];
 
   /* -------------------------------------------------
-   * The grid is split across tabs by InOutRecordType, and the
-   * Submit button posts only the rows of the tab you are on -
-   * the captured payload drops the one InOutRecordType 3 row
-   * that sat between two type 1 rows. Mixing types in one
-   * submit is what the server rejects, so scope the list to
-   * the tab the selected day actually lives in.
-   * ------------------------------------------------- */
-  const tabRecordType = gridRow.InOutRecordType;
-  const tabSourceRows = recordList.filter(function (r) { return r.InOutRecordType === tabRecordType; });
-  const tabRows = tabSourceRows.map(toSubmitRow);
-  const tabIndex = tabSourceRows.findIndex(function (r) { return isoDayOf(r.DatInDate) === targetIsoDay; });
-  const targetRow = tabRows[tabIndex];
-
-  /* -------------------------------------------------
-   * Valid Swipes parity: the page posts the whole valid-swipe
-   * array to GetManuallyTimeFixedData when that tab is opened.
+   * Valid Swipes tab: only these rows are editable. The manually-fixed
+   * list was already loaded with the rest of the page above.
    * ------------------------------------------------- */
   const validSwipeRows = recordList
     .filter(function (r) { return r.InOutRecordType === 3; })
-    .map(toSubmitRow);
+    .map(toValidSwipeRow);
 
-  const fixedResult = await safePostJson(
-    `${baseUrl}/TNAV9/api/ManualInOut/GetManuallyTimeFixedData/`,
-    validSwipeRows,
-    jsonHeaders
-  );
-  const fixedList = Array.isArray(fixedResult.body) ? fixedResult.body : [];
   const previouslyManuallyFixed = fixedList.some(function (r) {
     return isoDayOf(r.DatInDate) === targetIsoDay
       && (!gridRow.EmpDisplayNumber || r.EmpDisplayNumber === gridRow.EmpDisplayNumber);
   });
 
+  const validIndex = validSwipeRows.findIndex(function (r) {
+    return isoDayOf(r.DatInDate) === targetIsoDay;
+  });
+
+  if (validIndex < 0) {
+    return {
+      error: true,
+      message: `${dateText} has no valid swipe to edit - it is not in the Valid Swipes list, so its In and Out times cannot be changed here.`,
+      current: {
+        date: dateText,
+        shift: gridRow.ShiftAbbreviation || null,
+        status: gridRow.RecordStatusText || null,
+        inTime: hasTime(gridRow.InTime) ? (gridRow.InTimeText || hhmmToText(gridRow.InTime)) : null,
+        outTime: hasTime(gridRow.OutTime) ? (gridRow.OutTimeText || hhmmToText(gridRow.OutTime)) : null
+      },
+      editableDates: validSwipeRows.slice(0, 20).map(function (r) { return r.InDateText; })
+    };
+  }
+
+  const targetRow = validSwipeRows[validIndex];
+
   /* -------------------------------------------------
-   * Locked or disabled rows cannot be written to. Catch this
-   * here so the user gets a reason instead of a server error
-   * after they have already confirmed.
+   * Locked or disabled rows cannot be changed.
    * ------------------------------------------------- */
   const blockers = [];
   if (targetRow.IsLockedRecord === true) blockers.push("the record is locked");
@@ -573,7 +676,7 @@
   if (blockers.length > 0) {
     return {
       error: true,
-      message: `A manual In and Out cannot be added for ${dateText} because ${blockers.join(" and ")}. Please contact HR Admin.`,
+      message: `The manual In and Out for ${dateText} cannot be edited because ${blockers.join(" and ")}. Please contact HR Admin.`,
       current: {
         date: dateText,
         inTime: targetRow.InTimeText || hhmmToText(targetRow.InTime),
@@ -583,7 +686,7 @@
   }
 
   /* -------------------------------------------------
-   * Step 3: work out what is already there and what is missing.
+   * Step 3: check there are existing values to edit.
    * ------------------------------------------------- */
   const hasExistingIn = hasTime(targetRow.InTime);
   const hasExistingOut = hasTime(targetRow.OutTime);
@@ -591,84 +694,151 @@
   const currentInText = hasExistingIn ? (targetRow.InTimeText || hhmmToText(targetRow.InTime)) : null;
   const currentOutText = hasExistingOut ? (targetRow.OutTimeText || hhmmToText(targetRow.OutTime)) : null;
 
-  // Backstop for a submitting-grid row that already carries both halves -
-  // same answer as the Valid Swipes gate above, there is nothing to add.
-  if (hasExistingIn && hasExistingOut) {
-    const handOff = handOffToEdit(targetRow);
-    handOff.current.previouslyManuallyFixed = previouslyManuallyFixed;
-    return handOff;
+  if (!hasExistingIn && !hasExistingOut) {
+    return {
+      error: true,
+      message: `There is no In or Out time recorded for ${dateText}, so there is nothing to edit. Adding a new manual In and Out is handled by the submitSelfManualInAndOut tool.`,
+      current: { date: dateText, inTime: null, outTime: null }
+    };
   }
 
-  // Adding must not silently overwrite the half that is already there.
-  if (hasExistingIn && args.inTime && args.inTime !== currentInText) {
-    return {
-      error: true,
-      message: `${dateText} already has an In time of ${currentInText}. This tool only adds a missing time - to change ${currentInText} to ${args.inTime}, use the editSelfManualInAndOut tool.`,
-      current: { date: dateText, inTime: currentInText, outTime: currentOutText }
-    };
-  }
-  if (hasExistingOut && args.outTime && args.outTime !== currentOutText) {
-    return {
-      error: true,
-      message: `${dateText} already has an Out time of ${currentOutText}. This tool only adds a missing time - to change ${currentOutText} to ${args.outTime}, use the editSelfManualInAndOut tool.`,
-      current: { date: dateText, inTime: currentInText, outTime: currentOutText }
-    };
-  }
+  /* -------------------------------------------------
+   * Break cell parity: the grid row carries DABreakList null on every
+   * row, so the day's real breaks have to come from
+   * GetEmployeeBreaksByDate - which is what the page loads when the
+   * break count is clicked. Reading the list off the row instead left
+   * it permanently empty, so an existing break was never shown and a
+   * second one was appended instead of the first being changed.
+   * ------------------------------------------------- */
+  const rowEmpToken = targetRow.EmpNumber || empNumber;
+  const breaksResult = await safePostJson(
+    `${baseUrl}/TNAV9/api/ManualInOut/GetEmployeeBreaksByDate/`,
+    { empNumber: rowEmpToken, datInDateText: dateText },
+    ajaxHeaders
+  );
+  const existingBreaks = Array.isArray(breaksResult.body) ? breaksResult.body : [];
+  const currentBreak = existingBreaks.length > 0 ? existingBreaks[0] : null;
+  const currentBreakInText = currentBreak ? (currentBreak.BStartTimeText || hhmmToText(currentBreak.BStartTime)) : null;
+  const currentBreakOutText = currentBreak ? (currentBreak.BEndTimeText || hhmmToText(currentBreak.BEndTime)) : null;
 
   /* -------------------------------------------------
    * Step 4 and 5: collect In Time, Out Time, reason, and the
    * optional break pair.
    * ------------------------------------------------- */
-  const missing = [];
-  if (!hasExistingIn && !args.inTime) missing.push("In Time");
-  if (!hasExistingOut && !args.outTime) missing.push("Out Time");
-  if (!args.reason) missing.push("Reason");
-
+  const wantsInChange = !!args.inTime;
+  const wantsOutChange = !!args.outTime;
+  const wantsBreakChange = !!(args.breakInTime || args.breakOutTime);
   const shiftWindow = parseGraceWindow(targetRow.ShiftToolTip);
 
-  if (missing.length > 0) {
+  /* What the API says about this shift, handed to the caller so the user
+   * is asked for times against the real period rather than a guess. */
+  const shiftInfo = {
+    shift: targetRow.ShiftAbbreviation || null,
+    shiftPeriod: shiftWindow ? shiftWindow.text : null,
+    shiftStart: shiftWindow ? shiftWindow.shiftInClock : null,
+    shiftEnd: shiftWindow ? shiftWindow.shiftOutClock : null,
+    shiftAllowedFrom: shiftWindow ? shiftWindow.startText : null,
+    shiftAllowedTo: shiftWindow ? shiftWindow.endText : null,
+    shiftCanEndNextDay: shiftWindow ? shiftWindow.spansNextDay : (targetRow.IsMidNightShift === 1),
+    isMidNightShift: targetRow.IsMidNightShift,
+    shiftToolTip: targetRow.ShiftToolTip || null
+  };
+
+  /* The row's own dates - offered as the defaults when asking. */
+  const suggestedInDateText = targetRow.InDateText || dateText;
+  const suggestedOutDateText = targetRow.OutDateText || dateText;
+  const canEndNextDay = shiftInfo.shiftCanEndNextDay;
+  const nextDayNote = canEndNextDay
+    ? ` This shift can end on the following day, so the Out Date may be ${formatCultureDate(addDays(parseCultureDate(suggestedInDateText) || parsedDate, 1))} rather than ${suggestedInDateText} - ask, do not assume.`
+    : "";
+
+  if (!wantsInChange && !wantsOutChange && !wantsBreakChange) {
+    /* The user often arrives here from the submit tool, having been told
+     * the day was already submitted - lead with that so the answer is the
+     * same whichever way they came in. */
+    const alreadySubmitted = hasExistingIn && hasExistingOut
+      ? `You have already submitted your manual In and Out for ${dateText} (In: ${currentInText}, Out: ${currentOutText}). `
+      : "";
     return {
       needsInput: true,
-      message: `Please give me the following to add your manual In and Out for ${dateText}: ${missing.join(", ")}. Times are HH:mm. Break In Time and Break Out Time are optional - add them only if you want to.`,
-      missingFields: missing,
-      current: {
+      message: `${alreadySubmitted}Here is what is currently recorded for ${dateText}. Please give me the new In Date and In Time, and the new Out Date and Out Time, separately - dates are ${dateFormatName} and times are HH:mm - and the reason for the change.${nextDayNote} Break In Time and Break Out Time are optional - add them only if you want to.`,
+      suggested: { inDate: suggestedInDateText, outDate: suggestedOutDateText },
+      current: Object.assign({
         date: dateText,
+        inDate: suggestedInDateText,
+        outDate: suggestedOutDateText,
         inTime: currentInText,
         outTime: currentOutText,
-        shift: targetRow.ShiftAbbreviation || null,
-        shiftPeriod: shiftWindow ? shiftWindow.text : null,
-        shiftToolTip: targetRow.ShiftToolTip || null,
+        breakInTime: currentBreakInText,
+        breakOutTime: currentBreakOutText,
         status: targetRow.RecordStatusText || null,
         previouslyManuallyFixed
-      }
+      }, shiftInfo),
+      missingFields: ["In Date", "In Time", "Out Date", "Out Time", "Reason"]
     };
+  }
+
+  /* Whenever a time is being changed, all four of In Date, In Time, Out
+   * Date and Out Time are needed together - never one on its own. A shift
+   * can end on the date after it started, so the Out Date is a real
+   * choice and not something to decide on the user's behalf. A break-only
+   * change leaves the times and dates as they are and needs none of them
+   * restated. */
+  if (wantsInChange || wantsOutChange) {
+    const needed = [];
+    if (!args.inDate) needed.push("In Date");
+    if (!wantsInChange) needed.push("In Time");
+    if (!args.outDate) needed.push("Out Date");
+    if (!wantsOutChange) needed.push("Out Time");
+
+    if (needed.length > 0) {
+      const neededText = needed.length > 1
+        ? `${needed.slice(0, -1).join(", ")} and ${needed[needed.length - 1]}`
+        : needed[0];
+      return {
+        needsInput: true,
+        message: `Please give me the ${neededText} as well - I need the In Date and In Time, and the Out Date and Out Time, separately for ${dateText}. Dates are ${dateFormatName} and times are HH:mm.${nextDayNote} Currently recorded: In ${suggestedInDateText} ${currentInText || "-"}, Out ${suggestedOutDateText} ${currentOutText || "-"}.`,
+        missingFields: needed,
+        suggested: { inDate: suggestedInDateText, outDate: suggestedOutDateText },
+        current: Object.assign({
+          date: dateText,
+          inDate: suggestedInDateText,
+          outDate: suggestedOutDateText,
+          inTime: currentInText,
+          outTime: currentOutText
+        }, shiftInfo)
+      };
+    }
   }
 
   if ((args.breakInTime && !args.breakOutTime) || (!args.breakInTime && args.breakOutTime)) {
     return {
       needsInput: true,
-      message: "You gave only one break time. Please provide both Break In Time and Break Out Time (HH:mm), or leave both out to continue without a break.",
+      message: "You gave only one break time. Please provide both Break In Time and Break Out Time (HH:mm), or leave both out to keep the break unchanged.",
       missingFields: [args.breakInTime ? "Break Out Time" : "Break In Time"]
+    };
+  }
+
+  if (!args.reason) {
+    return {
+      needsInput: true,
+      message: `Please tell me the reason for changing the manual In and Out on ${dateText}.`,
+      missingFields: ["Reason"],
+      current: { date: dateText, inTime: currentInText, outTime: currentOutText }
     };
   }
 
   /* -------------------------------------------------
    * Validate the new values (HH:mm in, HH.MM on the wire).
    * ------------------------------------------------- */
-  let newIn = null;
-  if (!hasExistingIn) {
-    newIn = timeToHHMM(args.inTime);
-    if (newIn === null) {
-      return { error: true, message: "In Time must be in HH:mm 24-hour format, e.g. 08:30." };
-    }
+  const newIn = wantsInChange ? timeToHHMM(args.inTime) : null;
+  if (wantsInChange && newIn === null) {
+    return { error: true, message: "In Time must be in HH:mm 24-hour format, e.g. 08:30." };
   }
 
-  let newOut = null;
-  if (!hasExistingOut) {
-    newOut = timeToHHMM(args.outTime);
-    if (newOut === null) {
-      return { error: true, message: "Out Time must be in HH:mm 24-hour format, e.g. 17:30." };
-    }
+  const newOut = wantsOutChange ? timeToHHMM(args.outTime) : null;
+  if (wantsOutChange && newOut === null) {
+    return { error: true, message: "Out Time must be in HH:mm 24-hour format, e.g. 17:30." };
   }
 
   let breakIn = null;
@@ -686,105 +856,135 @@
     }
   }
 
-  // Whatever is already recorded stays exactly as the grid returned it.
-  const finalInTime = hasExistingIn ? targetRow.InTime : newIn;
-  const finalOutTime = hasExistingOut ? targetRow.OutTime : newOut;
-  const finalInText = hasExistingIn ? currentInText : args.inTime;
-  const finalOutText = hasExistingOut ? currentOutText : args.outTime;
+  // A break-only change keeps both recorded times exactly as they are.
+  const finalInTime = wantsInChange ? newIn : targetRow.InTime;
+  const finalOutTime = wantsOutChange ? newOut : targetRow.OutTime;
+  const finalInText = wantsInChange ? args.inTime : (currentInText || "");
+  const finalOutText = wantsOutChange ? args.outTime : (currentOutText || "");
 
   /* -------------------------------------------------
-   * The In/Out dates default to whatever the grid pre-filled -
-   * on a midnight shift the Out date is legitimately the next
-   * day, so never force both to the selected date.
+   * Which dates the In and the Out belong to.
+   *
+   * The In date is the row's own unless the caller overrides it. The Out
+   * date is resolved against the window the API returned for this row
+   * (ShiftToolTip), falling back to the row's own dates and then to
+   * IsMidNightShift - so an Out time earlier on the clock than the In
+   * time lands on the next date exactly when this shift reaches there,
+   * and stays on the same date when it does not.
    * ------------------------------------------------- */
-  let finalInDateText = targetRow.InDateText;
-  let finalOutDateText = targetRow.OutDateText;
+  let finalInDateText = targetRow.InDateText || dateText;
 
   if (args.inDate) {
     const parsedInDate = parseCultureDate(args.inDate);
     if (!parsedInDate) return { error: true, message: `Invalid inDate. Please provide it as ${dateFormatName}.` };
     finalInDateText = formatCultureDate(parsedInDate);
   }
+
+  const parsedInDateText = parseCultureDate(finalInDateText) || parsedDate;
+
+  let outDateResolution;
   if (args.outDate) {
     const parsedOutDate = parseCultureDate(args.outDate);
     if (!parsedOutDate) return { error: true, message: `Invalid outDate. Please provide it as ${dateFormatName}.` };
-    finalOutDateText = formatCultureDate(parsedOutDate);
+    outDateResolution = { parsed: parsedOutDate, text: formatCultureDate(parsedOutDate), rolled: false, source: "argument" };
+  } else {
+    outDateResolution = resolveOutDate(
+      parsedInDateText,
+      finalInText,
+      finalOutText,
+      targetRow.InDateText,
+      targetRow.OutDateText,
+      shiftWindow,
+      targetRow.IsMidNightShift
+    );
   }
+  const finalOutDateText = outDateResolution.text;
+  const parsedOutDateText = outDateResolution.parsed;
 
-  /* -------------------------------------------------
-   * Check the times against the shift's grace window. The server
-   * enforces this, so surface it in the preview rather than
-   * letting the user confirm into a rejection.
-   * ------------------------------------------------- */
+  const inKey = toMinuteKey(parsedInDateText, finalInText);
+  const outKey = toMinuteKey(parsedOutDateText, finalOutText);
   const warnings = [];
-  let outTimeExceedsGrace = false;
+  let breakInPlacement = null;
+  let breakOutPlacement = null;
+
+  /* The only ordering rule applied is the one the shift itself states, and
+   * it is checked on the full In/Out date-times rather than the bare clock
+   * values - so a shift that ends after midnight is not refused for having
+   * an Out "before" its In. When the API's window is single-day the shift
+   * really does require the Out later the same day, and that check stays. */
+  if (inKey !== null && outKey !== null && outKey <= inKey) {
+    if (shiftWindow && !shiftWindow.spansNextDay) {
+      return {
+        error: true,
+        message: `The Out time ${finalOutText} is not after the In time ${finalInText} on ${finalInDateText}. This shift runs ${shiftWindow.text} and has to be swiped between ${shiftWindow.startText} and ${shiftWindow.endText}, which is all within one day, so the Out time cannot be on the following date. Please give an Out time later than the In time.`,
+        current: Object.assign({ date: dateText, inTime: finalInText, outTime: finalOutText }, shiftInfo)
+      };
+    }
+    warnings.push(`The Out time ${finalOutText} on ${finalOutDateText} is not after the In time ${finalInText} on ${finalInDateText}. The system will decide whether it accepts this.`);
+  }
 
   if (shiftWindow) {
-    const inKey = toMinuteKey(parseCultureDate(finalInDateText), finalInText);
-    const outKey = toMinuteKey(parseCultureDate(finalOutDateText), finalOutText);
-
-    if (!hasExistingIn && inKey !== null && (inKey < shiftWindow.start || inKey > shiftWindow.end)) {
+    if (inKey !== null && (inKey < shiftWindow.start || inKey > shiftWindow.end)) {
       warnings.push(`The In time ${finalInText} on ${finalInDateText} falls outside the shift's allowed window (${targetRow.ShiftToolTip}).`);
     }
-    if (!hasExistingOut && outKey !== null && (outKey < shiftWindow.start || outKey > shiftWindow.end)) {
-      outTimeExceedsGrace = true;
-      warnings.push(`The Out time ${finalOutText} on ${finalOutDateText} falls outside the shift's allowed window (${targetRow.ShiftToolTip}). Confirming will submit it anyway, the same as accepting the warning in the UI.`);
-    }
-    /* A break outside the shift's allowed window is refused outright, not
-     * warned about - the record must not be submitted with it. */
-    if (breakIn !== null && breakOut !== null) {
-      const bInKey = toMinuteKey(parsedDate, args.breakInTime);
-      const bOutKey = toMinuteKey(parsedDate, args.breakOutTime);
-      const outside = [];
-      if (bInKey !== null && (bInKey < shiftWindow.start || bInKey > shiftWindow.end)) {
-        outside.push(`Break In Time ${args.breakInTime}`);
-      }
-      if (bOutKey !== null && (bOutKey < shiftWindow.start || bOutKey > shiftWindow.end)) {
-        outside.push(`Break Out Time ${args.breakOutTime}`);
-      }
-      if (outside.length > 0) {
-        return {
-          error: true,
-          message: `${outside.join(" and ")} ${outside.length > 1 ? "are" : "is"} not within the shift's allowed period, so this cannot be submitted. The shift and its allowed window are: ${targetRow.ShiftToolTip}. Please give break times inside that window.`,
-          current: {
-            date: dateText,
-            shift: targetRow.ShiftAbbreviation || null,
-            shiftPeriod: shiftWindow.text,
-            shiftToolTip: targetRow.ShiftToolTip || null,
-            breakInTime: args.breakInTime,
-            breakOutTime: args.breakOutTime
-          }
-        };
-      }
+    if (outKey !== null && (outKey < shiftWindow.start || outKey > shiftWindow.end)) {
+      warnings.push(`The Out time ${finalOutText} on ${finalOutDateText} falls outside the shift's allowed window (${targetRow.ShiftToolTip}).`);
     }
   }
 
-  /* -------------------------------------------------
-   * Comment cell parity: opening it loads the day's comment
-   * history, keyed by the row's own EmpNumber token - which is
-   * not the same token the search was filtered by.
-   * ------------------------------------------------- */
-  const rowEmpToken = targetRow.EmpNumber || empNumber;
-  const commentHistoryResult = await safePostJson(
-    `${baseUrl}/TNAV9/api/ManualInOut/GetCommentHistoryByDate/`,
-    { empNumber: rowEmpToken, datInDateText: dateText },
-    ajaxHeaders
-  );
-  const commentHistory = Array.isArray(commentHistoryResult.body) ? commentHistoryResult.body : [];
+  /* A break outside the shift's allowed window is refused outright - the
+   * record must not be saved with it. Each edge is first placed on
+   * whichever of the window's dates it falls on, the same way the Out
+   * time is, so a break after midnight on a shift that reaches there is
+   * not refused. If the window cannot be parsed there is nothing to
+   * check against. */
+  if (shiftWindow && breakIn !== null && breakOut !== null) {
+    breakInPlacement = resolveTimeInWindow(parsedInDateText, args.breakInTime, shiftWindow);
+    breakOutPlacement = resolveTimeInWindow(parsedInDateText, args.breakOutTime, shiftWindow);
+    const outside = [];
+    if (!breakInPlacement.inside) {
+      outside.push(`Break In Time ${args.breakInTime}`);
+    }
+    if (!breakOutPlacement.inside) {
+      outside.push(`Break Out Time ${args.breakOutTime}`);
+    }
+    if (outside.length > 0) {
+      return {
+        error: true,
+        message: `${outside.join(" and ")} ${outside.length > 1 ? "are" : "is"} not within the shift's allowed period, so this cannot be saved. The shift and its allowed window are: ${targetRow.ShiftToolTip}. Please give break times inside that window.`,
+        current: Object.assign({
+          date: dateText,
+          breakInTime: args.breakInTime,
+          breakOutTime: args.breakOutTime
+        }, shiftInfo)
+      };
+    }
+  }
 
-  /* -------------------------------------------------
-   * Break cell parity: the grid row carries DABreakList null,
-   * the real break list comes from GetEmployeeBreaksByDate.
-   * Fetch it before appending so an existing break is not lost.
-   * ------------------------------------------------- */
-  let existingBreaks = [];
-  if (breakIn !== null && breakOut !== null) {
-    const breaksResult = await safePostJson(
-      `${baseUrl}/TNAV9/api/ManualInOut/GetEmployeeBreaksByDate/`,
-      { empNumber: rowEmpToken, datInDateText: dateText },
-      ajaxHeaders
-    );
-    existingBreaks = Array.isArray(breaksResult.body) ? breaksResult.body : [];
+  const changes = [];
+  if (wantsInChange && args.inTime !== currentInText) {
+    changes.push({ field: "In Time", from: currentInText, to: args.inTime });
+  }
+  if (wantsOutChange && args.outTime !== currentOutText) {
+    changes.push({ field: "Out Time", from: currentOutText, to: args.outTime });
+  }
+  if (finalOutDateText !== targetRow.OutDateText) {
+    changes.push({ field: "Out Date", from: targetRow.OutDateText, to: finalOutDateText });
+  }
+  if (finalInDateText !== targetRow.InDateText) {
+    changes.push({ field: "In Date", from: targetRow.InDateText, to: finalInDateText });
+  }
+  if (wantsBreakChange && (args.breakInTime !== currentBreakInText || args.breakOutTime !== currentBreakOutText)) {
+    changes.push({ field: "Break In Time", from: currentBreakInText, to: args.breakInTime });
+    changes.push({ field: "Break Out Time", from: currentBreakOutText, to: args.breakOutTime });
+  }
+
+  if (changes.length === 0) {
+    return {
+      noChanges: true,
+      message: `The values you gave match what is already recorded for ${dateText} (In: ${currentInText || "-"}, Out: ${currentOutText || "-"}). There is nothing to update.`,
+      current: { date: dateText, inTime: currentInText, outTime: currentOutText }
+    };
   }
 
   const previewData = {
@@ -793,15 +993,19 @@
     shiftPeriod: shiftWindow ? shiftWindow.text : null,
     inDate: finalInDateText,
     outDate: finalOutDateText,
-    inTime: { current: currentInText, submitted: finalInText },
-    outTime: { current: currentOutText, submitted: finalOutText },
-    breakInTime: args.breakInTime || null,
-    breakOutTime: args.breakOutTime || null,
+    /* True when the Out lands on the date after the In - worth showing,
+     * because it is the part of the entry a user is most likely to want
+     * to correct before confirming. */
+    outIsNextDay: finalOutDateText !== finalInDateText,
+    outDateSource: outDateResolution.source,
+    warnings,
+    inTime: { current: currentInText, updated: finalInText || null },
+    outTime: { current: currentOutText, updated: finalOutText || null },
+    breakInTime: { current: currentBreakInText, updated: args.breakInTime || currentBreakInText },
+    breakOutTime: { current: currentBreakOutText, updated: args.breakOutTime || currentBreakOutText },
     reason: args.reason,
-    existingBreakCount: existingBreaks.length,
-    commentHistoryCount: commentHistory.length,
     previouslyManuallyFixed,
-    warnings
+    changes
   };
 
   /* -------------------------------------------------
@@ -812,32 +1016,69 @@
       needsConfirmation: true,
       preview: previewData,
       message: warnings.length > 0
-        ? "Please review the details below - note the warnings - and confirm before I submit your manual In and Out."
-        : "Please review the details below and confirm before I submit your manual In and Out.",
-      confirmationPrompt: "Are you sure the data above is correct? Reply yes to submit, or no to make changes."
+        ? "Please review the changes below - note the warnings - and confirm before I update your manual In and Out."
+        : "Please review the changes below and confirm before I update your manual In and Out.",
+      confirmationPrompt: "Are you sure you want to save these changes? Reply yes to update, or no to make further changes."
     };
   }
 
   /* -------------------------------------------------
-   * Step 7: submit. IsSelected is the row checkbox and is true
-   * only on the row being written to. Every Old* field keeps its
-   * pre-submit value so the server sees the before/after pair.
+   * Step 7: submit. The grid checkbox equivalent is IsSelected,
+   * true only on the row being changed. Every Old* field keeps
+   * its pre-edit value so the server sees the before/after pair.
    * ------------------------------------------------- */
-  function buildUpdatedRow(row, forceOutTimeExceedConfirmed) {
-    const updated = Object.assign({}, row, {
-      InTime: finalInTime,
-      OutTime: finalOutTime,
-      InTimeText: finalInText || "",
-      OutTimeText: finalOutText || "",
-      InDateText: finalInDateText,
-      OutDateText: finalOutDateText,
-      Comment: args.reason,
-      IsSelected: true,
-      IsOutTimeExceedConfirmed: forceOutTimeExceedConfirmed === true ? true : row.IsOutTimeExceedConfirmed === true
-    });
+  const updatedRow = Object.assign({}, targetRow, {
+    /* InDate/OutDate are the ISO halves of InDateText/OutDateText and have
+     * to move with them: on the captured overnight submit the UI sent
+     * OutDate "2024-11-09T00:00:00" alongside OutDateText "09/11/2024".
+     * Leaving the ISO date on the In date is what makes the server read a
+     * legitimate overnight Out as an Out before its own In. The times go
+     * out as the strings "HH.MM" the captured payload uses, and the two
+     * edited cells carry the UI's ChangeCell_Highlight marker. */
+    InDate: formatIsoDateOnly(parsedInDateText),
+    OutDate: formatIsoDateOnly(parsedOutDateText),
+    InTime: toWireTime(finalInText) || finalInTime,
+    OutTime: toWireTime(finalOutText) || finalOutTime,
+    InTimeText: finalInText,
+    OutTimeText: finalOutText,
+    InDateText: finalInDateText,
+    OutDateText: finalOutDateText,
+    InTimeHighlightCSS: "ChangeCell_Highlight",
+    OutTimeHighlightCSS: "ChangeCell_Highlight",
+    Comment: args.reason,
+    // Preserve existing reason semantics; forcing "-1" can break server validation.
+    ReasonCode: (targetRow.ReasonCode === "" ? null : targetRow.ReasonCode),
+    IsSelected: true
+  });
 
-    if (breakIn !== null && breakOut !== null) {
-      const datInDate = row.DatInDate || formatIsoDateOnly(parsedDate);
+  /* The row came off the grid with DABreakList null, normalised to [] by
+   * toValidSwipeRow while BreakCount kept the day's real count. Posting
+   * [] against a BreakCount of 1 reads as "the day lost its break", so
+   * the loaded list is always carried, touched or not. */
+  updatedRow.DABreakList = existingBreaks.slice();
+  updatedRow.BreakCount = existingBreaks.length;
+
+  if (breakIn !== null && breakOut !== null) {
+    const datInDate = targetRow.DatInDate || formatIsoDateOnly(parsedDate);
+    /* Each break edge keeps the date it was resolved onto, so a break
+     * after midnight on a shift that reaches there is stored on the right
+     * day instead of being folded back onto the In date. */
+    const bStartParsed = (breakInPlacement && breakInPlacement.parsed) || parsedInDateText;
+    const bEndParsed = (breakOutPlacement && breakOutPlacement.parsed) || parsedInDateText;
+
+    if (currentBreak) {
+      // Change the existing break in place, leaving any others untouched.
+      updatedRow.DABreakList = existingBreaks.map(function (br, idx) {
+        if (idx !== 0) return br;
+        return Object.assign({}, br, {
+          BStartTime: breakIn,
+          BStartTimeText: args.breakInTime,
+          BEndTime: breakOut,
+          BEndTimeText: args.breakOutTime,
+          ActionType: 1
+        });
+      });
+    } else {
       const baseSeq = existingBreaks.reduce(function (maxVal, br) {
         const seq = Number(br && br.SeqNo);
         return Number.isFinite(seq) && seq > maxVal ? seq : maxVal;
@@ -845,35 +1086,42 @@
 
       /* ActionType is the "was this break touched" flag: 1 for one the
        * user added or changed, 0 for one riding along untouched. A new
-       * break sent as 0 is read as unmodified, which is what makes the
-       * server answer "No modifications to save" - so it goes out as 1. */
-      updated.DABreakList = existingBreaks.concat([{
+       * break sent as 0 is read as unmodified, and when the In and Out
+       * are unchanged too the server answers "No modifications to save"
+       * and writes nothing - so an added break goes out as 1. */
+      updatedRow.DABreakList = existingBreaks.concat([{
         DatInDate: datInDate,
-        EmpNumber: row.EmpNumber || empNumber,
+        EmpNumber: targetRow.EmpNumber || empNumber,
         SeqNo: baseSeq + 1,
-        BStartDate: datInDate,
-        BStartDateText: dateText,
+        BStartDate: formatIsoDateOnly(bStartParsed),
         BStartTime: breakIn,
-        BStartTimeText: args.breakInTime,
-        BEndDate: datInDate,
-        BEndDateText: dateText,
+        BEndDate: formatIsoDateOnly(bEndParsed),
         BEndTime: breakOut,
-        BEndTimeText: args.breakOutTime,
         BStartOldDate: null,
         BStartOldTime: -1,
         BEndOldDate: null,
         BEndOldTime: -1,
+        BStartDateText: formatCultureDate(bStartParsed),
+        BEndDateText: formatCultureDate(bEndParsed),
+        BStartTimeText: args.breakInTime,
+        BEndTimeText: args.breakOutTime,
         ActionType: 1
       }]);
-      updated.BreakCount = updated.DABreakList.length;
     }
-
-    return updated;
+    updatedRow.BreakCount = updatedRow.DABreakList.length;
   }
 
-  // The captured payload carries exactly these two keys - nothing else.
+  // The UI submit posts the full model; keep every row and select only the target.
+  const fullDetailList = recordList.map(function (row, idx) {
+    if (idx === gridIndex) return updatedRow;
+    return Object.assign({}, row, { IsSelected: false });
+  });
+
   async function submitList(detailList) {
-    const payload = { PageMode: 2, ManualInOutDetailList: detailList };
+    const payload = Object.assign({}, pageModel || {}, {
+      PageMode: 2,
+      ManualInOutDetailList: detailList
+    });
     const raw = await fetch(`${baseUrl}/TNAV9/api/ManualInOut/SubmitManualAdjustment/`, {
       method: "POST",
       headers: jsonHeaders,
@@ -884,73 +1132,40 @@
     return { raw, result, payload };
   }
 
-  function succeeded(attempt) {
-    return attempt.raw.ok && attempt.result && attempt.result.Status === true;
-  }
+  let submitAttempt = await submitList(fullDetailList);
+  let retriedWithValidSwipesOnly = false;
 
-  function listWith(updatedRow) {
-    return tabRows.map(function (row, idx) {
-      if (idx === tabIndex) return updatedRow;
+  // A 5xx on the full list can mean the server choked on a non-editable row -
+  // retry once with just the Valid Swipes rows, as the tab itself holds them.
+  if ((!submitAttempt.raw.ok || !submitAttempt.result || submitAttempt.result.Status !== true)
+    && submitAttempt.raw.status >= 500) {
+    const validOnlyList = validSwipeRows.map(function (row, idx) {
+      if (idx === validIndex) return updatedRow;
       return Object.assign({}, row, { IsSelected: false });
     });
-  }
-
-  let updatedRow = buildUpdatedRow(targetRow, outTimeExceedsGrace);
-  let submitAttempt = await submitList(listWith(updatedRow));
-  let retriedWithGraceConfirmed = false;
-  let retriedWithSingleRow = false;
-
-  /* The page shows an "out time exceeds the configured grace" dialog and
-   * resubmits with the flag set once the user clicks OK. Our own confirm
-   * step is that OK, so replay it if the server asks and we have not
-   * already set the flag from the grace check above. */
-  if (!succeeded(submitAttempt) && !outTimeExceedsGrace) {
-    const askedForConfirmation = (submitAttempt.result && submitAttempt.result.IsConfirmationRequired === true)
-      || (Array.isArray(submitAttempt.result && submitAttempt.result.ManualInOutDetailList)
-        && submitAttempt.result.ManualInOutDetailList.some(function (r) { return r && r.IsConfirmationRequired === true; }));
-
-    if (askedForConfirmation || gridRow.IsTimeExceedsConfiguredGrace === true || gridRow.IsConfirmationRequired === true) {
-      updatedRow = buildUpdatedRow(targetRow, true);
-      submitAttempt = await submitList(listWith(updatedRow));
-      retriedWithGraceConfirmed = true;
-    }
-  }
-
-  // A 5xx on the full tab list can mean the server choked on an unrelated
-  // row - retry once with only the row being written to.
-  if (!succeeded(submitAttempt) && submitAttempt.raw.status >= 500) {
-    submitAttempt = await submitList([updatedRow]);
-    retriedWithSingleRow = true;
+    submitAttempt = await submitList(validOnlyList);
+    retriedWithValidSwipesOnly = true;
   }
 
   const submitRaw = submitAttempt.raw;
   const submitResult = submitAttempt.result;
 
-  if (!succeeded(submitAttempt)) {
+  if (!submitRaw.ok || !submitResult || submitResult.Status !== true) {
     const instance = submitResult && submitResult.instance ? String(submitResult.instance) : "";
     const instanceTrace = instance.includes(":") ? instance.split(":").pop() : null;
     return {
       error: true,
-      message: (submitResult && submitResult.Message) || (submitResult && submitResult.detail) || "Failed to submit your manual In and Out. Please verify in the UI.",
+      message: (submitResult && submitResult.Message) || (submitResult && submitResult.detail) || "Failed to update your manual In and Out. Please verify in the UI.",
       apiResponse: submitResult,
-      warnings,
       diagnostics: {
         submitHttpStatus: submitRaw.status,
-        retriedWithGraceConfirmed,
-        retriedWithSingleRow,
-        outTimeExceedsGrace,
+        retriedWithValidSwipesOnly,
         selectedDate: dateText,
-        tabRecordType,
-        tabRowCount: tabRows.length,
-        tabRowIndex: tabIndex,
-        gridRowCount: recordList.length,
+        selectedRowIndex: gridIndex,
         validSwipeCount: validSwipeRows.length,
         previouslyManuallyFixed,
         totalRowsSubmitted: (submitAttempt.payload.ManualInOutDetailList || []).length,
-        breakAdded: breakIn !== null && breakOut !== null,
-        existingBreakCount: existingBreaks.length,
-        addedIn: !hasExistingIn,
-        addedOut: !hasExistingOut,
+        breakEdited: breakIn !== null && breakOut !== null,
         usedSelfToolToken: !!selfToolToken,
         usedPageTokenFallback: !selfToolToken && !!pageToken,
         pageUrl,
@@ -961,6 +1176,7 @@
         fromDateText,
         toDateText,
         payloadTopLevelKeys: Object.keys(submitAttempt.payload || {}),
+        hasPageModel: Object.keys(pageModel || {}).length > 0,
         selectedRowBeforeUpdate: pickRowDebug(targetRow),
         selectedRowAfterUpdate: pickRowDebug(updatedRow),
         traceId: (submitResult && submitResult.traceId) || instanceTrace || null,
@@ -978,17 +1194,13 @@
 
   const refreshGrid = await safePostJson(`${baseUrl}/TNAV9/api/ManualInOut/GetGridDataByCriteria/`, gridPayload, jsonHeaders);
   const refreshedList = (refreshGrid.body && refreshGrid.body.ManualInOutDetailList) || [];
-  const refreshedValidRows = refreshedList
-    .filter(function (r) { return r.InOutRecordType === 3; })
-    .map(toSubmitRow);
+  const refreshedSubmittableRows = refreshedList
+    .filter(function (r) { return r.InOutRecordType === 1; })
+    .map(toValidSwipeRow);
 
-  await safePostJson(`${baseUrl}/TNAV9/api/ManualInOut/GetManuallyTimeFixedData/`, refreshedValidRows, jsonHeaders);
-  await safePostJson(`${baseUrl}/TNAV9/api/ManualInOut/GetManualRejectedData/`, {
-    FilterMode: 1,
-    FromDateText: fromDateText,
-    ToDateText: toDateText,
-    EmpNumber: empNumber
-  }, jsonHeaders);
+  /* Same array to both, exactly as the page load does. */
+  await safePostJson(`${baseUrl}/TNAV9/api/ManualInOut/GetManuallyTimeFixedData/`, refreshedSubmittableRows, jsonHeaders);
+  await safePostJson(`${baseUrl}/TNAV9/api/ManualInOut/GetManualRejectedData/`, refreshedSubmittableRows, jsonHeaders);
   await safePostJson(`${baseUrl}/TNAV9/api/Common/GetDynamicEmployeeSummary/`, {
     pageId: 1,
     empNumber,
@@ -996,20 +1208,10 @@
     toDateText
   }, jsonHeaders);
 
-  // Read back the day so the caller reports what the server actually stored.
-  const savedRow = refreshedList.find(function (r) { return isoDayOf(r.DatInDate) === targetIsoDay; });
-
   return {
     success: true,
-    message: `Your manual In and Out for ${dateText} has been submitted successfully.`,
-    submitted: previewData,
-    saved: savedRow ? {
-      date: dateText,
-      inTime: savedRow.InTimeText || hhmmToText(savedRow.InTime),
-      outTime: savedRow.OutTimeText || hhmmToText(savedRow.OutTime),
-      breakCount: savedRow.BreakCount,
-      status: savedRow.RecordStatusText || null
-    } : null,
+    message: `Your manual In and Out for ${dateText} has been updated successfully.`,
+    updated: previewData,
     apiResponse: submitResult
   };
 });

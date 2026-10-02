@@ -2,51 +2,51 @@
   "arguments": [],
   "advancedArguments": [
     {
-      "name": "ground",
+      "name": "templateName",
       "type": "string",
-      "required": false,
+      "required": true,
       "defaultValue": null,
-      "description": "The grievance ground/category, exactly as the user names it (e.g. 'Workload'). Do not ask the user for a code - the tool resolves the name against Beacon's live grounds list (GetGrievanceSources). Required to actually submit, but if you don't already know a valid ground name, or the user asks what grounds exist, call this tool with ground omitted anyway - it returns the real available list instead of an error, faster than asking the user to guess. Never invent generic examples like 'Workload, Harassment, Pay' - this org's actual configured grounds may look nothing like typical HR categories.",
+      "description": "The grievance template to submit under, as the user names it. Resolved first, before ground or any other detail. Optional - if only one template is available for this employee it is used automatically; if several are available and none is given, the tool lists them and asks the user to pick one. As soon as a template is resolved (auto-selected or named), the tool fetches and returns its channel members in every subsequent response - call this tool with just templateName (or nothing, if only one template exists) to answer \"who will handle my grievance?\" without providing ground, summary, description or mood.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The grievance ground/category, exactly as the user names it (e.g. 'Workload'). Do not ask the user for a code - the tool resolves the name against Beacon's live grounds list (GetGrievanceSources). Required to actually submit, but if you don't already know a valid ground name, or the user asks what grounds exist, call this tool with ground omitted anyway - it returns the real available list instead of an error, faster than asking the user to guess. Never invent generic examples like 'Workload, Harassment, Pay' - this org's actual configured grounds may look nothing like typical HR categories."
+        "description": "The grievance template to submit under, as the user names it. Resolved first, before ground or any other detail. Optional - if only one template is available for this employee it is used automatically; if several are available and none is given, the tool lists them and asks the user to pick one. As soon as a template is resolved (auto-selected or named), the tool fetches and returns its channel members in every subsequent response - call this tool with just templateName (or nothing, if only one template exists) to answer \"who will handle my grievance?\" without providing ground, summary, description or mood."
+      }
+    },
+    {
+      "name": "ground",
+      "type": "string",
+      "required": true,
+      "defaultValue": null,
+      "description": "The grievance ground/category, exactly as the user names it (e.g. 'Workload'). Resolved after the template. Grounds are single-select and can be nested one level: a main ground with sublevel grounds is never itself submittable - the user must pick one of its sublevel grounds; a main ground with no sublevel grounds is submittable directly. Do not ask the user for a code - the tool resolves the name against Beacon's live grounds list (GetGrievanceSources), returned already grouped as \"MainGround (SubGround1, SubGround2)\". Pass just the sublevel ground name (e.g. 'Workload7403205'), or qualify it as \"MainGround.SubGround\" if the same sublevel name could exist under more than one main ground. If you pass a main ground that turns out to have sublevel grounds, the tool refuses and lists them so you can ask the user to pick one - it never guesses. Required to actually submit, but if you don't already know a valid ground name, or the user asks what grounds exist, call this tool with ground omitted anyway - it returns the real available list (plus the resolved template's channel members) instead of an error. Never invent generic examples like 'Workload, Harassment, Pay' - this org's actual configured grounds may look nothing like typical HR categories.",
+      "advanced": true,
+      "raw": {
+        "type": "string",
+        "description": "The grievance ground/category, exactly as the user names it (e.g. 'Workload'). Resolved after the template. Grounds are single-select and can be nested one level: a main ground with sublevel grounds is never itself submittable - the user must pick one of its sublevel grounds; a main ground with no sublevel grounds is submittable directly. Do not ask the user for a code - the tool resolves the name against Beacon's live grounds list (GetGrievanceSources), returned already grouped as \"MainGround (SubGround1, SubGround2)\". Pass just the sublevel ground name (e.g. 'Workload7403205'), or qualify it as \"MainGround.SubGround\" if the same sublevel name could exist under more than one main ground. If you pass a main ground that turns out to have sublevel grounds, the tool refuses and lists them so you can ask the user to pick one - it never guesses. Required to actually submit, but if you don't already know a valid ground name, or the user asks what grounds exist, call this tool with ground omitted anyway - it returns the real available list (plus the resolved template's channel members) instead of an error. Never invent generic examples like 'Workload, Harassment, Pay' - this org's actual configured grounds may look nothing like typical HR categories."
       }
     },
     {
       "name": "summary",
       "type": "string",
-      "required": false,
+      "required": true,
       "defaultValue": null,
-      "description": "A short summary of the grievance. Required to actually submit, but omit it (along with ground) if you're only trying to discover the available grounds - the tool checks ground first and returns the list before ever needing summary.",
+      "description": "A short summary of the grievance. Resolved last, after template and ground. Required to actually submit, but omit it (along with description and moodRating) if you're only trying to discover templates, channel members, or grounds - the tool resolves those first and returns them before ever needing summary.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "A short summary of the grievance. Required to actually submit, but omit it (along with ground) if you're only trying to discover the available grounds - the tool checks ground first and returns the list before ever needing summary."
+        "description": "A short summary of the grievance. Resolved last, after template and ground. Required to actually submit, but omit it (along with description and moodRating) if you're only trying to discover templates, channel members, or grounds - the tool resolves those first and returns them before ever needing summary."
       }
     },
     {
       "name": "description",
       "type": "string",
-      "required": false,
+      "required": true,
       "defaultValue": null,
-      "description": "The full description/details of the grievance. Optional.",
+      "description": "The full description/details of the grievance. Required to actually submit - confirmed live that the real Grievance Application screen rejects a blank description ('Please fill the required fields.'). Not schema-required here so it never blocks template/ground/channel-member discovery; always ask the user for this before calling with confirmed:true. Character limit is characters+spaces 200. Always enforce the character limit 200.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The full description/details of the grievance. Optional."
-      }
-    },
-    {
-      "name": "templateName",
-      "type": "string",
-      "required": false,
-      "defaultValue": null,
-      "description": "The grievance template to submit under, as the user names it. Optional - if only one template is available for this employee it is used automatically; if several are available and none is given, the tool lists them and asks the user to pick one.",
-      "advanced": true,
-      "raw": {
-        "type": "string",
-        "description": "The grievance template to submit under, as the user names it. Optional - if only one template is available for this employee it is used automatically; if several are available and none is given, the tool lists them and asks the user to pick one."
+        "description": "The full description/details of the grievance. Required to actually submit - confirmed live that the real Grievance Application screen rejects a blank description ('Please fill the required fields.'). Not schema-required here so it never blocks template/ground/channel-member discovery; always ask the user for this before calling with confirmed:true. Character limit is characters+spaces 200. Always enforce the character limit 200."
       }
     },
     {
@@ -64,15 +64,27 @@
     {
       "name": "moodRating",
       "type": "integer",
-      "required": false,
+      "required": true,
       "defaultValue": null,
-      "description": "The employee's current mood/emoji rating, 1 (very unhappy) to 5 (very happy). Required to actually submit - Beacon's own client-side validation refuses a submission without it ('Please specify the Current Mood.'). Always ask the user for this before calling with confirmed:true. Not schema-required here so it never blocks a ground-discovery call. The 1-5 range is inferred from emoji rating values seen on existing grievance records (2, 3, 5) - the exact emoji meanings weren't directly observed on the submission screen, so confirm against the live UI before relying on it.",
+      "description": "The employee's current mood/emoji rating, 1 (very unhappy) to 5 (very happy). Required to actually submit - Beacon's own client-side validation refuses a submission without it ('Please specify the Current Mood.'). Always ask the user for this before calling with confirmed:true. Not schema-required here so it never blocks template/ground/channel-member discovery. The 1-5 range is inferred from emoji rating values seen on existing grievance records (2, 3, 5) - the exact emoji meanings weren't directly observed on the submission screen, so confirm against the live UI before relying on it.",
       "advanced": true,
       "raw": {
         "type": "integer",
         "minimum": 1,
         "maximum": 5,
-        "description": "The employee's current mood/emoji rating, 1 (very unhappy) to 5 (very happy). Required to actually submit - Beacon's own client-side validation refuses a submission without it ('Please specify the Current Mood.'). Always ask the user for this before calling with confirmed:true. Not schema-required here so it never blocks a ground-discovery call. The 1-5 range is inferred from emoji rating values seen on existing grievance records (2, 3, 5) - the exact emoji meanings weren't directly observed on the submission screen, so confirm against the live UI before relying on it."
+        "description": "The employee's current mood/emoji rating, 1 (very unhappy) to 5 (very happy). Required to actually submit - Beacon's own client-side validation refuses a submission without it ('Please specify the Current Mood.'). Always ask the user for this before calling with confirmed:true. Not schema-required here so it never blocks template/ground/channel-member discovery. The 1-5 range is inferred from emoji rating values seen on existing grievance records (2, 3, 5) - the exact emoji meanings weren't directly observed on the submission screen, so confirm against the live UI before relying on it."
+      }
+    },
+    {
+      "name": "attachmentTitles",
+      "type": "object",
+      "required": false,
+      "defaultValue": null,
+      "description": "Only needed when one or more files are attached in the chat: a title for each attached file, keyed by its exact file name (e.g. {\"certificate.pdf\": \"Medical certificate\"}). Always ask the user explicitly for a title per file - there is no filename-based default, since the module itself rejects a blank title ('Attachment Title cannot be empty.'). Checked only after summary/description/moodRating are already known; if any attached file has no matching title here, the tool lists exactly which file(s) still need one and does not proceed to the preview. No attachment size or file-type limit is checked or assumed by the tool, because both are configured per client. Attachments are uploaded one file per call, only after the user confirms, before Submit; if the module rejects any file for any reason (size, type, or otherwise), the tool relays the module's exact message (e.g. 'The maximum file size allowed for the Attachment is 2 MB.') and does not submit the grievance. Tell the user what was rejected and ask them to attach a different file or continue without it.",
+      "advanced": true,
+      "raw": {
+        "type": "object",
+        "description": "Only needed when one or more files are attached in the chat: a title for each attached file, keyed by its exact file name (e.g. {\"certificate.pdf\": \"Medical certificate\"}). Always ask the user explicitly for a title per file - there is no filename-based default, since the module itself rejects a blank title ('Attachment Title cannot be empty.'). Checked only after summary/description/moodRating are already known; if any attached file has no matching title here, the tool lists exactly which file(s) still need one and does not proceed to the preview. No attachment size or file-type limit is checked or assumed by the tool, because both are configured per client. Attachments are uploaded one file per call, only after the user confirms, before Submit; if the module rejects any file for any reason (size, type, or otherwise), the tool relays the module's exact message (e.g. 'The maximum file size allowed for the Attachment is 2 MB.') and does not submit the grievance. Tell the user what was rejected and ask them to attach a different file or continue without it."
       }
     },
     {
@@ -80,14 +92,14 @@
       "type": "array",
       "required": false,
       "defaultValue": null,
-      "description": "Names (or employee numbers) of assigned channel members the user wants to bypass/skip for this grievance, matched against the chosen template's channel member list. Optional - omit to keep every channel member in the escalation chain. Show the user the full channel member list (from this tool's preview response) before they ask to bypass anyone.",
+      "description": "Names (or employee numbers) of assigned channel members the user wants to bypass/skip for this grievance, matched against the chosen template's channel member list. Optional - omit to keep every channel member in the escalation chain. Show the user the full channel member list (returned as soon as the template is resolved) before they ask to bypass anyone. At least one channel member must always remain un-bypassed - naming every assigned member is rejected with \"You are not allowed to bypass all the channels in grievance application.\" (confirmed via Beacon's own validation message, type 'Grievance', key 'GrCannotByPassAllChannels'). If the user asks to bypass everyone, tell them one member must stay and ask them to leave at least one in.",
       "advanced": true,
       "raw": {
         "type": "array",
         "items": {
           "type": "string"
         },
-        "description": "Names (or employee numbers) of assigned channel members the user wants to bypass/skip for this grievance, matched against the chosen template's channel member list. Optional - omit to keep every channel member in the escalation chain. Show the user the full channel member list (from this tool's preview response) before they ask to bypass anyone."
+        "description": "Names (or employee numbers) of assigned channel members the user wants to bypass/skip for this grievance, matched against the chosen template's channel member list. Optional - omit to keep every channel member in the escalation chain. Show the user the full channel member list (returned as soon as the template is resolved) before they ask to bypass anyone. At least one channel member must always remain un-bypassed - naming every assigned member is rejected with \"You are not allowed to bypass all the channels in grievance application.\" (confirmed via Beacon's own validation message, type 'Grievance', key 'GrCannotByPassAllChannels'). If the user asks to bypass everyone, tell them one member must stay and ask them to leave at least one in."
       }
     },
     {
@@ -95,11 +107,28 @@
       "type": "boolean",
       "required": false,
       "defaultValue": null,
-      "description": "Set true only after the user has seen the preview this tool returns (ground, template, channel members and any bypassed ones, summary, description, hide-identity, mood) and has explicitly agreed to submit. Omit or set false to preview without submitting anything - this is the default and safe to call repeatedly while the user is still deciding.",
+      "description": "Set true only after the user has seen the preview this tool returns (ground, template, channel members and any bypassed ones, summary, description, hide-identity, mood, attachments) and has explicitly agreed to submit. Omit or set false to preview without submitting anything - this is the default and safe to call repeatedly while the user is still deciding.",
       "advanced": true,
       "raw": {
         "type": "boolean",
-        "description": "Set true only after the user has seen the preview this tool returns (ground, template, channel members and any bypassed ones, summary, description, hide-identity, mood) and has explicitly agreed to submit. Omit or set false to preview without submitting anything - this is the default and safe to call repeatedly while the user is still deciding."
+        "description": "Set true only after the user has seen the preview this tool returns (ground, template, channel members and any bypassed ones, summary, description, hide-identity, mood, attachments) and has explicitly agreed to submit. Omit or set false to preview without submitting anything - this is the default and safe to call repeatedly while the user is still deciding."
+      }
+    },
+    {
+      "name": "isAudioRecorded",
+      "type": "boolean",
+      "required": true,
+      "defaultValue": false,
+      "description": "Controls whether audio recording is requested. Send true when the user explicitly asks to record, capture, or save audio. Otherwise, always send false by default. Always include this field in the tool input.",
+      "advanced": true,
+      "raw": {
+        "type": "boolean",
+        "description": "Controls whether audio recording is requested. Send true when the user explicitly asks to record, capture, or save audio. Otherwise, always send false by default. Always include this field in the tool input.",
+        "enum": [
+          true,
+          false
+        ],
+        "default": false
       }
     }
   ]

@@ -1,20 +1,17 @@
 {
-  "arguments": [
+  "arguments": [],
+  "advancedArguments": [
     {
       "name": "keyword",
       "type": "string",
-      "required": true,
+      "required": false,
       "defaultValue": null,
-      "description": "Optional. A word or phrase to narrow the results by (e.g. 'MS Excel', 'DevOps') - matched word-by-word (every word here must appear somewhere in the target text, in any order) against both the existing need category names and the individual needs",
-      "advanced": false,
+      "description": "A word or phrase to narrow the results by (e.g. 'MS Excel', 'DevOps', 'backend dev'). Matched word-by-word, PARTIAL match per word (e.g. 'dev' matches 'Development', 'backend' matches 'Backend') against both the existing need category names and the individual needs. Every word must partially match somewhere in the target text, in any order. Optional - omit to list everything on file.",
+      "advanced": true,
       "raw": {
-        "name": "keyword",
         "type": "string",
-        "description": "Optional. A word or phrase to narrow the results by (e.g. 'MS Excel', 'DevOps') - matched word-by-word (every word here must appear somewhere in the target text, in any order) against both the existing need category names and the individual needs",
-        "required": true,
-        "_id": "6aa0296abf91849b7392ccf8"
+        "description": "A word or phrase to narrow the results by (e.g. 'MS Excel', 'DevOps', 'backend dev'). Matched word-by-word, PARTIAL match per word (e.g. 'dev' matches 'Development', 'backend' matches 'Backend') against both the existing need category names and the individual needs. Every word must partially match somewhere in the target text, in any order. Optional - omit to list everything on file."
       }
     }
-  ],
-  "advancedArguments": []
+  ]
 }

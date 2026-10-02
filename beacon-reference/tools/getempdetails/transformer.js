@@ -1,5 +1,4 @@
 (function (data, args, reqOptions) {
-    debugger
     if (!data?.data || data.data.length === 0) {
         return { message: "Employee not found" };
     }

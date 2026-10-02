@@ -62,6 +62,18 @@
       }
     },
     {
+      "name": "attachmentTitles",
+      "type": "object",
+      "required": false,
+      "defaultValue": null,
+      "description": "Only needed when one or more files are attached in the chat: a title for each attached file, keyed by its exact file name (e.g. {\"certificate.pdf\": \"Medical certificate\"}). Always ask the user explicitly for a title per file - there is no filename-based default, since the module itself rejects a blank title ('Attachment Title cannot be empty.', confirmed live for this appeal endpoint too). Checked only after the other required fields and the channel member list are already resolved; if any attached file has no matching title here, the tool lists exactly which file(s) still need one and does not proceed to the preview. Before that, any file over 2 MB is rejected immediately - a fast-fail heuristic inherited from the confirmed grievance-side limit, not independently re-confirmed for this specific appeal endpoint. Attachments are then uploaded one file per call, before Submit; if the module rejects any single file for any reason (type, size, or otherwise) at that point, the tool relays that exact message and does not submit the appeal at all.",
+      "advanced": true,
+      "raw": {
+        "type": "object",
+        "description": "Only needed when one or more files are attached in the chat: a title for each attached file, keyed by its exact file name (e.g. {\"certificate.pdf\": \"Medical certificate\"}). Always ask the user explicitly for a title per file - there is no filename-based default, since the module itself rejects a blank title ('Attachment Title cannot be empty.', confirmed live for this appeal endpoint too). Checked only after the other required fields and the channel member list are already resolved; if any attached file has no matching title here, the tool lists exactly which file(s) still need one and does not proceed to the preview. Before that, any file over 2 MB is rejected immediately - a fast-fail heuristic inherited from the confirmed grievance-side limit, not independently re-confirmed for this specific appeal endpoint. Attachments are then uploaded one file per call, before Submit; if the module rejects any single file for any reason (type, size, or otherwise) at that point, the tool relays that exact message and does not submit the appeal at all."
+      }
+    },
+    {
       "name": "bypassChannelMembers",
       "type": "array",
       "required": false,
@@ -81,11 +93,11 @@
       "type": "boolean",
       "required": false,
       "defaultValue": null,
-      "description": "Set true only after the user has seen the preview this tool returns (channel members and any bypassed ones, comment, hide-identity) and has explicitly agreed to submit. Omit or set false to preview without submitting anything - this is the default and safe to call repeatedly while the user is still deciding.",
+      "description": "Set true only after the user has seen the preview this tool returns (channel members and any bypassed ones, comment, hide-identity, attachments) and has explicitly agreed to submit. Omit or set false to preview without submitting anything - this is the default and safe to call repeatedly while the user is still deciding.",
       "advanced": true,
       "raw": {
         "type": "boolean",
-        "description": "Set true only after the user has seen the preview this tool returns (channel members and any bypassed ones, comment, hide-identity) and has explicitly agreed to submit. Omit or set false to preview without submitting anything - this is the default and safe to call repeatedly while the user is still deciding."
+        "description": "Set true only after the user has seen the preview this tool returns (channel members and any bypassed ones, comment, hide-identity, attachments) and has explicitly agreed to submit. Omit or set false to preview without submitting anything - this is the default and safe to call repeatedly while the user is still deciding."
       }
     }
   ]

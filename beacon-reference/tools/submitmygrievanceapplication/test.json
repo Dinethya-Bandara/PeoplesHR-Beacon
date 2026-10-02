@@ -1,5 +1,13 @@
 {
-  "sampleRequest": {},
+  "sampleRequest": {
+    "templateName": "Template 01",
+    "ground": "Ground 0003-1",
+    "summary": "Testing",
+    "description": "Testing desc",
+    "moodRating": "3",
+    "isAudioRecorded": "true",
+    "confirmed": "true"
+  },
   "sanity": {
     "apiResponse": []
   }

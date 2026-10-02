@@ -4,16 +4,16 @@
     {
       "name": "subordinates",
       "type": "array",
-      "required": true,
+      "required": false,
       "defaultValue": null,
-      "description": "One or more direct reports (each a name or employee number) to submit this training need application for, e.g. ['John Silva'] or ['000010','000011']. Matches each entry first by exact employee number, then by a case-insensitive substring match against name, against the supervisor's live subordinate list. At least one is required. If any entry doesn't match exactly one subordinate, the tool returns NOT_SUBORDINATE or AMBIGUOUS (whichever applies) listing every problem entry plus eligibleSubordinates - fix all of them and retry rather than resubmitting one at a time.",
+      "description": "One or more direct reports (each a name or employee number) to submit this training need application for, e.g. ['John Silva'] or ['000010','000011']. Matches each entry first by exact employee number, then by a case-insensitive substring match against name, against the supervisor's live subordinate list. Omit entirely (or pass an empty array) if you don't already know who this is for, or the supervisor asks 'who are my subordinates?' - the tool returns status LISTED with eligibleSubordinates and submits nothing, so this is always safe to call on its own. Once the supervisor has picked, call this tool again with subordinates set to their exact name(s) or employee number(s) - this is checked before everything else that follows, so call it with ONLY subordinates (existingNeedName/newNeedName and the narrative fields all omitted) to validate them first before ever asking about the need itself. If any entry doesn't match exactly one subordinate, the tool returns NOT_SUBORDINATE or AMBIGUOUS (whichever applies) listing every problem entry plus eligibleSubordinates - fix all of them before ever asking about the need itself or narrative fields.",
       "advanced": true,
       "raw": {
         "type": "array",
         "items": {
           "type": "string"
         },
-        "description": "One or more direct reports (each a name or employee number) to submit this training need application for, e.g. ['John Silva'] or ['000010','000011']. Matches each entry first by exact employee number, then by a case-insensitive substring match against name, against the supervisor's live subordinate list. At least one is required. If any entry doesn't match exactly one subordinate, the tool returns NOT_SUBORDINATE or AMBIGUOUS (whichever applies) listing every problem entry plus eligibleSubordinates - fix all of them and retry rather than resubmitting one at a time."
+        "description": "One or more direct reports (each a name or employee number) to submit this training need application for, e.g. ['John Silva'] or ['000010','000011']. Matches each entry first by exact employee number, then by a case-insensitive substring match against name, against the supervisor's live subordinate list. Omit entirely (or pass an empty array) if you don't already know who this is for, or the supervisor asks 'who are my subordinates?' - the tool returns status LISTED with eligibleSubordinates and submits nothing, so this is always safe to call on its own. Once the supervisor has picked, call this tool again with subordinates set to their exact name(s) or employee number(s) - this is checked before everything else that follows, so call it with ONLY subordinates (existingNeedName/newNeedName and the narrative fields all omitted) to validate them first before ever asking about the need itself. If any entry doesn't match exactly one subordinate, the tool returns NOT_SUBORDINATE or AMBIGUOUS (whichever applies) listing every problem entry plus eligibleSubordinates - fix all of them before ever asking about the need itself or narrative fields."
       }
     },
     {
@@ -21,11 +21,11 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "The name (or partial name) of an already-existing training need category to attach this application to, e.g. 'Database & Data Management' - matches case-insensitively against the category list from getSupervisorTrainingNeeds' existingNeedCategories. Use this when the subordinate's need matches a category already on file (UAC 3.2) rather than describing something new. If more than one category matches, the tool returns status AMBIGUOUS with the candidates - ask which one and retry with the exact name. Either existingNeedName or newNeedName must be provided, not both.",
+      "description": "The name (or partial name) of an already-existing training need category to attach this application to, e.g. 'Database & Data Management' - matches case-insensitively against the category list from getSupervisorTrainingNeeds' existingNeedCategories. Use this when the subordinate's need matches a category already on file (UAC 3.2) rather than describing something new. If more than one category matches, the tool returns status AMBIGUOUS with the candidates - ask which one and retry with the exact name. Either existingNeedName or newNeedName must be provided, not both. Only required once every named subordinate is already confirmed valid - do not collect or pass this on the subordinates-only validation call.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The name (or partial name) of an already-existing training need category to attach this application to, e.g. 'Database & Data Management' - matches case-insensitively against the category list from getSupervisorTrainingNeeds' existingNeedCategories. Use this when the subordinate's need matches a category already on file (UAC 3.2) rather than describing something new. If more than one category matches, the tool returns status AMBIGUOUS with the candidates - ask which one and retry with the exact name. Either existingNeedName or newNeedName must be provided, not both."
+        "description": "The name (or partial name) of an already-existing training need category to attach this application to, e.g. 'Database & Data Management' - matches case-insensitively against the category list from getSupervisorTrainingNeeds' existingNeedCategories. Use this when the subordinate's need matches a category already on file (UAC 3.2) rather than describing something new. If more than one category matches, the tool returns status AMBIGUOUS with the candidates - ask which one and retry with the exact name. Either existingNeedName or newNeedName must be provided, not both. Only required once every named subordinate is already confirmed valid - do not collect or pass this on the subordinates-only validation call."
       }
     },
     {
@@ -33,11 +33,11 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "The requested need, in the supervisor's own words, when what's needed isn't already an existing category, e.g. 'Advanced Excel Macros' (UAC 3.3 - the 'Requested Need' field). Either existingNeedName or newNeedName must be provided, not both.",
+      "description": "The requested need, in the supervisor's own words, when what's needed isn't already an existing category, e.g. 'Advanced Excel Macros' (UAC 3.3 - the 'Requested Need' field). Either existingNeedName or newNeedName must be provided, not both. Only required once every named subordinate is already confirmed valid - do not collect or pass this on the subordinates-only validation call.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The requested need, in the supervisor's own words, when what's needed isn't already an existing category, e.g. 'Advanced Excel Macros' (UAC 3.3 - the 'Requested Need' field). Either existingNeedName or newNeedName must be provided, not both."
+        "description": "The requested need, in the supervisor's own words, when what's needed isn't already an existing category, e.g. 'Advanced Excel Macros' (UAC 3.3 - the 'Requested Need' field). Either existingNeedName or newNeedName must be provided, not both. Only required once every named subordinate is already confirmed valid - do not collect or pass this on the subordinates-only validation call."
       }
     },
     {
@@ -55,49 +55,61 @@
     {
       "name": "objective",
       "type": "string",
-      "required": true,
+      "required": false,
       "defaultValue": null,
-      "description": "The objective of this training need. Required - the training system itself rejects a submission without this (confirmed live: 'Please specify the objective.'). Unlike the self-application tool, there is no goal-linking option here (confirmed live: a real multi-subordinate submission sent IsGoalObject false with no ongoing-goals data at all) - always provide free text.",
+      "description": "The objective of this training need. There is no goal-linking option here (confirmed live: a real multi-subordinate submission sent IsGoalObject false with no ongoing-goals data at all) - always free text, unlike the self-application tool's goalTitle alternative. Whether this is mandatory is a per-client Training & Development configuration setting (IsObjectiveMandatory) and can change between orgs - do not assume it's required and do not ask the supervisor for it upfront. Call this tool with whatever is known once every named subordinate is confirmed valid; if ValidateNeedApplication rejects the submission with 'Please specify the objective.', that confirms it's mandatory for this org - ask for it then and call this tool again with the same arguments plus objective filled in.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The objective of this training need. Required - the training system itself rejects a submission without this (confirmed live: 'Please specify the objective.'). Unlike the self-application tool, there is no goal-linking option here (confirmed live: a real multi-subordinate submission sent IsGoalObject false with no ongoing-goals data at all) - always provide free text."
+        "description": "The objective of this training need. There is no goal-linking option here (confirmed live: a real multi-subordinate submission sent IsGoalObject false with no ongoing-goals data at all) - always free text, unlike the self-application tool's goalTitle alternative. Whether this is mandatory is a per-client Training & Development configuration setting (IsObjectiveMandatory) and can change between orgs - do not assume it's required and do not ask the supervisor for it upfront. Call this tool with whatever is known once every named subordinate is confirmed valid; if ValidateNeedApplication rejects the submission with 'Please specify the objective.', that confirms it's mandatory for this org - ask for it then and call this tool again with the same arguments plus objective filled in."
       }
     },
     {
       "name": "relevanceToJob",
       "type": "string",
-      "required": true,
+      "required": false,
       "defaultValue": null,
-      "description": "How this training need relates to the subordinate(s)' job. Required - the training system itself rejects a submission without this (confirmed live: 'Please specify the relevance to job.').",
+      "description": "How this training need relates to the subordinate(s)' job. Whether this is mandatory is a per-client Training & Development configuration setting (IsRelToJobMandatory) and can change between orgs - do not assume it's required and do not ask the supervisor for it upfront. Call this tool with whatever is known once every named subordinate is confirmed valid; if ValidateNeedApplication rejects the submission with 'Please specify the relevance to job.', that confirms it's mandatory for this org - ask for it then and call this tool again with the same arguments plus relevanceToJob filled in.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "How this training need relates to the subordinate(s)' job. Required - the training system itself rejects a submission without this (confirmed live: 'Please specify the relevance to job.')."
+        "description": "How this training need relates to the subordinate(s)' job. Whether this is mandatory is a per-client Training & Development configuration setting (IsRelToJobMandatory) and can change between orgs - do not assume it's required and do not ask the supervisor for it upfront. Call this tool with whatever is known once every named subordinate is confirmed valid; if ValidateNeedApplication rejects the submission with 'Please specify the relevance to job.', that confirms it's mandatory for this org - ask for it then and call this tool again with the same arguments plus relevanceToJob filled in."
       }
     },
     {
       "name": "benefitToEmployee",
       "type": "string",
-      "required": true,
+      "required": false,
       "defaultValue": null,
-      "description": "The benefit of this training need to the employee(s). Required - the training system itself rejects a submission without this (confirmed live: 'Please specify the benefit to you.').",
+      "description": "The benefit of this training need to the employee(s). Whether this is mandatory is a per-client Training & Development configuration setting (IsPotentialToYouMandatory) and can change between orgs - do not assume it's required and do not ask the supervisor for it upfront. Call this tool with whatever is known once every named subordinate is confirmed valid; if ValidateNeedApplication rejects the submission with 'Please specify the benefit to you.', that confirms it's mandatory for this org - ask for it then and call this tool again with the same arguments plus benefitToEmployee filled in.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The benefit of this training need to the employee(s). Required - the training system itself rejects a submission without this (confirmed live: 'Please specify the benefit to you.')."
+        "description": "The benefit of this training need to the employee(s). Whether this is mandatory is a per-client Training & Development configuration setting (IsPotentialToYouMandatory) and can change between orgs - do not assume it's required and do not ask the supervisor for it upfront. Call this tool with whatever is known once every named subordinate is confirmed valid; if ValidateNeedApplication rejects the submission with 'Please specify the benefit to you.', that confirms it's mandatory for this org - ask for it then and call this tool again with the same arguments plus benefitToEmployee filled in."
       }
     },
     {
       "name": "benefitToCompany",
       "type": "string",
-      "required": true,
+      "required": false,
       "defaultValue": null,
-      "description": "The benefit of this training need to the company. Required - the training system itself rejects a submission without this (confirmed live: 'Please specify the benefit to the company.').",
+      "description": "The benefit of this training need to the company. Whether this is mandatory is a per-client Training & Development configuration setting (IsPotentialToCompMandatory) and can change between orgs - do not assume it's required and do not ask the supervisor for it upfront. Call this tool with whatever is known once every named subordinate is confirmed valid; if ValidateNeedApplication rejects the submission with 'Please specify the benefit to the company.', that confirms it's mandatory for this org - ask for it then and call this tool again with the same arguments plus benefitToCompany filled in.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The benefit of this training need to the company. Required - the training system itself rejects a submission without this (confirmed live: 'Please specify the benefit to the company.')."
+        "description": "The benefit of this training need to the company. Whether this is mandatory is a per-client Training & Development configuration setting (IsPotentialToCompMandatory) and can change between orgs - do not assume it's required and do not ask the supervisor for it upfront. Call this tool with whatever is known once every named subordinate is confirmed valid; if ValidateNeedApplication rejects the submission with 'Please specify the benefit to the company.', that confirms it's mandatory for this org - ask for it then and call this tool again with the same arguments plus benefitToCompany filled in."
+      }
+    },
+    {
+      "name": "confirmed",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": null,
+      "description": "Set true only after the supervisor has reviewed a summary of this exact application (subordinates, need, objective, relevance to job, benefits, attachments) and explicitly agreed to submit it. Leave unset/false on the first call - the tool returns status CONFIRMATION_REQUIRED with a preview and the server's own confirmation prompt (mirrors the real form's 'Are you sure you want to submit this training need?' dialog, shown right before Save) instead of submitting anything. Nothing is uploaded, validated, or saved until this is true. Call this tool again with confirmed:true and the exact same arguments once the supervisor agrees.",
+      "advanced": true,
+      "raw": {
+        "type": "boolean",
+        "description": "Set true only after the supervisor has reviewed a summary of this exact application (subordinates, need, objective, relevance to job, benefits, attachments) and explicitly agreed to submit it. Leave unset/false on the first call - the tool returns status CONFIRMATION_REQUIRED with a preview and the server's own confirmation prompt (mirrors the real form's 'Are you sure you want to submit this training need?' dialog, shown right before Save) instead of submitting anything. Nothing is uploaded, validated, or saved until this is true. Call this tool again with confirmed:true and the exact same arguments once the supervisor agrees."
       }
     }
   ]

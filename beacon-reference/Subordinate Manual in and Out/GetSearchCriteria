@@ -1,0 +1,3333 @@
+curl --url 'https://hrmmainphqa.phrsandbox.dev/hr/CommonComponents/Search/GetSearchCriteria/?key=80ecee46-27bc-48fb-b257-9fd3ac734519&_=1789970450453' \
+  -H 'accept: */*' \
+  -H 'accept-language: en-GB,en;q=0.9,en-US;q=0.8' \
+  -b 'ASP.NET_SessionId=3uqu1451asvcq1kscv4joua0; __RequestVerificationToken_L2hy0=lwpHoAnjFZnwEo4RbU2se58WAnSXhDQvBmiGswV3WTGjgDEmRcYwsw4uFdiiMQrlCI-lN-VlK6oYZ-0P4wudHspxvf01; THEME_V8=default; .ASPXAUTH=F0845D15873FDE018611C2E49C194A6BFF468F52234511BEEA5E00A207E374F946332315C0AC2DBC7E8D0B884BEC1966891F0908C9CBDFA0EFC32BFEA8C8E7FAD6C80B6B02A84E9850080E9B1F90889F0EB0BEA4E1EB1A2C9093DE264E650BC8; ehrm85=EAAAANxc7XILiw1wP+qt2wmUGj0vTteFQrlGGyNAse8MWDjXlRPPe49O2jboy9bxUeSnVwOHikhZAT8b+1gGs0c/2pAbQ8Y/vmH5Tcwu2iK4gzA8oTFU0TgqRv1YEIbUhlQoRPSgs/a1zpyaYYfEeaWcarCL5t9kblX91fyqeTZChtJLnXEjA6TJ73eyKFI764+p05MMa5Bs6ZuwjIiuCnz+4Lku5ZckRZ9hqzVRbNQG7ESopjpdXHh/JM8jt0o3cacYZEIocCbZC2llyAZjQjNc1Joh8qcq4MPYdvOV3QhKAT588h29Ft7TYF13ut6c9qpvhX6BMe+hj22C8ZaxEdmq/XWgin66lrJeRZVCTJ/x8Tf+VbLV8rGuTKwgX4itU58m7d15MQkx3yETPaHCHKKTQ43q3UXZ41pDL+fJYDRiiS0EBrEcM+u3UpxALRxP8eAbIaH7EnUiMa2naX78QAJUrJINzhhXl+GlvGCp2HLUqc3vR+Nwh0SlgpSlnhwuXkQLHOJj7DjbEBlPeYFshgOCkGLHy3DuODiDI0GHYo3YpIsdGsU0j438+F53ek1dsQO8nWffCpbgR3hiTNmWjlsaia4YM6+6Y+jbWTBbgDXKKxJm3nbq/RALaImYFITLCYIjVwZXSZTgRpdgPLoNvGnxO4eB42SltApeNuNziDqiCl/2WgPyC4+wiHY3PGSLnmaTH/EBmavQ8zdQYjj3yFHP37V++bmeeE/nTVDGUgTukPaVs1ZUCzq6QgrGDSh6U/AGfcx/Hf3qmksLyHBVvpyvGzJRzB1zIm9H2xYPhw8nreNW5RNEx6YB3leDglY51dqd4maZN4ymgqieCRDyyxO37wMpNe58P7WcDnZGL0zPIGOtIsq4vYS9UOmG3nO6c5WQldS9tLXrEXxNSXYNGAjAfqIUx/cHtXbfaxJLMR87pWhh3FkTH1q6SsCHoTOmLimtOlwY0QPxGE0ruaS7PIDi1Cw0N7aZ0p1SMewTusHym7yFUxdrDzwdvx4jp7i1SWnUjFExLLV9suTdyUvuf0zxHRINrBQ2DVuJa4gk66s3YJyS6Hx8mZIRuFvrq1cpls6C5oRccMGSrCCrNt2Tm4lEUXk=; my-application-browser-tab={"guid":"e0fafde7-4502-967d-48fa-26390c80c08e","timestamp":1789970452521}' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://hrmmainphqa.phrsandbox.dev/hr/TNAV9/Common/_SearchDivFrame?queryUrl=..%2FCommonComponents%2FSearch%2FSearch%3FempNumber%3DSR-EUedQg371s9HBQUXMnD6UPnkTAcC3iUWOtE05dNPLGmOxTyuyL3TKcoJyzFAx9bRrmVfbw5CMMpe6RKwG2xdJlfKXKk0H86hoR9AIiaVZrbzwNn5SAGk-0gnJWcBIvjZhOMCtGsxQxHO0PqX6qUBme0bQp6BNxX_wLJXFA1zeMBVZaPyINAWfl5XJmsdQWVwttrEbIHhBua2tyVM2YRNeHT5Uf2m3HJMoqTSNi3OzWhO4avD-3lCAIJAc-VMqVr4lR841XAzoyMg6r5jRBag6e10tv_ZOl2pkG3uu_qxl-noFDL71R9X_sxolhYIbFOpB3LClqaoYDY6-U1STJ2iEbZiyNWaQQzxu0K4_NQN9rCmqy8_NjLZlcbJUJNTamb4H7tNPwwn97-fYpaT0RSxk5I3-80t9Wev1mrrAFZl5gQfmB2Ot8MMP9tUAd74M%26callBack%3DNgA1ACwANgA1ADAAMAAyAA%253D%253D%26searchMode%3D2%26searchQueryMode%3DAll%26searchQueryState%3DActiveOnly%26isMultiple%3D1%26breadCrumbEnable%3D0%26isDivLoading%3D1%26displayName%3D%26elgmodid%3D65%26elggrpid%3D15%26ElgParam%3D000024%26searchToken%3DagZYLy5qpQrZfEFZ_aBbDTe84h4-uUHFojJQ8_BKFx8oN-tZnvyKj5xz2RIRYLrch5sePRd47f8gecN0YtvNJp0cAzf3yVBW50vvvaJreujn6Rjb0FC9pyQNm_Ao4dX0E_JUilS5LEUBckl2sYyEo31qWYMqO68LJHC4JtO9KJF1cN2XyDvkqQJ5CszxYaj1jBEmQl5G3bixOX6dxxu30H1iTyd3qdbOW6gZ3lc7QcCkilE8b5qdA_OxZw8VQZDrw6-0zalu3t2A5kH1KtBkAzvA5_E1g9LEUBnjnOXezXBOWWa7SdrOOkhijX569RqUCEXLkz-I-UJVE7ggizRrdfxRu0PsPe9D_27uTPP0GPyOAIgTdMVmzkekvQzByKFjr1nHP3Vm-6KSBiq8RHx3b8qRmcuUd-oKcE7awqE37fdWCZrjX0ny-NsiWGgghWwD6bYceuQ7wNyTepfczATuAOzCCKnFOSflkMdir_6Jr9d9S4APw7onCLsmLXMWzQBs' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="153", "Not_A Brand";v="8", "Chromium";v="153"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0' \
+  -H 'x-requested-with: XMLHttpRequest'
+
+  payload
+  key
+80ecee46-27bc-48fb-b257-9fd3ac734519
+_
+1789970450453
+
+response
+[
+    {
+        "CriteriaCode": "202",
+        "CriteriaName": "Employee No",
+        "IsTextBase": "1",
+        "ColumnName": "EMP_DISPLAY_NUMBER",
+        "ItemQuery": null,
+        "DataQuery": null,
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": null
+    },
+    {
+        "CriteriaCode": "203",
+        "CriteriaName": "Display Name",
+        "IsTextBase": "1",
+        "ColumnName": "EMP_DISPLAY_NAME",
+        "ItemQuery": null,
+        "DataQuery": null,
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": null
+    },
+    {
+        "CriteriaCode": "204",
+        "CriteriaName": "Preferred Name",
+        "IsTextBase": "1",
+        "ColumnName": "EMP_CALLING_NAME",
+        "ItemQuery": null,
+        "DataQuery": null,
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": null
+    },
+    {
+        "CriteriaCode": "205",
+        "CriteriaName": "Surname",
+        "IsTextBase": "1",
+        "ColumnName": "EMP_SURNAME",
+        "ItemQuery": null,
+        "DataQuery": null,
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": null
+    },
+    {
+        "CriteriaCode": "206",
+        "CriteriaName": "NIC No",
+        "IsTextBase": "1",
+        "ColumnName": "EMP_NIC_NO",
+        "ItemQuery": null,
+        "DataQuery": null,
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": null
+    },
+    {
+        "CriteriaCode": "207",
+        "CriteriaName": "Payroll No",
+        "IsTextBase": "1",
+        "ColumnName": "EMP_PAYROLLNO",
+        "ItemQuery": null,
+        "DataQuery": null,
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": null
+    },
+    {
+        "CriteriaCode": "208",
+        "CriteriaName": "Barcode No",
+        "IsTextBase": "1",
+        "ColumnName": "EMP_BARCODENO",
+        "ItemQuery": null,
+        "DataQuery": null,
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": null
+    },
+    {
+        "CriteriaCode": "209",
+        "CriteriaName": "Classification",
+        "IsTextBase": "0",
+        "ColumnName": null,
+        "ItemQuery": "SELECT STAFFCAT_CODE AS SEARCH_CODE,STAFFCAT_NAME AS SEARCH_NAME FROM HS_HR_STAFFCAT ORDER BY STAFFCAT_NAME",
+        "DataQuery": "SELECT STAFFCAT_CODE AS SEARCH_CODE, EMP_NUMBER FROM HS_HR_EMPLOYEE",
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [
+            {
+                "Id": "000005",
+                "Value": "Automation",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000001",
+                "Value": "Daily",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000006",
+                "Value": "Executive",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000008",
+                "Value": "Executive",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000003",
+                "Value": "Hourly",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000002",
+                "Value": "Monthly",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000009",
+                "Value": "Non Executive",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000007",
+                "Value": "Non Executive",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000004",
+                "Value": "Test",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            }
+        ],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": null
+    },
+    {
+        "CriteriaCode": "210",
+        "CriteriaName": "Corporate Title",
+        "IsTextBase": "0",
+        "ColumnName": null,
+        "ItemQuery": "select CT_CODE AS SEARCH_CODE,CT_NAME AS SEARCH_NAME from HS_HR_CORPORATE_TITLE order by CT_NAME",
+        "DataQuery": "SELECT CT_CODE AS SEARCH_CODE, EMP_NUMBER FROM HS_HR_EMPLOYEE",
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [
+            {
+                "Id": "000016",
+                "Value": "\nCEO",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000009",
+                "Value": "Analyst",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000005",
+                "Value": "Analyst",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000007",
+                "Value": "Analyst",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000014",
+                "Value": "Assistant",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000010",
+                "Value": "Associate",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000008",
+                "Value": "Associate",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000006",
+                "Value": "Associate",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000004",
+                "Value": "Associate",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000017",
+                "Value": "business development consuiltant",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000002",
+                "Value": "CEO",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000015",
+                "Value": "Intern Software Engineer",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000012",
+                "Value": "Newest Corporate title - CRB",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000003",
+                "Value": "PTO",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000001",
+                "Value": "Senior Executive",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000011",
+                "Value": "Senior Executive",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000013",
+                "Value": "TC 09062025",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            }
+        ],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": "214"
+    },
+    {
+        "CriteriaCode": "211",
+        "CriteriaName": "Cost Centers",
+        "IsTextBase": "0",
+        "ColumnName": null,
+        "ItemQuery": "SELECT CENTRE_CODE AS SEARCH_CODE,CENTRE_NAME AS SEARCH_NAME FROM HS_PR_COST_CENTRE ORDER BY CENTRE_NAME",
+        "DataQuery": "SELECT CENTRE_CODE AS SEARCH_CODE, EMP_NUMBER FROM HS_HR_EMPLOYEE",
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [
+            {
+                "Id": "000008",
+                "Value": "\nColombo",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000007",
+                "Value": "000001",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000005",
+                "Value": "CC Gampaha",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000003",
+                "Value": "CC Gampaha",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000004",
+                "Value": "CC Matara",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000006",
+                "Value": "CC Matara",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000001",
+                "Value": "Colombo",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000002",
+                "Value": "Kandy",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            }
+        ],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": null
+    },
+    {
+        "CriteriaCode": "212",
+        "CriteriaName": "Designation",
+        "IsTextBase": "0",
+        "ColumnName": null,
+        "ItemQuery": "SELECT DSG_CODE AS SEARCH_CODE,DSG_NAME AS SEARCH_NAME FROM HS_HR_DESIGNATION ORDER BY DSG_NAME",
+        "DataQuery": "SELECT DSG_CODE AS SEARCH_CODE, EMP_NUMBER FROM HS_HR_EMPLOYEE",
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [
+            {
+                "Id": "000016",
+                "Value": "\nCEO",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000009",
+                "Value": "Accounts Assistant",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000011",
+                "Value": "Accounts Assistant",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000007",
+                "Value": "Accounts Assistant",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000005",
+                "Value": "Associate Engineer",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000012",
+                "Value": "Associate QA Lead",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000017",
+                "Value": "business development consuiltant",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000002",
+                "Value": "CEO",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000006",
+                "Value": "Data Analyst",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000008",
+                "Value": "Data Analyst",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000010",
+                "Value": "Data Analyst",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000004",
+                "Value": "des1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000015",
+                "Value": "Intern Software Engineer",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000013",
+                "Value": "New Test",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000003",
+                "Value": "PTO",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000001",
+                "Value": "Senior Software Engineer",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000014",
+                "Value": "TEST",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            }
+        ],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": "210"
+    },
+    {
+        "CriteriaCode": "213",
+        "CriteriaName": "Roster",
+        "IsTextBase": "0",
+        "ColumnName": null,
+        "ItemQuery": "SELECT R.ROS_CODE AS SEARCH_CODE, ( R.ROS_NAME + \u0027 (\u0027 + G.RG_NAME + \u0027)\u0027) AS SEARCH_NAME FROM HS_TA_ROSTER_DEF R INNER JOIN HS_TA_ROSTERGROUP G ON R.RGP_ID=G.RGP_ID WHERE R.ROS_IS_ACTIVE=1",
+        "DataQuery": "SELECT R.ROS_CODE AS SEARCH_CODE, EMP_NUMBER FROM HS_TA_ROSTER_EMPLOYEE R",
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [
+            {
+                "Id": "000001",
+                "Value": "Roster Infor (Roster 1)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000002",
+                "Value": "Roster Information 2 (Roster 1)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000003",
+                "Value": "Roster 3s (Roster 02)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000004",
+                "Value": "Roster GPA (Roster GPA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000006",
+                "Value": "Roster AA1 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000007",
+                "Value": "Roster AA2 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000008",
+                "Value": "Roster AA3 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000009",
+                "Value": "Roster AA4 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000010",
+                "Value": "Roster AA5 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000011",
+                "Value": "Roster AA6 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000014",
+                "Value": "Roster AA9 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000015",
+                "Value": "Roster AA10 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000016",
+                "Value": "Roster AA11 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000017",
+                "Value": "Roster AA12 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000018",
+                "Value": "Roster AA13 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000019",
+                "Value": "Roster AA14 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000020",
+                "Value": "Roster AA15 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000021",
+                "Value": "Roster AA16 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000022",
+                "Value": "Roster AA17 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000023",
+                "Value": "Roster AA18 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000024",
+                "Value": "Roster AA19 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000025",
+                "Value": "Roster AA20 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000026",
+                "Value": "Roster AA21 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000027",
+                "Value": "Roster AA22 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000028",
+                "Value": "Roster AA23 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000029",
+                "Value": "Roster AA24 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000030",
+                "Value": "Roster AA25 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000031",
+                "Value": "Roster AA26 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000032",
+                "Value": "Roster AA27 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000033",
+                "Value": "Roster AA28 (Roster AA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000034",
+                "Value": "ROS GPA1 (Roster GPA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000035",
+                "Value": "ROS GPA2 (Roster GPA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000036",
+                "Value": "ROS GPA3 (Roster GPA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000037",
+                "Value": "ROS GPA5 (Roster GPA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000038",
+                "Value": "ROS GPA56 (Roster GPA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000039",
+                "Value": "ROS GPA57 (Roster GPA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000040",
+                "Value": "ROS GPA58 (Roster GPA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000041",
+                "Value": "ROS GPA59 (Roster GPA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000042",
+                "Value": "ROS GPA510 (Roster GPA)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000043",
+                "Value": "Roster A Auto (Roster A AUTO)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000044",
+                "Value": "TEST A (Roster 1)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000045",
+                "Value": "ABCD X1 (Roster 1)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000046",
+                "Value": "RO-IN (Roster 02)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000047",
+                "Value": "ROS-1 Default (Roster 1)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000048",
+                "Value": "A Roster 1 (Roster 1)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000049",
+                "Value": "A ROS - Roster 2 (Roster 02)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000050",
+                "Value": "B ROS - Roster 2 (Roster 02)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000051",
+                "Value": "C ROS - Roster 2 (Roster 02)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000052",
+                "Value": "D ROS - Roster 2 (Roster 02)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000053",
+                "Value": "ROS-2 Default 2 (Roster 1)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000054",
+                "Value": "New Roster EMP 1 (New Roster EMP)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000055",
+                "Value": "ROSTER -ED (Roster 1)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000056",
+                "Value": "ROST - RR 1 (xDont tk EMP ROST - RR 1)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000057",
+                "Value": "PHIC-Roster (ROSTER- PHIC)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000058",
+                "Value": "MAK01 (New Roster EMP)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000059",
+                "Value": "Mobile Offline (Roster Mobile Offline)",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            }
+        ],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": null
+    },
+    {
+        "CriteriaCode": "214",
+        "CriteriaName": "Salary Grade",
+        "IsTextBase": "0",
+        "ColumnName": null,
+        "ItemQuery": "SELECT SAL_GRD_CODE AS SEARCH_CODE,SAL_GRD_NAME AS SEARCH_NAME FROM HS_PR_SALARY_GRADE ORDER BY SAL_GRD_NAME",
+        "DataQuery": "SELECT SAL_GRD_CODE AS SEARCH_CODE, EMP_NUMBER FROM HS_HR_EMPLOYEE",
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [
+            {
+                "Id": "000024",
+                "Value": "\nEngineers",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000003",
+                "Value": "Associate",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000001",
+                "Value": "Engineers",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000021",
+                "Value": "Engineers",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000025",
+                "Value": "FileGenAlpha",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000023",
+                "Value": "Newest Salary Grade - CRB",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000002",
+                "Value": "Principal technology officer",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000005",
+                "Value": "SG-1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000007",
+                "Value": "SG-1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000008",
+                "Value": "SG-1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000010",
+                "Value": "SG-1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000012",
+                "Value": "SG-1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000016",
+                "Value": "SG-1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000014",
+                "Value": "SG-1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000015",
+                "Value": "SG-2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000017",
+                "Value": "SG-2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000013",
+                "Value": "SG-2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000011",
+                "Value": "SG-2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000009",
+                "Value": "SG-2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000006",
+                "Value": "SG-2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000018",
+                "Value": "SG-3",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000019",
+                "Value": "SG-4",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000004",
+                "Value": "test",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000020",
+                "Value": "test Salary Grade",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000022",
+                "Value": "test.5.20",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            }
+        ],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": null
+    },
+    {
+        "CriteriaCode": "216",
+        "CriteriaName": "Confirmation date",
+        "IsTextBase": "1",
+        "ColumnName": "EMP_CONFIRM_DATE",
+        "ItemQuery": null,
+        "DataQuery": null,
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "4",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": null
+    },
+    {
+        "CriteriaCode": "217",
+        "CriteriaName": "Joined Date",
+        "IsTextBase": "1",
+        "ColumnName": "EMP_DATE_JOINED",
+        "ItemQuery": null,
+        "DataQuery": null,
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "4",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": null
+    },
+    {
+        "CriteriaCode": "219",
+        "CriteriaName": "DEF_LEVEL_1",
+        "IsTextBase": "0",
+        "ColumnName": null,
+        "ItemQuery": "SELECT HIE_CODE AS SEARCH_CODE,HIE_NAME AS SEARCH_NAME FROM HS_HR_COMPANY_HIERARCHY WHERE DEF_LEVEL=1",
+        "DataQuery": "SELECT HIE_CODE_6 AS SEARCH_CODE, EMP_NUMBER FROM HS_HR_EMPLOYEE",
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [
+            {
+                "Id": "000001",
+                "Value": "TestAuto_Business Solutions Group",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000019",
+                "Value": "000001",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            }
+        ],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": null
+    },
+    {
+        "CriteriaCode": "220",
+        "CriteriaName": "DEF_LEVEL_2",
+        "IsTextBase": "0",
+        "ColumnName": null,
+        "ItemQuery": "SELECT HIE_CODE AS SEARCH_CODE,HIE_NAME AS SEARCH_NAME FROM HS_HR_COMPANY_HIERARCHY ORDER BY SEARCH_NAME",
+        "DataQuery": "SELECT HIE_CODE_6 AS SEARCH_CODE, EMP_NUMBER FROM HS_HR_EMPLOYEE",
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [
+            {
+                "Id": "000019",
+                "Value": "000001",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000020",
+                "Value": "000002",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000021",
+                "Value": "000003",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000022",
+                "Value": "000004",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000023",
+                "Value": "000005",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000015",
+                "Value": "ADX SECTOR",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000017",
+                "Value": "Classifications 1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000018",
+                "Value": "COMP 2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000016",
+                "Value": "Company H1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000027",
+                "Value": "Company2025",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000025",
+                "Value": "Credit Dept",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000024",
+                "Value": "Division 2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000026",
+                "Value": "Legal Dept",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000014",
+                "Value": "NO Sponse",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000012",
+                "Value": "Sector2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000030",
+                "Value": "TEST",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000031",
+                "Value": "TEST",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000011",
+                "Value": "TEST AP1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000010",
+                "Value": "TEST DATA2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000013",
+                "Value": "TEST DATA3",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000028",
+                "Value": "Test HIE 2 No LOC",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000029",
+                "Value": "Test TND",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000007",
+                "Value": "TEST_Hierarchy_1.1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000008",
+                "Value": "TEST_Hierarchy_1.2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000009",
+                "Value": "TEST_Hierarchy_1.2A",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000005",
+                "Value": "TestAuto_Automation",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000006",
+                "Value": "TestAuto_Automation_Unit-1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000001",
+                "Value": "TestAuto_Business Solutions Group",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000003",
+                "Value": "TestAuto_hSenidBizMobile",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000002",
+                "Value": "TestAuto_Mobile",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000004",
+                "Value": "TestAuto_SQA",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            }
+        ],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": "219"
+    },
+    {
+        "CriteriaCode": "221",
+        "CriteriaName": "DEF_LEVEL_3",
+        "IsTextBase": "0",
+        "ColumnName": null,
+        "ItemQuery": "SELECT HIE_CODE AS SEARCH_CODE,HIE_NAME AS SEARCH_NAME FROM HS_HR_COMPANY_HIERARCHY ORDER BY SEARCH_NAME",
+        "DataQuery": "SELECT HIE_CODE_6 AS SEARCH_CODE, EMP_NUMBER FROM HS_HR_EMPLOYEE",
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [
+            {
+                "Id": "000019",
+                "Value": "000001",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000020",
+                "Value": "000002",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000021",
+                "Value": "000003",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000022",
+                "Value": "000004",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000023",
+                "Value": "000005",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000015",
+                "Value": "ADX SECTOR",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000017",
+                "Value": "Classifications 1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000018",
+                "Value": "COMP 2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000016",
+                "Value": "Company H1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000027",
+                "Value": "Company2025",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000025",
+                "Value": "Credit Dept",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000024",
+                "Value": "Division 2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000026",
+                "Value": "Legal Dept",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000014",
+                "Value": "NO Sponse",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000012",
+                "Value": "Sector2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000030",
+                "Value": "TEST",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000031",
+                "Value": "TEST",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000011",
+                "Value": "TEST AP1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000010",
+                "Value": "TEST DATA2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000013",
+                "Value": "TEST DATA3",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000028",
+                "Value": "Test HIE 2 No LOC",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000029",
+                "Value": "Test TND",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000007",
+                "Value": "TEST_Hierarchy_1.1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000008",
+                "Value": "TEST_Hierarchy_1.2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000009",
+                "Value": "TEST_Hierarchy_1.2A",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000005",
+                "Value": "TestAuto_Automation",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000006",
+                "Value": "TestAuto_Automation_Unit-1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000001",
+                "Value": "TestAuto_Business Solutions Group",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000003",
+                "Value": "TestAuto_hSenidBizMobile",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000002",
+                "Value": "TestAuto_Mobile",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000004",
+                "Value": "TestAuto_SQA",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            }
+        ],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": "220"
+    },
+    {
+        "CriteriaCode": "222",
+        "CriteriaName": "DEF_LEVEL_4",
+        "IsTextBase": "0",
+        "ColumnName": null,
+        "ItemQuery": "SELECT HIE_CODE AS SEARCH_CODE,HIE_NAME AS SEARCH_NAME FROM HS_HR_COMPANY_HIERARCHY ORDER BY SEARCH_NAME",
+        "DataQuery": "SELECT HIE_CODE_6 AS SEARCH_CODE, EMP_NUMBER FROM HS_HR_EMPLOYEE",
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [
+            {
+                "Id": "000019",
+                "Value": "000001",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000020",
+                "Value": "000002",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000021",
+                "Value": "000003",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000022",
+                "Value": "000004",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000023",
+                "Value": "000005",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000015",
+                "Value": "ADX SECTOR",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000017",
+                "Value": "Classifications 1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000018",
+                "Value": "COMP 2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000016",
+                "Value": "Company H1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000027",
+                "Value": "Company2025",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000025",
+                "Value": "Credit Dept",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000024",
+                "Value": "Division 2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000026",
+                "Value": "Legal Dept",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000014",
+                "Value": "NO Sponse",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000012",
+                "Value": "Sector2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000030",
+                "Value": "TEST",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000031",
+                "Value": "TEST",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000011",
+                "Value": "TEST AP1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000010",
+                "Value": "TEST DATA2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000013",
+                "Value": "TEST DATA3",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000028",
+                "Value": "Test HIE 2 No LOC",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000029",
+                "Value": "Test TND",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000007",
+                "Value": "TEST_Hierarchy_1.1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000008",
+                "Value": "TEST_Hierarchy_1.2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000009",
+                "Value": "TEST_Hierarchy_1.2A",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000005",
+                "Value": "TestAuto_Automation",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000006",
+                "Value": "TestAuto_Automation_Unit-1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000001",
+                "Value": "TestAuto_Business Solutions Group",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000003",
+                "Value": "TestAuto_hSenidBizMobile",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000002",
+                "Value": "TestAuto_Mobile",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000004",
+                "Value": "TestAuto_SQA",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            }
+        ],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": "221"
+    },
+    {
+        "CriteriaCode": "223",
+        "CriteriaName": "DEF_LEVEL_5",
+        "IsTextBase": "0",
+        "ColumnName": null,
+        "ItemQuery": "SELECT HIE_CODE AS SEARCH_CODE,HIE_NAME AS SEARCH_NAME FROM HS_HR_COMPANY_HIERARCHY ORDER BY SEARCH_NAME",
+        "DataQuery": "SELECT HIE_CODE_6 AS SEARCH_CODE, EMP_NUMBER FROM HS_HR_EMPLOYEE",
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [
+            {
+                "Id": "000019",
+                "Value": "000001",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000020",
+                "Value": "000002",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000021",
+                "Value": "000003",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000022",
+                "Value": "000004",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000023",
+                "Value": "000005",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000015",
+                "Value": "ADX SECTOR",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000017",
+                "Value": "Classifications 1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000018",
+                "Value": "COMP 2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000016",
+                "Value": "Company H1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000027",
+                "Value": "Company2025",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000025",
+                "Value": "Credit Dept",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000024",
+                "Value": "Division 2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000026",
+                "Value": "Legal Dept",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000014",
+                "Value": "NO Sponse",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000012",
+                "Value": "Sector2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000030",
+                "Value": "TEST",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000031",
+                "Value": "TEST",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000011",
+                "Value": "TEST AP1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000010",
+                "Value": "TEST DATA2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000013",
+                "Value": "TEST DATA3",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000028",
+                "Value": "Test HIE 2 No LOC",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000029",
+                "Value": "Test TND",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000007",
+                "Value": "TEST_Hierarchy_1.1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000008",
+                "Value": "TEST_Hierarchy_1.2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000009",
+                "Value": "TEST_Hierarchy_1.2A",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000005",
+                "Value": "TestAuto_Automation",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000006",
+                "Value": "TestAuto_Automation_Unit-1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000001",
+                "Value": "TestAuto_Business Solutions Group",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000003",
+                "Value": "TestAuto_hSenidBizMobile",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000002",
+                "Value": "TestAuto_Mobile",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000004",
+                "Value": "TestAuto_SQA",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            }
+        ],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": "222"
+    },
+    {
+        "CriteriaCode": "224",
+        "CriteriaName": "DEF_LEVEL_6",
+        "IsTextBase": "0",
+        "ColumnName": null,
+        "ItemQuery": "SELECT HIE_CODE AS SEARCH_CODE,HIE_NAME AS SEARCH_NAME FROM HS_HR_COMPANY_HIERARCHY ORDER BY SEARCH_NAME",
+        "DataQuery": "SELECT HIE_CODE_6 AS SEARCH_CODE, EMP_NUMBER FROM HS_HR_EMPLOYEE",
+        "IsEligibility": null,
+        "IsHierarchical": null,
+        "CriteriaControlType": "1",
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [
+            {
+                "Id": "000019",
+                "Value": "000001",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000020",
+                "Value": "000002",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000021",
+                "Value": "000003",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000022",
+                "Value": "000004",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000023",
+                "Value": "000005",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000015",
+                "Value": "ADX SECTOR",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000017",
+                "Value": "Classifications 1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000018",
+                "Value": "COMP 2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000016",
+                "Value": "Company H1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000027",
+                "Value": "Company2025",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000025",
+                "Value": "Credit Dept",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000024",
+                "Value": "Division 2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000026",
+                "Value": "Legal Dept",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000014",
+                "Value": "NO Sponse",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000012",
+                "Value": "Sector2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000030",
+                "Value": "TEST",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000031",
+                "Value": "TEST",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000011",
+                "Value": "TEST AP1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000010",
+                "Value": "TEST DATA2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000013",
+                "Value": "TEST DATA3",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000028",
+                "Value": "Test HIE 2 No LOC",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000029",
+                "Value": "Test TND",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000007",
+                "Value": "TEST_Hierarchy_1.1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000008",
+                "Value": "TEST_Hierarchy_1.2",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000009",
+                "Value": "TEST_Hierarchy_1.2A",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000005",
+                "Value": "TestAuto_Automation",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000006",
+                "Value": "TestAuto_Automation_Unit-1",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000001",
+                "Value": "TestAuto_Business Solutions Group",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000003",
+                "Value": "TestAuto_hSenidBizMobile",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000002",
+                "Value": "TestAuto_Mobile",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            },
+            {
+                "Id": "000004",
+                "Value": "TestAuto_SQA",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            }
+        ],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": "223"
+    },
+    {
+        "CriteriaCode": "ELG",
+        "CriteriaName": "Eligibility Group",
+        "IsTextBase": "0",
+        "ColumnName": null,
+        "ItemQuery": null,
+        "DataQuery": null,
+        "IsEligibility": "1",
+        "IsHierarchical": null,
+        "CriteriaControlType": null,
+        "IsAndSelected": false,
+        "IsOrSelected": false,
+        "LeftParentheses": null,
+        "RightParentheses": null,
+        "CriteriaItemList": [
+            {
+                "Id": "15",
+                "Value": "TNA Subordinates",
+                "FromDate": null,
+                "ToDate": null,
+                "IsAndSelected": false,
+                "IsOrSelected": false,
+                "LeftParentheses": null,
+                "RightParentheses": null
+            }
+        ],
+        "CriteriaDataList": null,
+        "ParentCriteriaCode": null
+    }
+]

@@ -38,15 +38,39 @@
       }
     },
     {
+      "name": "inDate",
+      "type": "string",
+      "required": false,
+      "defaultValue": null,
+      "description": "In date, in the format returned by the dateFormat tool. ALWAYS ask the user for this separately, alongside the Out Date - do not assume it. The tool returns the row's own date under suggested.inDate; offer that as the default and let the user confirm or change it.",
+      "advanced": true,
+      "raw": {
+        "type": "string",
+        "description": "In date, in the format returned by the dateFormat tool. ALWAYS ask the user for this separately, alongside the Out Date - do not assume it. The tool returns the row's own date under suggested.inDate; offer that as the default and let the user confirm or change it."
+      }
+    },
+    {
       "name": "inTime",
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "In time in HH:mm 24-hour format. Only required if not already present on the record for that date.",
+      "description": "In time in HH:mm 24-hour format, e.g. 08:30. ALWAYS ask the user for this together with inDate, outDate and outTime - all four are collected separately and none is inferred.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "In time in HH:mm 24-hour format. Only required if not already present on the record for that date."
+        "description": "In time in HH:mm 24-hour format, e.g. 08:30. ALWAYS ask the user for this together with inDate, outDate and outTime - all four are collected separately and none is inferred."
+      }
+    },
+    {
+      "name": "outDate",
+      "type": "string",
+      "required": false,
+      "defaultValue": null,
+      "description": "Out date, in the format returned by the dateFormat tool. ALWAYS ask the user for this separately, alongside the In Date - never decide it yourself. An Out Date on the day AFTER the In Date is normal - many shifts end after midnight - and the Out time is then earlier on the clock than the In time, which is correct and must never be questioned or rejected. The tool reports whether this shift can end on the following day as current.shiftCanEndNextDay, and returns the row's own date under suggested.outDate; offer that as the default and let the user confirm or change it.",
+      "advanced": true,
+      "raw": {
+        "type": "string",
+        "description": "Out date, in the format returned by the dateFormat tool. ALWAYS ask the user for this separately, alongside the In Date - never decide it yourself. An Out Date on the day AFTER the In Date is normal - many shifts end after midnight - and the Out time is then earlier on the clock than the In time, which is correct and must never be questioned or rejected. The tool reports whether this shift can end on the following day as current.shiftCanEndNextDay, and returns the row's own date under suggested.outDate; offer that as the default and let the user confirm or change it."
       }
     },
     {
@@ -54,35 +78,11 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "Out time in HH:mm 24-hour format. Only required if not already present on the record for that date.",
+      "description": "Out time in HH:mm 24-hour format, e.g. 17:30. ALWAYS ask the user for this together with inDate, inTime and outDate. An Out Date on the day AFTER the In Date is normal - many shifts end after midnight - and the Out time is then earlier on the clock than the In time, which is correct and must never be questioned or rejected. Check it against outDate, not against inTime.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "Out time in HH:mm 24-hour format. Only required if not already present on the record for that date."
-      }
-    },
-    {
-      "name": "breakInTime",
-      "type": "string",
-      "required": false,
-      "defaultValue": null,
-      "description": "Optional break in time in HH:mm 24-hour format.",
-      "advanced": true,
-      "raw": {
-        "type": "string",
-        "description": "Optional break in time in HH:mm 24-hour format."
-      }
-    },
-    {
-      "name": "breakOutTime",
-      "type": "string",
-      "required": false,
-      "defaultValue": null,
-      "description": "Optional break out time in HH:mm 24-hour format.",
-      "advanced": true,
-      "raw": {
-        "type": "string",
-        "description": "Optional break out time in HH:mm 24-hour format."
+        "description": "Out time in HH:mm 24-hour format, e.g. 17:30. ALWAYS ask the user for this together with inDate, inTime and outDate. An Out Date on the day AFTER the In Date is normal - many shifts end after midnight - and the Out time is then earlier on the clock than the In time, which is correct and must never be questioned or rejected. Check it against outDate, not against inTime."
       }
     },
     {
@@ -107,6 +107,66 @@
       "raw": {
         "type": "boolean",
         "description": "Set to true only after the user has reviewed the preview and explicitly confirmed the data is correct. Set to false (or omit) to just preview/validate without submitting."
+      }
+    },
+    {
+      "name": "breakInTime",
+      "type": "string",
+      "required": false,
+      "defaultValue": null,
+      "description": "Optional break in time in HH:mm 24-hour format. Break times are not mandatory - add them only if the user wants to. If given, breakOutTime must be given too. A break after midnight is fine on a shift whose period reaches there.",
+      "advanced": true,
+      "raw": {
+        "type": "string",
+        "description": "Optional break in time in HH:mm 24-hour format. Break times are not mandatory - add them only if the user wants to. If given, breakOutTime must be given too. A break after midnight is fine on a shift whose period reaches there."
+      }
+    },
+    {
+      "name": "breakOutTime",
+      "type": "string",
+      "required": false,
+      "defaultValue": null,
+      "description": "Optional break out time in HH:mm 24-hour format. Break times are not mandatory - add them only if the user wants to. If given, breakInTime must be given too. A break after midnight is fine on a shift whose period reaches there.",
+      "advanced": true,
+      "raw": {
+        "type": "string",
+        "description": "Optional break out time in HH:mm 24-hour format. Break times are not mandatory - add them only if the user wants to. If given, breakInTime must be given too. A break after midnight is fine on a shift whose period reaches there."
+      }
+    },
+    {
+      "name": "rosterGroup",
+      "type": "string",
+      "required": false,
+      "defaultValue": null,
+      "description": "Optional roster group id for GetRostersByGroupId. Leave it out: the tool reads the group off the team page's own roster list, which varies from user to user.",
+      "advanced": true,
+      "raw": {
+        "type": "string",
+        "description": "Optional roster group id for GetRostersByGroupId. Leave it out: the tool reads the group off the team page's own roster list, which varies from user to user."
+      }
+    },
+    {
+      "name": "rosterCode",
+      "type": "string",
+      "required": false,
+      "defaultValue": null,
+      "description": "Optional roster code for GetGridDataByCriteria, e.g. 000058. Leave it out: the tool uses the first roster GetRostersByGroupId returns for this user's group, which is what the screen itself searches with. Takes precedence over rosterName.",
+      "advanced": true,
+      "raw": {
+        "type": "string",
+        "description": "Optional roster code for GetGridDataByCriteria, e.g. 000058. Leave it out: the tool uses the first roster GetRostersByGroupId returns for this user's group, which is what the screen itself searches with. Takes precedence over rosterName."
+      }
+    },
+    {
+      "name": "rosterName",
+      "type": "string",
+      "required": false,
+      "defaultValue": null,
+      "description": "Optional roster name, e.g. 'MAK01'. Resolved to a roster code against the roster list the API returned. Ignored when rosterCode is given.",
+      "advanced": true,
+      "raw": {
+        "type": "string",
+        "description": "Optional roster name, e.g. 'MAK01'. Resolved to a roster code against the roster list the API returned. Ignored when rosterCode is given."
       }
     }
   ]

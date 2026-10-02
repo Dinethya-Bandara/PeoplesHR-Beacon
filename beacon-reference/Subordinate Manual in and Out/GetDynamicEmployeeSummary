@@ -1,0 +1,190 @@
+curl --url 'https://hrmmainphqa.phrsandbox.dev/hr/TNAV9/api/Common/GetDynamicEmployeeSummary/' \
+  -H 'accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'accept-language: en-GB,en;q=0.9,en-US;q=0.8' \
+  -H 'content-type: application/json' \
+  -b 'ASP.NET_SessionId=3uqu1451asvcq1kscv4joua0; __RequestVerificationToken_L2hy0=lwpHoAnjFZnwEo4RbU2se58WAnSXhDQvBmiGswV3WTGjgDEmRcYwsw4uFdiiMQrlCI-lN-VlK6oYZ-0P4wudHspxvf01; THEME_V8=default; .ASPXAUTH=02032E57286E28A64A3282B3AD6533DE720C72C5F9232AEEDC9ADBABD6C59118AA1F6CDC245E684A94068BA2FD10754570C6A38B51607D82EAC275828AF975AD24304DFB2B82100ABBF84B0D97D35741F85A0DE7048ECDA6B7134F045D652D71; my-application-browser-tab={"guid":"e0fafde7-4502-967d-48fa-26390c80c08e","timestamp":1789971440563}; ehrm85=EAAAAJfQoNyId8felv6KfjzZRYoFC4qsqx+5Us9x8kI7zW5Y7FdqWGtGgK4VQplJAFXM3iPbSnjN6KCsqCh1fHgG4CBPUJBA7YwldEL2pcOTYX1HmR+eUZcwbAfNM4hYPNx2uRl8iP6z3LXQHzTo5UeIKkXSCmIWFpZekTQ45psuRwD5lgmSwH8cPARekXxLG6nJEZZT5d12wejl/QfSYjjUgkGPWNm8OUanuISRCREOIgD3t0yu5PFaIAMUdCHwQ/qKotFHlBemaQrjhixBcVvM9pQxaEck0XlJ5zwYkKp08GQ1LvCOnAMf0Vb3q6s1gVIgFgQAMlzekUEVAvRAdxUckvrFFp3mSNSLd6hih9VFBRpZuYrgyaDH5p0VdkUCFY1S8B1RZtxJ6x6uupy/M7hazzKV+UsPW5NID9LBw6E67rwbhrvw0MtY75/PVD8GNjB10Ate2W4H4fy7L+dsxJXYnxBtE//ZQdIeUZ7XEEnzJzRSwiDdVYACysKncwfWXRyQ+4Xcimhp4rd8LFPBjN5IV5b8oa3eGoaislDzzrDZO9dFMAHcpQ1CqJ/RCHn9Gz2iGUTQFoS34/1xeWEAWborzC8DEqUe/Pc1x/cKNRPOZuN4/q9//Gcl705T2Gk6I6Q/qxWBh9Rl/MB11AULv/VLsbCsu8m+jvFsGOhmV0OeRwGmw4ZHZIrfeVXt3R5X9H2ZPbBnni5idSK4cha5hkzTR/B60fXhWsc6Wj3GaVlwkx9kdseDv9/AiP1faE/LOadzzKqI3q+XNeLNf/ohtEnDzlGvZIdXlYOBQpbUQoq3WKt04n1aGUaEJMJ00D7PSYvjkWRYIFeY/AB5HrUBjlOlMnpmnhs8zBdfqA0JCV41ZeLZMdMj4ERQRCgsBL3IMNfUVVtErNUHPov0u/VNOZzvBGQrxfx5FjJ8UberfFu4hbFbKTvRWvLHUYzHnv22MN/eLQCzzzqEvWPkVvfHukWfRbkWBoKjAKtMrm57gOLGPp1JJNeNcXeCEWskMO1KdO8M50h3eOvgTAOtfIv/qwE4K8BqekFodihyXZs0KJ6G3QCr70p44dOEVAbvcdp/sPGi4ABodYFMAYkRnU77UT92DJU=' \
+  -H 'origin: https://hrmmainphqa.phrsandbox.dev' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://hrmmainphqa.phrsandbox.dev/hr/home/index' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="153", "Not_A Brand";v="8", "Chromium";v="153"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0' \
+  -H 'x-requested-with: XMLHttpRequest' \
+  --data-raw '{"pageId":1,"empNumber":"qYFMwQ2pMR1AJuicFORxF7T3SuZJo0gcn_VbVRGE-YHasSYPNqSHoBY257RqclOBhAlDOl_jYi_daNpnB1Z-n2pcv5m9XRqisVMOoPj8zDeh6rkYod8ZzTYBDWZLc8a-KcuOOpiibMNlKJIL-KOBnYnH0g1VUXFcoXYjt9fBTaZwMEzXphMWA6JoZ3e08MXrDY-Q5Emar1uR50BcbyhKGj19C0v6B7p9njNLsuyg1Ujj7Q46SM1ar0XbwNsb59IRZ2Vxz1-WSN0rQe_YFSgUnN-02EUbfSlkfN_J05a8d5aCB18Ah75IbmzwRWxxRfqsIo0t2RG9IMEfOcB6bPCtd5X6rt_V2hAlWUlBFyGzvaI4DPrxLkRe-jpaDaZ3jL29ojkKhFD1IF0kobakT9Mzekyff5i-FxpVnl5LCQT9PBuEpekrZkIohOZc9XXd-j6IhkG9xCyOR9OKyw4SzgEBPg","fromDateText":"01/01/2023","toDateText":"21/09/2026"}'
+
+  payload
+  {"pageId":1,"empNumber":"qYFMwQ2pMR1AJuicFORxF7T3SuZJo0gcn_VbVRGE-YHasSYPNqSHoBY257RqclOBhAlDOl_jYi_daNpnB1Z-n2pcv5m9XRqisVMOoPj8zDeh6rkYod8ZzTYBDWZLc8a-KcuOOpiibMNlKJIL-KOBnYnH0g1VUXFcoXYjt9fBTaZwMEzXphMWA6JoZ3e08MXrDY-Q5Emar1uR50BcbyhKGj19C0v6B7p9njNLsuyg1Ujj7Q46SM1ar0XbwNsb59IRZ2Vxz1-WSN0rQe_YFSgUnN-02EUbfSlkfN_J05a8d5aCB18Ah75IbmzwRWxxRfqsIo0t2RG9IMEfOcB6bPCtd5X6rt_V2hAlWUlBFyGzvaI4DPrxLkRe-jpaDaZ3jL29ojkKhFD1IF0kobakT9Mzekyff5i-FxpVnl5LCQT9PBuEpekrZkIohOZc9XXd-j6IhkG9xCyOR9OKyw4SzgEBPg","fromDateText":"01/01/2023","toDateText":"21/09/2026"}
+
+  response
+  {
+    "EmployeeData": {
+        "EmpNumber": "SROo4I124L3UAqwW21eTAlB-1C7LJVL46uoFWNqKzZ3bUl_dUA81viSghD9BYgdUWHE6u8lj-_o0ZiEQABXNiCoM55gEuI7kG0VfaSkv2q6_VnaY0H6mrAjhk0VQu5vuWurHfBbXYz2aJ1QFqLMBsqYTqe8sol6XJAlDpWIztVYS_4KV6wdwBX-vVIOetgDLcfuZoADydiclG6WXpx_1vQsFbaoiMle9vSATVqaAj27-G4a4yb5CWasKAt0ZQliWxzuOnBTFg_rRQG89RmLYySm-UsfipgEaiZjkbprQCw_78WP9TnqvL6t_InrPWJCwd_rl67KMtK4JGdSAz80xXmvwyeOoj1b8BSBGrtyWjrfFGZqCiH5aR_fhYMnxn_8kdBVB9ZfpJSwtkbgkUc1gXuCmo_MQc07EmQn8rK_8MiZFis-MKiBr1f0L6yJy17W-",
+        "EmpDisplayName": "Jackson Walker",
+        "EmpDisplayNumber": "000017",
+        "EmpCompleteName": "000017 - Jackson Walker",
+        "Designation": "Senior Software Engineer",
+        "PermanentAddress": "No 0253, No 215/16, Mihindu Mawatha, Warahanthuduwa, Mahara, Kadawatha",
+        "PermanentMobile": "",
+        "IsPayrollActive": 1,
+        "IsSelected": false,
+        "OTasPercentage": null
+    },
+    "SummaryPeriod": "(01/01/2023 - 21/09/2026)",
+    "SummaryData_01": [
+        {
+            "FieldName": "Total Pre OT (HH:mm) ",
+            "ColPosition": 1,
+            "RowPosition": 1,
+            "FieldValue": "05:00",
+            "UniqueId": "DAT_SOT"
+        },
+        {
+            "FieldName": "Total Post OT (HH:mm) ",
+            "ColPosition": 1,
+            "RowPosition": 2,
+            "FieldValue": "06:00",
+            "UniqueId": "DAT_EOT"
+        },
+        {
+            "FieldName": "Total Absent Days (d) ",
+            "ColPosition": 1,
+            "RowPosition": 3,
+            "FieldValue": "00:00",
+            "UniqueId": "DAT_ABSENT_DAY"
+        }
+    ],
+    "SummaryData_02": [
+        {
+            "FieldName": "Total Late Hours (HH:mm) ",
+            "ColPosition": 2,
+            "RowPosition": 1,
+            "FieldValue": "00:00",
+            "UniqueId": "DAT_SLATE"
+        },
+        {
+            "FieldName": "Total Early Hours (HH:mm) ",
+            "ColPosition": 2,
+            "RowPosition": 2,
+            "FieldValue": "03:00",
+            "UniqueId": "DAT_ELATE"
+        }
+    ],
+    "SummaryData_03": [
+        {
+            "FieldName": "Total Nopay (d) ",
+            "ColPosition": 3,
+            "RowPosition": 1,
+            "FieldValue": "106:00",
+            "UniqueId": "DAT_NPY_DAYS"
+        },
+        {
+            "FieldName": "Total Work Hours (HH:mm) ",
+            "ColPosition": 3,
+            "RowPosition": 2,
+            "FieldValue": "112:00",
+            "UniqueId": "DAT_WORKHRS"
+        }
+    ],
+    "IsShowAbsantee": 0
+}
+
+//after submit a manual in and out
+
+curl --url 'https://hrmmainphqa.phrsandbox.dev/hr/TNAV9/api/Common/GetDynamicEmployeeSummary/' \
+  -H 'accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'accept-language: en-GB,en;q=0.9,en-US;q=0.8' \
+  -H 'content-type: application/json' \
+  -b 'ASP.NET_SessionId=3uqu1451asvcq1kscv4joua0; __RequestVerificationToken_L2hy0=lwpHoAnjFZnwEo4RbU2se58WAnSXhDQvBmiGswV3WTGjgDEmRcYwsw4uFdiiMQrlCI-lN-VlK6oYZ-0P4wudHspxvf01; THEME_V8=default; my-application-browser-tab={"guid":"e0fafde7-4502-967d-48fa-26390c80c08e","timestamp":1789979121796}; .ASPXAUTH=065247D994830FD60BCA5EBC81105A3CDDEDBCA3FA3870EF35A8C09E69AE536067D797A6BD8F6B363CEEC4680F12D130CF62A36FA6D6400F7A4944A6208BE4F22DA74C9DA8A274EAC055CBDBDB5377009F56562E9A1D5B19EB7E0A118B6E99A1; ehrm85=EAAAABm+Ii0Zaww/0/i+MJIYMeAc8bmY3J1xPTaQY0vEnoj2RtzPTMtlGsQhzywGKcFcfJs6JRNsmmVVhups5tnZQcb2OLZAubm7Il0Z7NCylsR+tvQ80BKWV761Wptwf+oEFvKJotj23wtjObL3+hJ+AISmD0f7go2po+RBByrI0sDi1PDo90Y1dNCImE7gbc/584bmH+Sm/LHTr4Np7cP6jifzKiLqbGZrlRIJVbHBS/NlDXaFpeTmiWNv2/fN2v5b5HDHA03NM8BtN9NjqQUDXZVGrcAGSXHIfkYr+1eHdPrw8FqtkLbxfxwtExqf+uOuf8gue3M4jXba3PHfCeLwtcL3FvySR07MqVbKGDevnT+6xbuM7YGh2CUrwJJb8u4hGh/nb9+ZCcbheHelTfqMMY9GnVzBkoABTxpLgVJgMxi3CAHMcUSxYT9YNJfjJmU7X5Qoydrf+1DwU4l2AHb94MebrzAwT9FStzJHYRfj7vpGZJoIabU/QYqAO/HPBD/GuzSZyIW6tReufJkIHRbNqAYZM619C0mKI3g5d3TiXf5wZa3Mjxtitzbruhgh3Kii2tHvAn320H/le8R0YLpbcBde5dOZvmcUpZU8loPhHTKqu0nXafWVzrWQ+KNHNSGWPW22hT3cBxzaWslvAezexWBFoWVqW4Jk5niyHrbYGLpLWgfe+K64QHLcqenbTeDPNrUtFZZiSw7FBJUsSVPaib7EhQh52ZC5M1aJfBFe29ELGO70qYs1BZ9oQLWTq6KYITc8Gqqxx6gcHNmbcNuf2V4F5lYMDzUEhal9T+zsUsNDnMbehYIqCHzx0Zzdo1OEszIuZ0am5oeQe5OwgCm/I0vnInRDhnBa3/g7tOdZZjT0oTLrQzHFf1QxU9VhISZdklGAH9kBaR0uha0CSyx6zzpdVjxliTwxAxTp8cEm9b1zlI7tryNLhrJq1wlPRzAn/gPz4/VVjZ/deQzOyd1OxrArOCdibBwlfF7/caPlGfJGcPVUwbrYF7A3n1LR59Yqtjx0vVlHb1uCf8awVtMVJ/ztNOUZLSvoDlYxYnf7kD26vJZGtZbp7IQA233CROZfq8BjZjgwKQ9Xb03dmD5YiMo=' \
+  -H 'origin: https://hrmmainphqa.phrsandbox.dev' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://hrmmainphqa.phrsandbox.dev/hr/home/index' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="153", "Not_A Brand";v="8", "Chromium";v="153"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0' \
+  -H 'x-requested-with: XMLHttpRequest' \
+  --data-raw '{"pageId":1,"empNumber":"mSrmhQlCcB65D40swel1p2vve5jy2DkfDmJiG2L5chwo59gkPehdUl1ctr2-8HNm1AqPSUobK0X9nL0RSQJzhC-LLv6KkjQ6wCreFwXZmsgVH8cu6gwScSC-qY7SGopORp-ODLxXeC20HL5vNmuPMDLKfNyoey29yCcU1S1cRmJx0UJKJD4ZZXNIYBRdDFSz-yioTYQmTipM74hb7q4d2P-AyHieqA0CS6UTIffFrocQd2J4FOIv4JoUafj-nziEVgI4SnyE3SLNDaDdp8Du-UxXS9FoMY0onTojFwkmHqKkUF5XRSLz4WBNTFRKGOaH1t3P9_988ReRyCsX0Or3E5M37gHlDs6w9a348fgU0vhRYhCb7FoSkRlio2Sg9pB9TbCyQWQihyjRdj20jyfnb-kNzdr9ViTse29fxW3YBKr8sPFJccUT0RGr8u5lJ2YHZDeHKppWpmrJLNtqznlqDA","fromDateText":"01/01/2023","toDateText":"21/09/2026"}'
+
+  payload
+
+  {"pageId":1,"empNumber":"mSrmhQlCcB65D40swel1p2vve5jy2DkfDmJiG2L5chwo59gkPehdUl1ctr2-8HNm1AqPSUobK0X9nL0RSQJzhC-LLv6KkjQ6wCreFwXZmsgVH8cu6gwScSC-qY7SGopORp-ODLxXeC20HL5vNmuPMDLKfNyoey29yCcU1S1cRmJx0UJKJD4ZZXNIYBRdDFSz-yioTYQmTipM74hb7q4d2P-AyHieqA0CS6UTIffFrocQd2J4FOIv4JoUafj-nziEVgI4SnyE3SLNDaDdp8Du-UxXS9FoMY0onTojFwkmHqKkUF5XRSLz4WBNTFRKGOaH1t3P9_988ReRyCsX0Or3E5M37gHlDs6w9a348fgU0vhRYhCb7FoSkRlio2Sg9pB9TbCyQWQihyjRdj20jyfnb-kNzdr9ViTse29fxW3YBKr8sPFJccUT0RGr8u5lJ2YHZDeHKppWpmrJLNtqznlqDA","fromDateText":"01/01/2023","toDateText":"21/09/2026"}
+
+  response
+  {
+    "EmployeeData": {
+        "EmpNumber": "IQgqCovdyrSGdOgyOPbubr1t7SCFA5PWMVwDXuZeNnrX9TSdS5S_X_Fu3XX_fZsPCsdONbqwjZCL0IJl3xzCCO-LkADEgEAhZz7nb-vwTUFMymapm4_DsXN39YmvoRuMmhEFfVAntwJDvnRiaKrGyVk04s72ezjQGoOgA3iWUkmlE5HrXDMARQed2yBmnZsrrrRdzxft7lMa8WuIMw1FCVCjd2pon_i0wrMSHZAVqrXUtFnLLlVoSZ8USppQEtFrcFNnqd93M8u4OyqAJjV2U4m5-yyHOtnhCUvkyFPHWDAEvomF6eu5-21EKsK6xvmamkSMhunL6nbaQAxGgIZZ9WYa0m7NAx7hb6Q2HwOOrKvqphf1zSH8HzEmGFSiuERFh9g8zUuQZNpnrdH8XuOcLwC82wo0mu7pBBhb4ZWzxLSAoHWJfnkBN2sUFdTEVV4B",
+        "EmpDisplayName": "Jackson Walker",
+        "EmpDisplayNumber": "000017",
+        "EmpCompleteName": "000017 - Jackson Walker",
+        "Designation": "Senior Software Engineer",
+        "PermanentAddress": "No 0253, No 215/16, Mihindu Mawatha, Warahanthuduwa, Mahara, Kadawatha",
+        "PermanentMobile": "",
+        "IsPayrollActive": 1,
+        "IsSelected": false,
+        "OTasPercentage": null
+    },
+    "SummaryPeriod": "(01/01/2023 - 21/09/2026)",
+    "SummaryData_01": [
+        {
+            "FieldName": "Total Pre OT (HH:mm) ",
+            "ColPosition": 1,
+            "RowPosition": 1,
+            "FieldValue": "05:00",
+            "UniqueId": "DAT_SOT"
+        },
+        {
+            "FieldName": "Total Post OT (HH:mm) ",
+            "ColPosition": 1,
+            "RowPosition": 2,
+            "FieldValue": "06:00",
+            "UniqueId": "DAT_EOT"
+        },
+        {
+            "FieldName": "Total Absent Days (d) ",
+            "ColPosition": 1,
+            "RowPosition": 3,
+            "FieldValue": "00:00",
+            "UniqueId": "DAT_ABSENT_DAY"
+        }
+    ],
+    "SummaryData_02": [
+        {
+            "FieldName": "Total Late Hours (HH:mm) ",
+            "ColPosition": 2,
+            "RowPosition": 1,
+            "FieldValue": "00:00",
+            "UniqueId": "DAT_SLATE"
+        },
+        {
+            "FieldName": "Total Early Hours (HH:mm) ",
+            "ColPosition": 2,
+            "RowPosition": 2,
+            "FieldValue": "03:00",
+            "UniqueId": "DAT_ELATE"
+        }
+    ],
+    "SummaryData_03": [
+        {
+            "FieldName": "Total Nopay (d) ",
+            "ColPosition": 3,
+            "RowPosition": 1,
+            "FieldValue": "106:00",
+            "UniqueId": "DAT_NPY_DAYS"
+        },
+        {
+            "FieldName": "Total Work Hours (HH:mm) ",
+            "ColPosition": 3,
+            "RowPosition": 2,
+            "FieldValue": "112:00",
+            "UniqueId": "DAT_WORKHRS"
+        }
+    ],
+    "IsShowAbsantee": 0
+}

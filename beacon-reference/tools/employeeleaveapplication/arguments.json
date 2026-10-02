@@ -88,13 +88,13 @@
     {
       "name": "isAttachmentMandatory",
       "type": "boolean",
-      "required": false,
+      "required": true,
       "defaultValue": null,
-      "description": "Set to true when the leave type requires a mandatory attachment (e.g., medical leave). When true, prompt the user to upload a file before proceeding. Do not submit without attachment if this is true.",
+      "description": "Set to true when the leave type requires a mandatory attachment (e.g., medical leave). When true, Set this field to true if the user is applying for one of the following leave types: Annual Leave, Sick Leave, or Maternity Leave.",
       "advanced": true,
       "raw": {
         "type": "boolean",
-        "description": "Set to true when the leave type requires a mandatory attachment (e.g., medical leave). When true, prompt the user to upload a file before proceeding. Do not submit without attachment if this is true."
+        "description": "Set to true when the leave type requires a mandatory attachment (e.g., medical leave). When true, Set this field to true if the user is applying for one of the following leave types: Annual Leave, Sick Leave, or Maternity Leave."
       }
     },
     {
