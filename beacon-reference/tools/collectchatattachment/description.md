@@ -6,7 +6,7 @@
 
 ## Description
 
-If the user wants to change, replace, or update a previously uploaded file, check the chat for the newly uploaded attachment and call the collectChatAttachment tool to retrieve it. Do not ask the user to upload the file again if it is already available in the chat.
+If the user wants to change, replace, or update a previously uploaded file, or add new files without replacing the existing ones, check the chat for the newly uploaded attachment(s) and call the collectChatAttachment tool to retrieve them. Do not ask the user to upload a file again if it is already available in the chat.
 
 ## Signature
 

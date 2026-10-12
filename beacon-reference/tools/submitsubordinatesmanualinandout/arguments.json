@@ -2,15 +2,39 @@
   "arguments": [],
   "advancedArguments": [
     {
+      "name": "showTab",
+      "type": "string",
+      "required": false,
+      "defaultValue": null,
+      "description": "Set when the user asks to see the dates on one tab of the Manual In and Out screen - e.g. 'what are the dates in the pending tab'. Pass the tab name as the user says it: Regularize, Pending, Valid Swipes or Off Shifts. No date is needed (the team and admin tools still need the employee). Returns only that tab's dates and submits nothing - show the dates as returned.",
+      "advanced": true,
+      "raw": {
+        "type": "string",
+        "description": "Set when the user asks to see the dates on one tab of the Manual In and Out screen - e.g. 'what are the dates in the pending tab'. Pass the tab name as the user says it: Regularize, Pending, Valid Swipes or Off Shifts. No date is needed (the team and admin tools still need the employee). Returns only that tab's dates and submits nothing - show the dates as returned."
+      }
+    },
+    {
+      "name": "listSubordinates",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": null,
+      "description": "Set to true when the user asks to see the team members (subordinates) they can submit manual In and Out for - e.g. \"display all the subordinates I can apply manual In and Out for\". No employee or date is needed; the tool returns the list (number and name) and submits nothing. Show the list, then ask which one and the date.",
+      "advanced": true,
+      "raw": {
+        "type": "boolean",
+        "description": "Set to true when the user asks to see the team members (subordinates) they can submit manual In and Out for - e.g. \"display all the subordinates I can apply manual In and Out for\". No employee or date is needed; the tool returns the list (number and name) and submits nothing. Show the list, then ask which one and the date."
+      }
+    },
+    {
       "name": "employeeNumber",
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "The subordinate's employee number, e.g. 000013. Either employeeNumber or employeeName must be provided.",
+      "description": "The team member's employee number, e.g. 000017. Leading zeros are optional. Either employeeNumber or employeeName must be given - ask the user which team member if neither is known.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The subordinate's employee number, e.g. 000013. Either employeeNumber or employeeName must be provided."
+        "description": "The team member's employee number, e.g. 000017. Leading zeros are optional. Either employeeNumber or employeeName must be given - ask the user which team member if neither is known."
       }
     },
     {
@@ -18,23 +42,23 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "The subordinate's name (full or partial). Either employeeNumber or employeeName must be provided.",
+      "description": "The team member's name, full or partial. Either employeeNumber or employeeName must be given. If it matches more than one person the tool returns candidates - ask the user which one, never pick.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "The subordinate's name (full or partial). Either employeeNumber or employeeName must be provided."
+        "description": "The team member's name, full or partial. Either employeeNumber or employeeName must be given. If it matches more than one person the tool returns candidates - ask the user which one, never pick."
       }
     },
     {
       "name": "date",
       "type": "string",
-      "required": true,
+      "required": false,
       "defaultValue": null,
-      "description": "Date to add/check manual in and out for, in the format returned by the dateFormat tool (DD/MM/YYYY, or MM/DD/YYYY for en-US). Ask the user for this if not provided.",
+      "description": "The day of the manual In and Out, in the format returned by the dateFormat tool (MM/DD/YYYY for en-US, otherwise DD/MM/YYYY). Ask the user for it, then call the tool straight away with the employee and the date alone - the tool checks which tab the day is on and returns the shift details before anything else is asked. Also call with the date when the user asks for the status of a pending request on that date - for a Pending day the tool returns the status, what was requested (old -> new In/Out and break times), the comment and who it is waiting for (pendingRequest); show that as returned.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "Date to add/check manual in and out for, in the format returned by the dateFormat tool (DD/MM/YYYY, or MM/DD/YYYY for en-US). Ask the user for this if not provided."
+        "description": "The day of the manual In and Out, in the format returned by the dateFormat tool (MM/DD/YYYY for en-US, otherwise DD/MM/YYYY). Ask the user for it, then call the tool straight away with the employee and the date alone - the tool checks which tab the day is on and returns the shift details before anything else is asked. Also call with the date when the user asks for the status of a pending request on that date - for a Pending day the tool returns the status, what was requested (old -> new In/Out and break times), the comment and who it is waiting for (pendingRequest); show that as returned."
       }
     },
     {
@@ -42,11 +66,11 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "In date, in the format returned by the dateFormat tool. ALWAYS ask the user for this separately, alongside the Out Date - do not assume it. The tool returns the row's own date under suggested.inDate; offer that as the default and let the user confirm or change it.",
+      "description": "In date, in the format returned by the dateFormat tool. Give it with inTime when the user is giving the In. The screen submits an In on its own, an Out on its own, or both, so one side is enough - ask the user which they want to give and never insist on the other. Offer suggested.inDate as the default; never assume it.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "In date, in the format returned by the dateFormat tool. ALWAYS ask the user for this separately, alongside the Out Date - do not assume it. The tool returns the row's own date under suggested.inDate; offer that as the default and let the user confirm or change it."
+        "description": "In date, in the format returned by the dateFormat tool. Give it with inTime when the user is giving the In. The screen submits an In on its own, an Out on its own, or both, so one side is enough - ask the user which they want to give and never insist on the other. Offer suggested.inDate as the default; never assume it."
       }
     },
     {
@@ -54,11 +78,11 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "In time in HH:mm 24-hour format, e.g. 08:30. ALWAYS ask the user for this together with inDate, outDate and outTime - all four are collected separately and none is inferred.",
+      "description": "In time in HH:mm 24-hour format, e.g. 08:30. Give it with inDate when the user is giving the In; leave both out for an Out-only entry. Offer suggested.inTime as the default.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "In time in HH:mm 24-hour format, e.g. 08:30. ALWAYS ask the user for this together with inDate, outDate and outTime - all four are collected separately and none is inferred."
+        "description": "In time in HH:mm 24-hour format, e.g. 08:30. Give it with inDate when the user is giving the In; leave both out for an Out-only entry. Offer suggested.inTime as the default."
       }
     },
     {
@@ -66,11 +90,11 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "Out date, in the format returned by the dateFormat tool. ALWAYS ask the user for this separately, alongside the In Date - never decide it yourself. An Out Date on the day AFTER the In Date is normal - many shifts end after midnight - and the Out time is then earlier on the clock than the In time, which is correct and must never be questioned or rejected. The tool reports whether this shift can end on the following day as current.shiftCanEndNextDay, and returns the row's own date under suggested.outDate; offer that as the default and let the user confirm or change it.",
+      "description": "Out date, in the format returned by the dateFormat tool. Give it with outTime when the user is giving the Out; leave both out for an In-only entry. An Out Date on the day AFTER the In Date is normal for shifts past midnight (shiftDetails.canEndNextDay) - never question it. Offer suggested.outDate as the default.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "Out date, in the format returned by the dateFormat tool. ALWAYS ask the user for this separately, alongside the In Date - never decide it yourself. An Out Date on the day AFTER the In Date is normal - many shifts end after midnight - and the Out time is then earlier on the clock than the In time, which is correct and must never be questioned or rejected. The tool reports whether this shift can end on the following day as current.shiftCanEndNextDay, and returns the row's own date under suggested.outDate; offer that as the default and let the user confirm or change it."
+        "description": "Out date, in the format returned by the dateFormat tool. Give it with outTime when the user is giving the Out; leave both out for an In-only entry. An Out Date on the day AFTER the In Date is normal for shifts past midnight (shiftDetails.canEndNextDay) - never question it. Offer suggested.outDate as the default."
       }
     },
     {
@@ -78,11 +102,11 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "Out time in HH:mm 24-hour format, e.g. 17:30. ALWAYS ask the user for this together with inDate, inTime and outDate. An Out Date on the day AFTER the In Date is normal - many shifts end after midnight - and the Out time is then earlier on the clock than the In time, which is correct and must never be questioned or rejected. Check it against outDate, not against inTime.",
+      "description": "Out time in HH:mm 24-hour format, e.g. 17:30. Give it with outDate when the user is giving the Out. Check it against outDate, not against inTime. Offer suggested.outTime as the default.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "Out time in HH:mm 24-hour format, e.g. 17:30. ALWAYS ask the user for this together with inDate, inTime and outDate. An Out Date on the day AFTER the In Date is normal - many shifts end after midnight - and the Out time is then earlier on the clock than the In time, which is correct and must never be questioned or rejected. Check it against outDate, not against inTime."
+        "description": "Out time in HH:mm 24-hour format, e.g. 17:30. Give it with outDate when the user is giving the Out. Check it against outDate, not against inTime. Offer suggested.outTime as the default."
       }
     },
     {
@@ -90,23 +114,44 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "Reason/comment explaining why the manual in and out is being added. Always required before submission. No need reason for breakInTime and breakOutTime.",
+      "description": "Reason/comment explaining why the manual In and Out is being submitted. Required before the record is submitted.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "Reason/comment explaining why the manual in and out is being added. Always required before submission. No need reason for breakInTime and breakOutTime."
+        "description": "Reason/comment explaining why the manual In and Out is being submitted. Required before the record is submitted."
       }
     },
     {
-      "name": "confirmed",
-      "type": "boolean",
+      "name": "breaks",
+      "type": "array",
       "required": false,
       "defaultValue": null,
-      "description": "Set to true only after the user has reviewed the preview and explicitly confirmed the data is correct. Set to false (or omit) to just preview/validate without submitting.",
+      "description": "Optional breaks - none, one or as many as the user wants. After showing the shift details, tell the user they can add breaks, but do not insist. Each break needs both times, must end after it starts, must sit within the In and Out date-times and the shift's allowed period, and must not overlap another break of the day (shiftDetails.recordedBreaks lists the ones already recorded). A break after midnight is fine on a shift whose period reaches there.",
       "advanced": true,
       "raw": {
-        "type": "boolean",
-        "description": "Set to true only after the user has reviewed the preview and explicitly confirmed the data is correct. Set to false (or omit) to just preview/validate without submitting."
+        "type": "array",
+        "description": "Optional breaks - none, one or as many as the user wants. After showing the shift details, tell the user they can add breaks, but do not insist. Each break needs both times, must end after it starts, must sit within the In and Out date-times and the shift's allowed period, and must not overlap another break of the day (shiftDetails.recordedBreaks lists the ones already recorded). A break after midnight is fine on a shift whose period reaches there.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "breakInTime": {
+              "type": "string",
+              "description": "Break start time in HH:mm 24-hour format, e.g. 12:00."
+            },
+            "breakOutTime": {
+              "type": "string",
+              "description": "Break end time in HH:mm 24-hour format, e.g. 13:00."
+            },
+            "breakNo": {
+              "type": "integer",
+              "description": "Only to CHANGE a recorded break: its breakNo from shiftDetails.recordedBreaks. Leave it out to add a new break."
+            }
+          },
+          "required": [
+            "breakInTime",
+            "breakOutTime"
+          ]
+        }
       }
     },
     {
@@ -114,11 +159,11 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "Optional break in time in HH:mm 24-hour format. Break times are not mandatory - add them only if the user wants to. If given, breakOutTime must be given too. A break after midnight is fine on a shift whose period reaches there.",
+      "description": "Single-break shorthand: break start time in HH:mm. Prefer the breaks list. If given, breakOutTime must be given too.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "Optional break in time in HH:mm 24-hour format. Break times are not mandatory - add them only if the user wants to. If given, breakOutTime must be given too. A break after midnight is fine on a shift whose period reaches there."
+        "description": "Single-break shorthand: break start time in HH:mm. Prefer the breaks list. If given, breakOutTime must be given too."
       }
     },
     {
@@ -126,11 +171,82 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "Optional break out time in HH:mm 24-hour format. Break times are not mandatory - add them only if the user wants to. If given, breakInTime must be given too. A break after midnight is fine on a shift whose period reaches there.",
+      "description": "Single-break shorthand: break end time in HH:mm. Prefer the breaks list. If given, breakInTime must be given too.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "Optional break out time in HH:mm 24-hour format. Break times are not mandatory - add them only if the user wants to. If given, breakInTime must be given too. A break after midnight is fine on a shift whose period reaches there."
+        "description": "Single-break shorthand: break end time in HH:mm. Prefer the breaks list. If given, breakInTime must be given too."
+      }
+    },
+    {
+      "name": "otherEntries",
+      "type": "array",
+      "required": false,
+      "defaultValue": null,
+      "description": "When the user asks for several days in one request, pass on every call the OTHER days of that request that are not submitted yet, each with the values the user gave. The screen submits such days together and refuses all of them when two overlap across midnight, so the tool checks the overlap in each day's preview. Preview every day first; submit none until all previews passed.",
+      "advanced": true,
+      "raw": {
+        "type": "array",
+        "description": "When the user asks for several days in one request, pass on every call the OTHER days of that request that are not submitted yet, each with the values the user gave. The screen submits such days together and refuses all of them when two overlap across midnight, so the tool checks the overlap in each day's preview. Preview every day first; submit none until all previews passed.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "description": "That day, in the dateFormat format."
+            },
+            "inDate": {
+              "type": "string"
+            },
+            "inTime": {
+              "type": "string",
+              "description": "HH:mm"
+            },
+            "outDate": {
+              "type": "string"
+            },
+            "outTime": {
+              "type": "string",
+              "description": "HH:mm"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "confirmed",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": null,
+      "description": "Set to true, together with previewToken, only after the user has reviewed the preview (it names the team member) and explicitly confirmed. Set to false (or omit) to preview/validate without submitting anything. Never send it on the first call - the tool validates and returns the preview first.",
+      "advanced": true,
+      "raw": {
+        "type": "boolean",
+        "description": "Set to true, together with previewToken, only after the user has reviewed the preview (it names the team member) and explicitly confirmed. Set to false (or omit) to preview/validate without submitting anything. Never send it on the first call - the tool validates and returns the preview first."
+      }
+    },
+    {
+      "name": "previewToken",
+      "type": "string",
+      "required": false,
+      "defaultValue": null,
+      "description": "The previewToken from the preview the user confirmed. Required with confirmed:true. Without it, or if any value changed since that preview, nothing is submitted and the preview is returned again - show it and ask for confirmation.",
+      "advanced": true,
+      "raw": {
+        "type": "string",
+        "description": "The previewToken from the preview the user confirmed. Required with confirmed:true. Without it, or if any value changed since that preview, nothing is submitted and the preview is returned again - show it and ask for confirmation."
+      }
+    },
+    {
+      "name": "isGroupByEmployee",
+      "type": "boolean",
+      "required": false,
+      "defaultValue": null,
+      "description": "Optional Group By Employee checkbox on the Search Criteria panel. Omit it to use the screen's own default.",
+      "advanced": true,
+      "raw": {
+        "type": "boolean",
+        "description": "Optional Group By Employee checkbox on the Search Criteria panel. Omit it to use the screen's own default."
       }
     },
     {
@@ -138,11 +254,11 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "Optional roster group id for GetRostersByGroupId. Leave it out: the tool reads the group off the team page's own roster list, which varies from user to user.",
+      "description": "Optional roster group, by id or name. Omit it to use the screen's first roster group. Do not ask the user for it unless they want a specific roster.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "Optional roster group id for GetRostersByGroupId. Leave it out: the tool reads the group off the team page's own roster list, which varies from user to user."
+        "description": "Optional roster group, by id or name. Omit it to use the screen's first roster group. Do not ask the user for it unless they want a specific roster."
       }
     },
     {
@@ -150,11 +266,11 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "Optional roster code for GetGridDataByCriteria, e.g. 000058. Leave it out: the tool uses the first roster GetRostersByGroupId returns for this user's group, which is what the screen itself searches with. Takes precedence over rosterName.",
+      "description": "Optional roster code. Takes precedence over rosterName. Omit it to use the first roster of the roster group, as the screen does.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "Optional roster code for GetGridDataByCriteria, e.g. 000058. Leave it out: the tool uses the first roster GetRostersByGroupId returns for this user's group, which is what the screen itself searches with. Takes precedence over rosterName."
+        "description": "Optional roster code. Takes precedence over rosterName. Omit it to use the first roster of the roster group, as the screen does."
       }
     },
     {
@@ -162,11 +278,11 @@
       "type": "string",
       "required": false,
       "defaultValue": null,
-      "description": "Optional roster name, e.g. 'MAK01'. Resolved to a roster code against the roster list the API returned. Ignored when rosterCode is given.",
+      "description": "Optional roster name. Resolved to a roster code within the roster group. Ignored when rosterCode is given.",
       "advanced": true,
       "raw": {
         "type": "string",
-        "description": "Optional roster name, e.g. 'MAK01'. Resolved to a roster code against the roster list the API returned. Ignored when rosterCode is given."
+        "description": "Optional roster name. Resolved to a roster code within the roster group. Ignored when rosterCode is given."
       }
     }
   ]

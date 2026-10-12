@@ -10,3 +10,10 @@ discovery-output/
 .DS_Store
 Thumbs.db
 *.log
+
+# Folders to exclude from beacon-reference
+/beacon-reference/Benefit management/
+/beacon-reference/Manual In and Out/
+/beacon-reference/Manual in and out Admin/
+/beacon-reference/Off Shifts/
+/beacon-reference/Subordinate Manual in and Out/

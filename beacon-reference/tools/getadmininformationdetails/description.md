@@ -29,9 +29,9 @@ _None._
 ## Assigned agents
 
 - BenefitManagement (`690dc571931a2d61ba0b1be9`)
+- Attendance (`690dc571931a2d61ba0b1bcd`)
 - AbsenceManagement (`690dc571931a2d61ba0b1be3`)
 - AbsenceManagementEmployee (`690dc572931a2d61ba0b1c72`)
-- Attendance (`690dc571931a2d61ba0b1bcd`)
 - Employee Information (`690dc571931a2d61ba0b1bf4`)
 - PayRoll (`690dc572931a2d61ba0b1c51`)
 - Recruitment (`690dc571931a2d61ba0b1bef`)

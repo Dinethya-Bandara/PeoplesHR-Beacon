@@ -105,7 +105,15 @@
       readError: null
     };
 
-    function chatFiles() {
+    // Names of the files attached to the CURRENT message - the only ones the chat
+    // hands over with their contents; earlier files come back as {name, key}.
+    let currentChatNames = [];
+    // Entries saved by collectChatAttachment (peoplesHRChatAttachments /
+    // peoplesHRSelectedAttachment). It saves the files of the message it was
+    // called for, as the original File objects.
+    let collectedEntries = [];
+
+    async function chatFiles() {
       try {
         chatFileSource.helperPresent =
           typeof BeaconBar !== "undefined" &&
@@ -116,21 +124,23 @@
         if (chatFileSource.helperPresent) {
           const bao = BeaconBar.getUploadedBaoFiles();
           uploaded = Array.isArray(bao) ? bao : bao ? [bao] : [];
+            currentChatNames = uploaded.filter(f => f && f.name).map(f => String(f.name));
         }
 
         // Read files collected by the separate attachment collector.
         let collected = [];
         if (typeof BeaconBar.getSharedData === "function") {
-          const stored = BeaconBar.getSharedData("peoplesHRChatAttachments");
+          const stored = await BeaconBar.getSharedData("peoplesHRChatAttachments");
           collected = Array.isArray(stored) ? stored : stored ? [stored] : [];
 
-          const selected = BeaconBar.getSharedData("peoplesHRSelectedAttachment");
+          const selected = await BeaconBar.getSharedData("peoplesHRSelectedAttachment");
           if (selected && !collected.some(f =>
             f === selected
           )) {
             collected.push(selected);
           }
         }
+        collectedEntries = collected.filter(f => f && typeof f === "object" && f.name);
 
         // Merge current chat uploads with previously collected attachments.
         const combined = [...collected, ...uploaded]
@@ -199,6 +209,32 @@
     function describeEntry(entry) {
       try { return Object.keys(entry || {}).join(", ") || typeof entry; } catch (e) { return typeof entry; }
     }
+
+    /* Multiple attachments: the chat hands a file's CONTENTS over only on the call
+     * for the message it was attached to - later calls see the same file as
+     * {name, key} - and PeoplesHR did not keep the files staged by an earlier call.
+     * So a copy of every readable file is kept in the page (attachmentCache) and
+     * the application is re-staged from those copies on every call, the final
+     * confirmation included. Files of this message are parked here first, because
+     * the benefit type (and team member) may not be known yet. */
+    const cacheHost = typeof window !== "undefined" ? window : globalThis;
+    const attachmentCache = cacheHost.__peoplesHRBenefitAttachments = cacheHost.__peoplesHRBenefitAttachments || {};
+    attachmentCache.apps = attachmentCache.apps || {};
+    attachmentCache.pending = attachmentCache.pending || {};
+    attachmentCache.consumed = attachmentCache.consumed || {};
+    attachmentCache.seen = attachmentCache.seen || new WeakSet();
+    const isNewlyCollected = f => collectedEntries.includes(f) && !attachmentCache.seen.has(f);
+    for (const f of await chatFiles()) {
+      if (!currentChatNames.some(n => String(n).trim().toLowerCase() === String(f.name).trim().toLowerCase())
+        && !isNewlyCollected(f)) continue;
+      try {
+        const resolved = await fileBlobOf(f);
+        if (resolved && resolved.blob && resolved.blob.size) {
+          attachmentCache.pending[String(f.name).trim().toLowerCase()] = { blob: resolved.blob, name: f.name, size: resolved.blob.size };
+        }
+      } catch (e) { /* unreadable now; reported later if the application needs it */ }
+    }
+
 
     function extensionOf(name) {
       const dot = String(name).lastIndexOf(".");
@@ -433,7 +469,12 @@
     const removeNames = (Array.isArray(args.removeAttachments) ? args.removeAttachments : (args.removeAttachments ? [args.removeAttachments] : []))
       .map(n => String(n).trim().toLowerCase())
       .filter(Boolean);
-    const isRemoved = name => removeNames.includes(String(name || "").trim().toLowerCase());
+    // Files left out by an earlier call (removed or replaced), from attachmentCache.
+    const leftOutNames = [];
+    const isRemoved = name => {
+      const n = String(name || "").trim().toLowerCase();
+      return removeNames.includes(n) || leftOutNames.includes(n);
+    };
 
     const attachmentBase = { attachmentRules, attachmentSessionKey: sessionKey };
     const sameName = (a, b) => String(a || "").trim().toLowerCase() === String(b || "").trim().toLowerCase();
@@ -468,6 +509,10 @@
      * call of this application, means later calls find it on the server
      * instead of asking the user for a document they already attached.
      * Returns a response to hand straight back, or null to carry on. */
+    const appCacheKey = (employee.displayNumber || employee.displayName) + "|" + typeMatch.BetCode;
+    const appCache = attachmentCache.apps[appCacheKey] = attachmentCache.apps[appCacheKey] || { files: {}, excluded: {} };
+    // Attached in the chat but removed or replaced - reported in the preview.
+    let leftOutAttachments = [];
     let attachmentsSynced = false;
 
     async function syncAttachments() {
@@ -475,7 +520,7 @@
       if (attachmentsSynced) return null;
       attachmentsSynced = true;
       if (!attachmentRules.allowed) {
-        const unexpected = chatFiles().filter(f => !isRemoved(f.name));
+        const unexpected = (await chatFiles()).filter(f => !isRemoved(f.name));
         if (unexpected.length > 0) {
           return {
             needsInput: true,
@@ -488,8 +533,68 @@
         if (current.error) return current.error;
         let serverList = current.list;
 
-        const inChat = chatFiles();
-        const toDelete = serverList.filter(a => isRemoved(a.BetAttachmentName));
+        const lc = n => String(n || "").trim().toLowerCase();
+        const isCurrent = f => currentChatNames.some(n => sameName(n, f.name));
+        // Files of an application already submitted are not picked up again unless
+        // they are attached again.
+        const inChat = (await chatFiles()).filter(f => !attachmentCache.consumed[lc(f.name)] || isCurrent(f));
+
+        toolStage = "reading the files attached in the chat";
+        // Files collectChatAttachment delivered for this message count as attached
+        // in it, exactly like files from getUploadedBaoFiles.
+        const collectedNow = inChat.filter(isNewlyCollected).map(f => lc(f.name));
+        const readableNow = [];
+        for (const f of inChat) {
+          if (collectedEntries.includes(f)) attachmentCache.seen.add(f);
+          const resolved = await fileBlobOf(f);
+          if (resolved && resolved.blob && resolved.blob.size) {
+            appCache.files[lc(f.name)] = { blob: resolved.blob, name: f.name, size: resolved.blob.size };
+            readableNow.push(lc(f.name));
+          } else if (attachmentCache.pending[lc(f.name)] && !appCache.files[lc(f.name)]) {
+            appCache.files[lc(f.name)] = attachmentCache.pending[lc(f.name)];
+          }
+          delete attachmentCache.pending[lc(f.name)];
+          if (isCurrent(f)) delete attachmentCache.consumed[lc(f.name)];
+        }
+        // Files parked before this application was known (sent with the first message,
+        // before the benefit type or team member was chosen) belong to it, even when
+        // the chat no longer lists them.
+        Object.keys(attachmentCache.pending).forEach(n => {
+          if (!appCache.files[n] && !attachmentCache.consumed[n]) appCache.files[n] = attachmentCache.pending[n];
+          delete attachmentCache.pending[n];
+        });
+        // A file handed over WITH its contents in this message - a new file, or a new
+        // copy of one already attached.
+        const freshInMessage = f => (isCurrent(f) || collectedNow.includes(lc(f.name))) && readableNow.includes(lc(f.name));
+        const displayOf = n => {
+          const c = inChat.find(f => lc(f.name) === n), s = serverList.find(a => lc(a.BetAttachmentName) === n);
+          return (c && c.name) || (s && s.BetAttachmentName) || (appCache.files[n] && appCache.files[n].name) || n;
+        };
+
+        // Attaching a file again brings it back; removals are remembered so a file
+        // the chat keeps listing stays out even if removeAttachments is not resent.
+        inChat.forEach(f => { if (freshInMessage(f) && !removeNames.includes(lc(f.name))) delete appCache.excluded[lc(f.name)]; });
+        removeNames.forEach(n => { appCache.excluded[n] = true; });
+
+        // replaceAttachments: the file(s) of this message replace every earlier one.
+        const replacedByThisMessage = [];
+        if ((args.replaceAttachments === true || String(args.replaceAttachments || "").toLowerCase() === "true")
+          && inChat.some(f => freshInMessage(f) && !removeNames.includes(lc(f.name)))) {
+          new Set(serverList.map(a => lc(a.BetAttachmentName)).concat(Object.keys(appCache.files), inChat.map(f => lc(f.name)))).forEach(n => {
+            if (appCache.excluded[n] || inChat.some(f => freshInMessage(f) && lc(f.name) === n)) return;
+            appCache.excluded[n] = true;
+            replacedByThisMessage.push(n);
+          });
+        }
+        Object.keys(appCache.excluded).forEach(n => { if (!removeNames.includes(n)) leftOutNames.push(n); });
+        if (replacedByThisMessage.length > 0) {
+          attachmentNotes.push(`${replacedByThisMessage.map(n => `"${displayOf(n)}"`).join(", ")} ${replacedByThisMessage.length === 1 ? "was" : "were"} replaced by what the user attached in the chat and will not be submitted.`);
+        }
+
+        // Removals the user asked for in this call; files left out earlier come off
+        // quietly alongside them.
+        const toDelete = serverList.filter(a => removeNames.includes(lc(a.BetAttachmentName)));
+        const leftOutOnServer = serverList.filter(a => leftOutNames.includes(lc(a.BetAttachmentName)));
 
         /* Anything the chat hands over is an upload attempt. The helper reports
          * a file to the call it was attached for, so a file arriving under a
@@ -499,7 +604,7 @@
          * list says how big a file is or when it changed, so the chat is the
          * only thing that can be trusted about what the user wants now. */
         const replaced = serverList.filter(a => !isRemoved(a.BetAttachmentName)
-          && inChat.some(f => !isRemoved(f.name) && sameName(f.name, a.BetAttachmentName)));
+          && inChat.some(f => !isRemoved(f.name) && freshInMessage(f) && sameName(f.name, a.BetAttachmentName)));
         /* "Change the document to this": with replaceAttachments the files in
          * the chat are the whole attachment list, so anything staged that the
          * user did not attach again comes off - a swap for a file with a
@@ -512,10 +617,20 @@
             && !inChat.some(f => sameName(f.name, a.BetAttachmentName))
             && !replaced.some(r => sameName(r.BetAttachmentName, a.BetAttachmentName)))
           : [];
-        const toRemoveFromServer = toDelete.concat(replaced, supersededByReplaceAll);
-        const toUpload = inChat.filter(f => !isRemoved(f.name));
+        const toRemoveFromServer = toDelete.concat(replaced, supersededByReplaceAll, leftOutOnServer);
+        /* Additive: every file attached in the conversation is part of the application
+         * until removed or replaced (capture: three UploadAttachment calls under one
+         * key, GetAttachments growing 1 -> 2 -> 3, SaveApplication picking them all up
+         * through KeyValue). A file already staged is not uploaded again, and files
+         * PeoplesHR no longer holds are re-uploaded from their copies. */
+        const staysStaged = name => serverList.some(a => sameName(a.BetAttachmentName, name))
+          && !toRemoveFromServer.some(r => sameName(r.BetAttachmentName, name));
+        const toUpload = inChat.filter(f => !isRemoved(f.name) && !staysStaged(f.name))
+          .concat(Object.keys(appCache.files)
+            .filter(n => !isRemoved(n) && !staysStaged(n) && !inChat.some(f => lc(f.name) === n))
+            .map(n => ({ name: appCache.files[n].name, size: appCache.files[n].size })));
         inChat.forEach(f => {
-          if (!isRemoved(f.name) || serverList.some(a => sameName(a.BetAttachmentName, f.name))) return;
+          if (!removeNames.includes(lc(f.name)) || serverList.some(a => sameName(a.BetAttachmentName, f.name))) return;
           const wrongType = attachmentRules.allowedTypes.length && !attachmentRules.allowedTypes.includes(extensionOf(f.name));
           const tooBig = attachmentRules.maxSizeMb && typeof f.size === "number" && f.size > attachmentRules.maxSizeMb * 1024 * 1024;
           if (!wrongType && !tooBig) suppressedByRemoval.push(f.name);
@@ -596,7 +711,14 @@
             { fileCode: att.BetAttachmentCode, empNumber: appEmpNumber, key: sessionKey },
             "DeleteAttachment"
           );
-          if (del.error || (del.data && del.data.Status === false)) {
+          // Capture: DeleteAttachment {fileCode, empNumber, key} answers with the files
+          // still attached ({BmAppAttachments: [...]}, no Status).
+          const remaining = del.data && Array.isArray(del.data.BmAppAttachments) ? del.data.BmAppAttachments : null;
+          if (remaining) serverList = remaining;
+          const stillThere = remaining
+            ? remaining.some(a => a.BetAttachmentCode === att.BetAttachmentCode)
+            : !!(del.data && del.data.Status === false);
+          if (del.error || stillThere) {
             const reason = `${del.data && del.data.Message ? `: ${del.data.Message}` : ""}`;
             /* A removal the user asked for is the point of the call, so it stops
              * here. A file being taken off to make way for a new one is not: the
@@ -624,11 +746,11 @@
 
         toolStage = "uploading an attachment";
         for (const file of toUploadUsable) {
-          const resolved = await fileBlobOf(file);
+          const resolved = appCache.files[lc(file.name)] || await fileBlobOf(file);
           if (!resolved || !resolved.blob || !resolved.blob.size) {
             rejectedAttachments.push({
               name: file && file.name ? file.name : "(unnamed file)",
-              reason: `the chat handed over no readable contents for it (it arrived as: ${describeEntry(file)})`
+              reason: `it was attached earlier in the chat, but its contents are no longer available to this tool (the page may have been reloaded) - it needs to be attached again (it arrived as: ${describeEntry(file)})`
             });
             continue;
           }
@@ -655,6 +777,15 @@
               attachments: after.list ? after.list.map(a => a.BetAttachmentName) : undefined
             }, attachmentBase);
           }
+
+          // The screen reads the list back after every upload (UploadAttachment ->
+          // GetAttachments, once per file), so this does too.
+          const afterUpload = await listAttachments();
+          if (afterUpload.error) return afterUpload.error;
+          if (!afterUpload.list.some(a => sameName(a.BetAttachmentName, resolved.name))) {
+            attachmentNotes.push(`"${resolved.name}" was sent to PeoplesHR but does not appear on the application's attachment list. Tell the user, and ask them to attach it again.`);
+          }
+          serverList = afterUpload.list;
         }
 
         // Always read the list back after anything was uploaded or removed.
@@ -664,6 +795,9 @@
           serverList = refreshed.list;
         }
         stagedAttachments = serverList.map(a => a.BetAttachmentName).filter(Boolean);
+        leftOutAttachments = Object.keys(appCache.excluded)
+          .filter(n => !stagedAttachments.some(s => lc(s) === n) && (appCache.files[n] || inChat.some(f => lc(f.name) === n)))
+          .map(displayOf);
 
       }
       return null;
@@ -1664,6 +1798,7 @@
         ? `Attached: ${stagedAttachments.map(n => `"${n}"`).join(", ")}. Show these to the user with the rest of the preview - before confirming they can still remove any of them (call again with removeAttachments listing the file name, and keep passing it on later calls)${attachmentRules.maxCount && stagedAttachments.length >= attachmentRules.maxCount ? "" : " or attach more in the chat"}.`
         : `No attachment added (optional; ${attachmentRulesText() || "any file type"}). The user can attach one in the chat before confirming.`;
       return [staged, `Pass attachmentSessionKey:"${sessionKey}" on every later call for this application, including the confirmation; leave it out if the benefit type changes.`]
+        .concat(leftOutAttachments.length ? [`Left out (removed or replaced, will not be submitted): ${leftOutAttachments.map(n => `"${n}"`).join(", ")}.`] : [])
         .concat(attachmentNotes).join(" ");
     }
 
@@ -1726,6 +1861,8 @@
         rows: hasGrid ? rowSummaries : undefined,
         comment: args.comment || null,
         attachments: attachmentRules.allowed ? stagedAttachments : undefined,
+        attachmentCount: attachmentRules.allowed ? stagedAttachments.length : undefined,
+        attachmentsLeftOut: leftOutAttachments.length ? leftOutAttachments : undefined,
         // Files that were received and checked but could not be attached.
         // Read every one of these out: the user attached them and would
         // otherwise believe they are on the application.
@@ -1814,6 +1951,8 @@
      * attachments are already saved with the application by then, so this is
      * housekeeping only: its outcome never changes the result reported. */
     if (saved.Status === true && attachmentRules.allowed) {
+      stagedAttachments.forEach(n => { attachmentCache.consumed[String(n).trim().toLowerCase()] = true; });
+      delete attachmentCache.apps[appCacheKey];
       try {
         await fetch(`${base}/BenefitV9/api/ApplicationApi/DeleteAttachments`, {
           method: "POST",

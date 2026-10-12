@@ -4,7 +4,6 @@ Grievance Handling
 
 ## Assigned tools
 
-- [myTeamGrievanceApplication](../../tools/myteamgrievanceapplication) (`6abf6191ab3f4045a178767a`)
 - [submitMyGrievanceApplication](../../tools/submitmygrievanceapplication) (`6aa4282725179d849b92c8e3`)
 - [submitSelfAppealForGrievance](../../tools/submitselfappealforgrievance) (`6aa41e46824909881cc8416d`)
 - [getMyAppealHistory](../../tools/getmyappealhistory) (`6aa41b144568dadea3305d7b`)

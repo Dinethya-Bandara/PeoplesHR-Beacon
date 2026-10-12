@@ -4,12 +4,15 @@ Attendance
 
 ## Assigned tools
 
-- [editSubordinatesManualInAndOut](../../tools/editsubordinatesmanualinandout) (`6a8ee7dd4297aa961cef45dc`)
+- [submitSubordinatesOffShifts](../../tools/submitsubordinatesoffshifts) (`6ac61b8b46a63036febd176b`)
 - [submitSubordinatesManualInAndOut](../../tools/submitsubordinatesmanualinandout) (`6a82e376462b20b27700e67e`)
-- [submitSelfManualInAndOut](../../tools/submitselfmanualinandout) (`6a7d652bdf5557a058554c33`)
+- [submitSelfOffShifts](../../tools/submitselfoffshifts) (`6ac4cdf67c4f1f8bd76e000f`)
+- [submitManualInAndOutByAdmin](../../tools/submitmanualinandoutbyadmin) (`6a8fec0523d5d8fe14b0f829`)
+- [submitAdminOffShifts](../../tools/submitadminoffshifts) (`6ac61d8c80fb7d3db26568ba`)
+- [editSubordinatesManualInAndOut](../../tools/editsubordinatesmanualinandout) (`6a8ee7dd4297aa961cef45dc`)
 - [editSelfManualInAndOut](../../tools/editselfmanualinandout) (`6a8ea65237b20ee9436a5da9`)
 - [editManualInAndOutByAdmin](../../tools/editmanualinandoutbyadmin) (`6a90108b5238e7bab3688f48`)
-- [submitManualInAndOutByAdmin](../../tools/submitmanualinandoutbyadmin) (`6a8fec0523d5d8fe14b0f829`)
+- [submitSelfManualInAndOut](../../tools/submitselfmanualinandout) (`6a7d652bdf5557a058554c33`)
 - [selfEmployeeManualInAndOutDetails](../../tools/selfemployeemanualinandoutdetails) (`690dc56b931a2d61ba0b1af5`)
 - [updateOvertimeInformation](../../tools/updateovertimeinformation) (`690dc569931a2d61ba0b1937`)
 - [getRoundingInformationDetails](../../tools/getroundinginformationdetails) (`690dc568931a2d61ba0b181a`)

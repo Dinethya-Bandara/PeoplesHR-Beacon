@@ -3,7 +3,7 @@
   "slug": "training-development-workflow-assist-phase-2-agent",
   "name": "Training & Development | Workflow Assist | Phase 2 | Agent",
   "description": "An intelligent assistant that helps training administrators create professional, comprehensive course descriptions through a guided conversation. The agent asks targeted questions about the course topic, target audience, duration, learning objectives, and training mode, then generates a well-structured description that automatically populates into the course creation form. Administrators can review and refine the generated content before finalizing the course setup.",
-  "exportedAt": "2026-10-02T08:25:56.201Z",
+  "exportedAt": "2026-10-12T05:13:15.329Z",
   "raw": {
     "_id": "69562bd4e05f6cdd1594bd17",
     "orgId": "690d9674c55784cc895ca691",

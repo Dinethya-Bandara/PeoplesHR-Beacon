@@ -1,8 +1,8 @@
 [
   {
-    "toolId": "6a8ee7dd4297aa961cef45dc",
-    "toolName": "editSubordinatesManualInAndOut",
-    "path": "tools/editsubordinatesmanualinandout"
+    "toolId": "6ac61b8b46a63036febd176b",
+    "toolName": "submitSubordinatesOffShifts",
+    "path": "tools/submitsubordinatesoffshifts"
   },
   {
     "toolId": "6a82e376462b20b27700e67e",
@@ -10,9 +10,24 @@
     "path": "tools/submitsubordinatesmanualinandout"
   },
   {
-    "toolId": "6a7d652bdf5557a058554c33",
-    "toolName": "submitSelfManualInAndOut",
-    "path": "tools/submitselfmanualinandout"
+    "toolId": "6ac4cdf67c4f1f8bd76e000f",
+    "toolName": "submitSelfOffShifts",
+    "path": "tools/submitselfoffshifts"
+  },
+  {
+    "toolId": "6a8fec0523d5d8fe14b0f829",
+    "toolName": "submitManualInAndOutByAdmin",
+    "path": "tools/submitmanualinandoutbyadmin"
+  },
+  {
+    "toolId": "6ac61d8c80fb7d3db26568ba",
+    "toolName": "submitAdminOffShifts",
+    "path": "tools/submitadminoffshifts"
+  },
+  {
+    "toolId": "6a8ee7dd4297aa961cef45dc",
+    "toolName": "editSubordinatesManualInAndOut",
+    "path": "tools/editsubordinatesmanualinandout"
   },
   {
     "toolId": "6a8ea65237b20ee9436a5da9",
@@ -25,9 +40,9 @@
     "path": "tools/editmanualinandoutbyadmin"
   },
   {
-    "toolId": "6a8fec0523d5d8fe14b0f829",
-    "toolName": "submitManualInAndOutByAdmin",
-    "path": "tools/submitmanualinandoutbyadmin"
+    "toolId": "6a7d652bdf5557a058554c33",
+    "toolName": "submitSelfManualInAndOut",
+    "path": "tools/submitselfmanualinandout"
   },
   {
     "toolId": "690dc56b931a2d61ba0b1af5",

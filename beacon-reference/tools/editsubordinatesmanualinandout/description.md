@@ -2,20 +2,19 @@
 
 **Task:** Edit the previously submitted Manual In and Out times of subordinates.
 
-**Tags:** Attendance, edit-manual-in-out, Headers, phase 3
+**Tags:** Attendance, edit-manual-in-out, phase 3, Dinethya
 
 **Status:** live
 
 ## Description
 
-Edits an existing Manual In and Out of a team member. Call it AS SOON AS the user asks to change, correct or update a manual In and Out, check-in or check-out (checkin/checkout) time, or attendance FOR SOMEONE ELSE - e.g. "change the checkout for <name>". Adding a time to a day with none belongs to submitSubordinatesManualInAndOut.
+Edits a recorded Manual In and Out of a team member (subordinate) on the Valid Swipes tab. Call it when the user asks to change a manual In and Out or check-in/out FOR SOMEONE ELSE, or on useTool editSubordinatesManualInAndOut.
 
-1. Ask which subordinate if not given; if several match, ask which. Run dateFormat and pass the date in that format.
-2. When any time is changing, ask separately for the new In Date, In Time, Out Date, Out Time and the reason, and pass all four. Offer suggested.inDate / suggested.outDate as defaults.
-3. An Out Date on the day AFTER the In Date is normal - shifts can end after midnight - and the Out time is then earlier on the clock. Never question it or demand In before Out.
-4. Only Valid Swipes rows are editable; locked ones are refused with a reason.
-5. Breaks are optional; a break-only change needs no times or dates.
-6. Show the preview with the name and confirm first.
+1. Run dateFormat first. To list the team members, call with listSubordinates:true. To list one tab's dates, call with showTab. Ask which one and the date; call with only those.
+2. Show the shiftDetails and the recorded In/Out, then ask which to edit (In Date, In Time, Out Date, Out Time) as fieldsToEdit.
+3. Ask only for those new values and the reason. Breaks optional - add, or change by breakNo. Remove a time: clearInTime/clearOutTime; delete breaks: deleteBreaks.
+4. validationError: show it, ask for missingFields - not a failure. pending: show it and stop. wrongTab: call useTool with the same employee and date.
+5. Call without confirmed first; show the preview. On yes: confirmed:true + previewToken. Several days: others in otherEntries, preview all first. On success no status.
 
 ## Signature
 
@@ -30,24 +29,30 @@ _None._
 
 ## Advanced arguments
 
-- `employeeNumber` (string, optional) — The team member's employee number, e.g. 000013. Either employeeNumber or employeeName must be provided. Leading zeros are optional.
-- `employeeName` (string, optional) — The team member's name (full or partial). Either employeeNumber or employeeName must be provided. If it matches more than one person the tool asks which one - never pick for the user.
-- `date` (string, required) — Date of the existing manual in and out record to edit. Use the format returned by the dateFormat tool (MM/DD/YYYY for en-US, otherwise DD/MM/YYYY). Ask the user for this if not provided.
-- `inDate` (string, optional) — In date, in the format returned by the dateFormat tool. ALWAYS ask the user for this separately, alongside the Out Date - do not assume it. The tool returns the row's own date under suggested.inDate; offer that as the default and let the user confirm or change it.
-- `inTime` (string, optional) — New In time in HH:mm 24-hour format, e.g. 08:30. Whenever a time is being changed, ask the user separately for the In Date, In Time, Out Date and Out Time and pass all four. Omit them all only when the user is changing just the break.
-- `outDate` (string, optional) — Out date, in the format returned by the dateFormat tool. ALWAYS ask the user for this separately, alongside the In Date - never decide it yourself. An Out Date on the day AFTER the In Date is normal - many shifts end after midnight - and the Out time is then earlier on the clock than the In time, which is correct and must never be questioned or rejected. The tool reports whether this shift can end on the following day as current.shiftCanEndNextDay, and returns the row's own date under suggested.outDate; offer that as the default and let the user confirm or change it.
-- `outTime` (string, optional) — New Out time in HH:mm 24-hour format, e.g. 17:30. Ask for it together with inDate, inTime and outDate. An Out Date on the day AFTER the In Date is normal - many shifts end after midnight - and the Out time is then earlier on the clock than the In time, which is correct and must never be questioned or rejected. Check it against outDate, not against inTime.
-- `reason` (string, optional) — Reason/comment explaining why the manual in and out is being changed. Required before the update is submitted. No reason is needed for the break times on their own.
-- `confirmed` (boolean, optional) — Set to true only after the user has reviewed the preview of current vs new values and explicitly confirmed. Set to false (or omit) to just preview/validate without updating anything.
-- `breakInTime` (string, optional) — Optional break in time in HH:mm 24-hour format. Break times are not mandatory - add them only if the user wants to. If given, breakOutTime must be given too. A break after midnight is fine on a shift whose period reaches there.
-- `breakOutTime` (string, optional) — Optional break out time in HH:mm 24-hour format. Break times are not mandatory - add them only if the user wants to. If given, breakInTime must be given too. A break after midnight is fine on a shift whose period reaches there.
-- `dateSelectMode` (unknown type, optional) — Search Criteria date selection mode, matching the page radio buttons: last7days (Last 7 Days), last30days (Last 30 Days), period (By Period, uses fromDate/toDate). Defaults to period with a wide range.
-- `fromDate` (string, optional) — Search range start date in the format returned by the dateFormat tool. Only used when dateSelectMode is period. If omitted, a wide default range is used. The date being edited must fall inside the range.
-- `toDate` (string, optional) — Search range end date in the format returned by the dateFormat tool. Only used when dateSelectMode is period. If omitted, a wide default range is used. The date being edited must fall inside the range.
-- `isGroupByEmployee` (boolean, optional) — Optional Group By Employee checkbox on the Search Criteria panel. Defaults to false.
-- `rosterGroup` (string, optional) — Optional roster group id for GetRostersByGroupId. Leave it out: the tool reads the group off the team page's own roster list, which varies from user to user.
-- `rosterCode` (string, optional) — Optional roster code for GetGridDataByCriteria, e.g. 000058. Leave it out: the tool uses the first roster GetRostersByGroupId returns for this user's group, which is what the screen itself searches with. Takes precedence over rosterName.
-- `rosterName` (string, optional) — Optional roster name, e.g. 'MAK01'. Resolved to a roster code against the roster list the API returned. Ignored when rosterCode is given.
+- `showTab` (string, optional) — Set when the user asks to see the dates on one tab of the Manual In and Out screen - e.g. 'what are the dates in the pending tab'. Pass the tab name as the user says it: Regularize, Pending, Valid Swipes or Off Shifts. No date is needed (the team and admin tools still need the employee). Returns only that tab's dates and submits nothing - show the dates as returned.
+- `listSubordinates` (boolean, optional) — Set to true when the user asks to see the team members (subordinates) they can submit manual In and Out for - e.g. "display all the subordinates I can apply manual In and Out for". No employee or date is needed; the tool returns the list (number and name) and submits nothing. Show the list, then ask which one and the date.
+- `employeeNumber` (string, optional) — The team member's employee number, e.g. 000017. Leading zeros are optional. Either employeeNumber or employeeName must be given - ask the user which team member if neither is known.
+- `employeeName` (string, optional) — The team member's name, full or partial. Either employeeNumber or employeeName must be given. If it matches more than one person the tool returns candidates - ask the user which one, never pick.
+- `fieldsToEdit` (array, optional) — What the user wants to change. After showing the recorded In and Out (the tool lists them under editableFields), ask the user which they want to edit - In Date, In Time, Out Date or Out Time, one or more - and pass their choice here. The tool then asks for the new values of only those. Fields not chosen keep their recorded values.
+- `date` (string, optional) — The day of the recorded manual In and Out to edit, in the format returned by the dateFormat tool (MM/DD/YYYY for en-US, otherwise DD/MM/YYYY). Ask the user for it, then call the tool straight away with the employee and the date alone - the tool checks which tab the day is on and returns the shift details and what is recorded before anything else is asked. Also call with the date when the user asks for the status of a pending request on that date - for a Pending day the tool returns the status, what was requested (old -> new In/Out and break times), the comment and who it is waiting for (pendingRequest); show that as returned.
+- `inDate` (string, optional) — New In date, in the format returned by the dateFormat tool. Pass it only when the user chose to edit the In Date; otherwise the recorded In date is kept.
+- `inTime` (string, optional) — New In time in HH:mm 24-hour format, e.g. 08:30. Pass it only when the user chose to edit the In Time; otherwise the recorded In time is kept.
+- `outDate` (string, optional) — New Out date, in the format returned by the dateFormat tool. Pass it only when the user chose to edit the Out Date; otherwise the recorded Out date is kept. An Out Date on the day AFTER the In Date is normal - many shifts end after midnight - and must never be questioned; never decide it yourself.
+- `outTime` (string, optional) — New Out time in HH:mm 24-hour format, e.g. 17:30. Pass it only when the user chose to edit the Out Time; otherwise the recorded Out time is kept. An Out time earlier on the clock than the In time is normal when the Out Date is the following day.
+- `clearInTime` (boolean, optional) — Set to true when the user wants to remove (clear) the recorded In time, as the Valid Swipes grid allows - e.g. 'delete my in time for 05/11/2024'. Do not also give inTime. Needs a reason; the day is submitted with the In empty.
+- `clearOutTime` (boolean, optional) — Set to true when the user wants to remove (clear) the recorded Out time. Do not also give outTime. Can be combined with clearInTime to clear both. Needs a reason.
+- `deleteBreaks` (array, optional) — Numbers (breakNo, from shiftDetails.recordedBreaks) of the recorded breaks the user wants to delete - e.g. [1]. Deleting breaks alone is a valid edit; it needs a reason. Do not also change the same break in breaks.
+- `reason` (string, optional) — Reason/comment explaining why the manual In and Out is being changed. Required before the update is submitted.
+- `breaks` (array, optional) — Optional breaks - none, one or as many as the user wants. After showing the recorded values, tell the user they can add breaks or change a recorded one (shiftDetails.recordedBreaks, numbered by breakNo), but do not insist. Each break needs both times and must sit within the In and Out date-times and the shift's allowed period. A break after midnight is fine on a shift whose period reaches there.
+- `breakInTime` (string, optional) — Single-break shorthand: break start time in HH:mm (adds a new break). Prefer the breaks list. If given, breakOutTime must be given too.
+- `breakOutTime` (string, optional) — Single-break shorthand: break end time in HH:mm (adds a new break). Prefer the breaks list. If given, breakInTime must be given too.
+- `otherEntries` (array, optional) — When the user asks for several days in one request, pass on every call the OTHER days of that request that are not submitted yet, each with the values the user gave. The screen submits such days together and refuses all of them when two overlap across midnight, so the tool checks the overlap in each day's preview. Preview every day first; submit none until all previews passed.
+- `confirmed` (boolean, optional) — Set to true, together with previewToken, only after the user has reviewed the preview of current vs new values (it names the team member) and explicitly confirmed. Set to false (or omit) to preview/validate without updating anything. Never send it on the first call - the tool validates and returns the preview first.
+- `previewToken` (string, optional) — The previewToken from the preview the user confirmed. Required with confirmed:true. Without it, or if any value changed since that preview, nothing is submitted and the preview is returned again - show it and ask for confirmation.
+- `isGroupByEmployee` (boolean, optional) — Optional Group By Employee checkbox on the Search Criteria panel. Omit it to use the screen's own default.
+- `rosterGroup` (string, optional) — Optional roster group, by id or name. Omit it to use the screen's first roster group. Do not ask the user for it unless they want a specific roster.
+- `rosterCode` (string, optional) — Optional roster code. Takes precedence over rosterName. Omit it to use the first roster of the roster group, as the screen does.
+- `rosterName` (string, optional) — Optional roster name. Resolved to a roster code within the roster group. Ignored when rosterCode is given.
 
 
 ## Assigned agents

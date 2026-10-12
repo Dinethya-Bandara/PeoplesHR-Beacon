@@ -3,10 +3,10 @@
   /* -------------------------------------------------
    * Access gate - runs before anything else, so a user without
    * the screen is refused before any argument or network work.
-   * This is the admin screen (Employee Manual In & Out,
-   * PageMode 0) - a different menu entry from the team screen
-   * (1) and the self screen (2). Matched with a substring test
-   * because the menu entry can carry extra query parameters.
+   * This is the admin screen (Manual In & Out, PageMode 0) - a
+   * different menu entry from the team screen (1) and the self
+   * screen (2). Matched with a substring test because the menu
+   * entry can carry extra query parameters.
    * ------------------------------------------------- */
   if (
     !BeaconBar.user?.metaData?.menus?.some(menu =>
@@ -16,7 +16,19 @@
     return { error: true, message: "You do not have access to edit manual In and Out for employees. Please contact HR Admin." };
   }
 
+  args = args || {};
+
   function pad(n) { return String(n).padStart(2, "0"); }
+
+  /* -------------------------------------------------
+   * A validation problem is an answer for the user, not a tool
+   * failure: a wrong date, a day on another tab, a locked record or
+   * the server refusing the values all come back through here. Only
+   * a broken session or an unreachable server is returned as error.
+   * ------------------------------------------------- */
+  function invalid(message, extra) {
+    return Object.assign({ validationError: true, needsInput: true, message }, extra || {});
+  }
 
   /* -------------------------------------------------
    * Date helpers - the input format follows the culture, the
@@ -63,22 +75,33 @@
     return Number(`${parsed.yyyy}${parsed.mm}${parsed.dd}`);
   }
 
-  // Comparable YYYYMMDDHHmm key, for checking a time against the grace window.
-  function toMinuteKey(parsed, hhmm) {
-    if (!parsed || !hhmm || hhmm.indexOf(":") === -1) return null;
-    const [h, m] = hhmm.split(":");
-    return Number(`${parsed.yyyy}${parsed.mm}${parsed.dd}${pad(h)}${pad(m)}`);
-  }
-
   // Rows carry DatInDate as an ISO string - the unambiguous way to match a day.
   function isoDayOf(value) {
     if (!value || typeof value !== "string") return null;
     return value.split("T")[0];
   }
 
+  // Comparable YYYYMMDDHHmm key, for checking a time against the shift window.
+  function toMinuteKey(parsed, hhmm) {
+    if (!parsed || !hhmm || hhmm.indexOf(":") === -1) return null;
+    const [h, m] = hhmm.split(":");
+    return Number(`${parsed.yyyy}${parsed.mm}${parsed.dd}${pad(h)}${pad(m)}`);
+  }
+
+  function addDays(parsed, days) {
+    return fromJsDate(new Date(Number(parsed.yyyy), Number(parsed.mm) - 1, Number(parsed.dd) + days));
+  }
+
   /* -------------------------------------------------
-   * ShiftToolTip carries the window the server actually enforces:
-   * "08.00 - 17.00 [Grace Start Time - 03/08/26 03:00 Grace End Time 04/08/26 05:00]"
+   * Everything this tool knows about the shift comes out of the row's
+   * own ShiftToolTip - nothing about it is assumed or hard-coded here:
+   * "09.00 - 18.00 [Grace Start Time - 05/11/24 05:00 Grace End Time 06/11/24 03:00]"
+   * The two-digit dates follow the same culture as everything else.
+   *
+   * spansNextDay is the fact that settles whether an Out time earlier on
+   * the clock than the In time is legal. The captured Valid Swipes edit
+   * proves it: a 09.00 - 18.00 shift, window 05/11/24 05:00 -> 06/11/24
+   * 03:00, was submitted with In 05/11 10:00 and Out 06/11 02:00.
    * ------------------------------------------------- */
   function parseGraceWindow(toolTip) {
     if (!toolTip || typeof toolTip !== "string") return null;
@@ -90,33 +113,45 @@
       const dd = isUsFormat ? b : a;
       const mm = isUsFormat ? a : b;
       const yyyy = String(y).length === 2 ? `20${y}` : String(y);
-      return Number(`${yyyy}${pad(mm)}${pad(dd)}${pad(h)}${pad(min)}`);
+      return {
+        dayKey: Number(`${yyyy}${pad(mm)}${pad(dd)}`),
+        key: Number(`${yyyy}${pad(mm)}${pad(dd)}${pad(h)}${pad(min)}`),
+        text: `${pad(dd)}/${pad(mm)}/${yyyy} ${pad(h)}:${pad(min)}`
+      };
     }
 
     const start = build(m[1], m[2], m[3], m[4], m[5]);
     const end = build(m[6], m[7], m[8], m[9], m[10]);
-    if (!Number.isFinite(start) || !Number.isFinite(end) || start > end) return null;
-    return { start, end, text: toolTip.split("[")[0].trim() };
+    if (!Number.isFinite(start.key) || !Number.isFinite(end.key) || start.key > end.key) return null;
+
+    // "09.00 - 18.00" - the shift's own start and end, as the API states them.
+    const shiftText = toolTip.split("[")[0].trim();
+    const clock = shiftText.match(/(\d{1,2})[.:](\d{2})\s*-\s*(\d{1,2})[.:](\d{2})/);
+
+    return {
+      start: start.key,
+      end: end.key,
+      startText: start.text,
+      endText: end.text,
+      spansNextDay: end.dayKey > start.dayKey,
+      shiftInClock: clock ? `${pad(clock[1])}:${clock[2]}` : null,
+      shiftOutClock: clock ? `${pad(clock[3])}:${clock[4]}` : null,
+      text: shiftText
+    };
   }
 
+
   /* -------------------------------------------------
-   * Time helpers - the user always speaks HH:mm, the wire carries
-   * the same clock time as HH.MM (16:52 -> 16.52), which is not
-   * decimal hours.
-   *
-   * A value the user just typed goes out as the zero-padded STRING
-   * "08.00", not the number 8 - that is what the captured submit
-   * sends for the edited row, while every untouched row keeps the
-   * number the server gave it (-1 for empty, 14.43 for a punch).
-   * Only newly entered times are built here, so this always returns
-   * the string form.
+   * Time helpers - the user always speaks HH:mm, the API stores
+   * the same clock time as the number HH.MM (16:52 -> 16.52,
+   * 17:30 -> 17.3), which is not decimal hours.
    * ------------------------------------------------- */
   function timeToHHMM(hhmm) {
     if (!hhmm || typeof hhmm !== "string" || !hhmm.includes(":")) return null;
     const [h, m] = hhmm.split(":").map(Number);
     if (Number.isNaN(h) || Number.isNaN(m)) return null;
     if (h < 0 || h > 23 || m < 0 || m > 59) return null;
-    return `${pad(h)}.${pad(m)}`;
+    return Number((h + (m / 100)).toFixed(2));
   }
 
   function hhmmToText(val) {
@@ -129,7 +164,22 @@
   }
 
   function hasTime(val) {
-    return val !== undefined && val !== null && val !== -1;
+    return val !== undefined && val !== null && val !== -1 && val !== "";
+  }
+
+  /* SubmitManualAdjustment posts a changed time as the string "HH.MM"
+   * ("10.00", "02.00"), and a break edge the same way ("12.00", "12.30") -
+   * spelled exactly as the captured payload spells them. */
+  function toWireTime(hhmm) {
+    if (!hhmm || typeof hhmm !== "string" || !hhmm.includes(":")) return null;
+    const [h, m] = hhmm.split(":");
+    return `${pad(h)}.${pad(m)}`;
+  }
+
+  // "8:5" and "08:05" are the same time - compare and show them one way.
+  function normaliseHHMM(hhmm) {
+    const [h, m] = String(hhmm).trim().split(":");
+    return `${pad(h)}:${pad(m)}`;
   }
 
   /* -------------------------------------------------
@@ -166,55 +216,22 @@
     }
   }
 
-  async function safeGetJson(url) {
-    try {
-      const res = await fetch(url, {
-        method: "GET",
-        headers: { "x-requested-with": "XMLHttpRequest" },
-        redirect: "follow"
-      });
-      const body = await res.json().catch(function () { return null; });
-      return { ok: res.ok, status: res.status, body };
-    } catch (e) {
-      return { ok: false, status: 0, body: null };
-    }
-  }
-
-  // Mirrors the Search Criteria radios: rdoLast7Days (0), rdoLast30Days (1), rdoPeriod (2).
-  function getRangeForMode(mode) {
-    const today = new Date();
-    if (mode === "last7days") {
-      const from = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6);
-      return { from: formatRangeDate(from), to: formatRangeDate(today) };
-    }
-    if (mode === "last30days") {
-      const from = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 29);
-      return { from: formatRangeDate(from), to: formatRangeDate(today) };
-    }
-    // Wide default period, matching what the page falls back to.
-    const startOfYear = new Date(today.getFullYear() - 3, 0, 1);
-    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-    return { from: formatRangeDate(startOfYear), to: formatRangeDate(endOfMonth) };
-  }
 
   /* -------------------------------------------------
-   * Shapes a grid row into the row the Submit button posts.
-   * GetGridDataByCriteria returns a read model; SubmitManualAdjustment
-   * wants the edit model, and they are not the same shape - the grid
-   * carries ShiftHTCode / RosterCode / SubmitStatus / WFMainId /
-   * IsTimeExceedsConfiguredGrace / IsShiftAdjustmentLocked / ErrMessage,
-   * none of which the real submit sends, and it omits the Old* snapshot
-   * and the enablement flags, all of which the real submit does send.
+   * Shapes a grid row into the edit model that GetManuallyTimeFixedData,
+   * GetManualRejectedData and SubmitManualAdjustment all take - the 67
+   * keys every captured payload carries. The grid's ShiftHTCode /
+   * RosterCode / SubmitStatus / WFMainId / IsTimeExceedsConfiguredGrace /
+   * IsShiftAdjustmentLocked / ErrMessage never go back; the Old* snapshot
+   * and the enablement flags always do.
    *
-   * ReasonCode is normalised to "-1" (the "no reason" dropdown value)
-   * while OldReasonCode keeps the grid's raw "" - they differ on purpose.
+   * ReasonCode "" is normalised to the reason dropdown's own first option
+   * (model.ReasonList[0], "Select a reason") while OldReasonCode keeps the
+   * grid's raw value. A locked record is sent with IsEnabled and
+   * IsAdjustmentEnabled false, as every captured payload does.
    * ------------------------------------------------- */
-  function isRowUnlocked(row) {
-    return !(row.IsLockedRecord === true || row.IsTimeAdjLocked === 1 || row.IsPeriodLocked === 1);
-  }
-
-  function toSubmitRow(row) {
-    const shaped = {
+  function toValidSwipeRow(row, noReasonCode) {
+    return {
       DatInDate: row.DatInDate,
       EmpNumber: row.EmpNumber,
       EmpDisplayNumber: row.EmpDisplayNumber,
@@ -238,7 +255,7 @@
       DAUpdatedPurchesList: Array.isArray(row.DAUpdatedPurchesList) ? row.DAUpdatedPurchesList : [],
       BreakCount: row.BreakCount,
       PunchesCount: row.PunchesCount,
-      ReasonCode: (row.ReasonCode === "" || row.ReasonCode === null || row.ReasonCode === undefined) ? "-1" : row.ReasonCode,
+      ReasonCode: (row.ReasonCode === "" || row.ReasonCode === null || row.ReasonCode === undefined) ? noReasonCode : row.ReasonCode,
       Comment: row.Comment,
       DynamicColumnText: row.DynamicColumnText,
       LeaveDays: row.LeaveDays,
@@ -274,13 +291,8 @@
       IsSelected: false,
       Message: "",
       DynamicGridDataList: Array.isArray(row.DynamicGridDataList) ? row.DynamicGridDataList : [],
-      /* The grid read model carries neither flag - the client derives both
-       * from the lock state. Captured rows with IsLockedRecord true or
-       * IsTimeAdjLocked 1 go out as false on both, unlocked rows as true,
-       * so deriving them keeps a locked row in the tab list honest instead
-       * of defaulting it to editable. */
-      IsEnabled: row.IsEnabled !== undefined ? row.IsEnabled : isRowUnlocked(row),
-      IsAdjustmentEnabled: row.IsAdjustmentEnabled !== undefined ? row.IsAdjustmentEnabled : isRowUnlocked(row),
+      IsEnabled: row.IsEnabled !== undefined ? row.IsEnabled : isEditableRow(row),
+      IsAdjustmentEnabled: row.IsAdjustmentEnabled !== undefined ? row.IsAdjustmentEnabled : isEditableRow(row),
       IsConfirmationRequired: row.IsConfirmationRequired === true,
       IsOutTimeExceedConfirmed: row.IsOutTimeExceedConfirmed === true,
       IsHighlightInTime: row.IsHighlightInTime === true,
@@ -289,18 +301,36 @@
       NopayHours: row.NopayHours,
       IsShiftOffShift: row.IsShiftOffShift === true
     };
+  }
 
-    // A row the server flagged as manually fixed carries the highlight
-    // classes back with it - both halves, not just the In.
-    if (shaped.IsHighlightInTime) shaped.InTimeHighlightCSS = "ManualTime_Highlight";
-    if (shaped.IsHighlightOutTime) shaped.OutTimeHighlightCSS = "ManualTime_Highlight";
-    return shaped;
+  /* Once GetManuallyTimeFixedData answers, the grid marks every row whose
+   * day it lists as manually fixed: the In cell when the fixed entry has
+   * an In time, the Out cell when it has an Out time. The captured submit
+   * carries exactly those flags, so the submitted rows are marked the same way. */
+  function withManualHighlight(row, fixedEntries) {
+    const fixed = fixedEntries.find(function (f) {
+      return isoDayOf(f.DatInDate) === isoDayOf(row.DatInDate)
+        && (!row.EmpDisplayNumber || !f.EmpDisplayNumber || f.EmpDisplayNumber === row.EmpDisplayNumber);
+    });
+    if (!fixed) return row;
+    const marked = Object.assign({}, row);
+    if (hasTime(fixed.InTime)) {
+      marked.IsHighlightInTime = true;
+      marked.InTimeHighlightCSS = "ManualTime_Highlight";
+    }
+    if (hasTime(fixed.OutTime)) {
+      marked.IsHighlightOutTime = true;
+      marked.OutTimeHighlightCSS = "ManualTime_Highlight";
+    }
+    return marked;
   }
 
   function pickRowDebug(row) {
     if (!row) return null;
     return {
       DatInDate: row.DatInDate,
+      InDate: row.InDate,
+      OutDate: row.OutDate,
       InDateText: row.InDateText,
       OutDateText: row.OutDateText,
       InTime: row.InTime,
@@ -312,43 +342,47 @@
       IsSelected: row.IsSelected,
       Comment: row.Comment,
       ReasonCode: row.ReasonCode,
-      OldReasonCode: row.OldReasonCode,
       InOutRecordType: row.InOutRecordType,
       RecordStatus: row.RecordStatus,
       IsEnabled: row.IsEnabled,
       IsAdjustmentEnabled: row.IsAdjustmentEnabled,
-      IsOutTimeExceedConfirmed: row.IsOutTimeExceedConfirmed,
+      OldBreakCount: row.OldBreakCount,
       BreakCount: row.BreakCount,
-      DABreakListCount: Array.isArray(row.DABreakList) ? row.DABreakList.length : 0
+      // The break entries themselves - a break-only edit lives or dies on
+      // these, so a failure has to show what actually went out.
+      DABreakList: Array.isArray(row.DABreakList) ? row.DABreakList : null
     };
   }
 
   /* -------------------------------------------------
-   * Step 1: identify the employee and the date.
+   * Step 1: who and which day. Both are needed before anything else -
+   * the day is placed on its tab as soon as it is known.
    * ------------------------------------------------- */
-  if (!args || (!args.employeeNumber && !args.employeeName)) {
+  if (!args.employeeNumber && !args.employeeName) {
     return {
       needsInput: true,
-      message: "Please tell me which employee's manual In and Out you want to edit - their employee number or name.",
+      message: "Please tell me which employee this manual In and Out is for - their employee number or name.",
       missingFields: ["Employee"]
     };
   }
 
-  if (!args.date) {
+  const wantsTab = !!args.showTab;
+
+  if (!args.date && !wantsTab) {
     return {
       needsInput: true,
-      message: `Please tell me the date (${dateFormatName}) of the manual In and Out you want to edit.`,
+      message: `Please tell me the date (${dateFormatName}) of the manual In and Out.`,
       missingFields: ["Date"],
       expectedDateFormat: dateFormatName
     };
   }
 
-  const parsedDate = parseCultureDate(args.date);
-  if (!parsedDate) {
-    return { error: true, message: `Invalid date format. Please provide the date as ${dateFormatName}.` };
+  const parsedDate = args.date ? parseCultureDate(args.date) : null;
+  if (!wantsTab && !parsedDate) {
+    return invalid(`Invalid date format. Please provide the date as ${dateFormatName}.`, { missingFields: ["Date"], expectedDateFormat: dateFormatName });
   }
-  const dateText = formatCultureDate(parsedDate);
-  const targetIsoDay = `${parsedDate.yyyy}-${parsedDate.mm}-${parsedDate.dd}`;
+  const dateText = parsedDate ? formatCultureDate(parsedDate) : null;
+  const targetIsoDay = parsedDate ? `${parsedDate.yyyy}-${parsedDate.mm}-${parsedDate.dd}` : null;
 
   const sl = reqOptions.sl;
   const baseUrl = getPathBase(sl);
@@ -357,6 +391,7 @@
     "content-type": "application/json",
     "x-requested-with": "XMLHttpRequest"
   };
+  // The roster, summary, message, break and comment calls go out as jQuery ajax, with its own accept.
   const ajaxHeaders = {
     "accept": "application/json, text/javascript, */*; q=0.01",
     "content-type": "application/json",
@@ -364,9 +399,11 @@
   };
 
   /* -------------------------------------------------
-   * Step 2: load the admin "Employee Manual In & Out" page
-   * (PageMode 0). updateUrlParams appends the digest the route
-   * needs - the raw path returns an incomplete page.
+   * Page load (captured pageload1): the admin "Manual In & Out"
+   * (PageMode 0) through the digest-aware URL, read for filterModel /
+   * model. Every screen default this tool uses - roster groups, the
+   * search component URLs, the reason dropdown, the grid page size,
+   * Group By Employee - comes from these two objects.
    * ------------------------------------------------- */
   const updateUrl = await BeaconBar.executeFunction("updateUrlParams")(
     "TNAV9/ManualInOut/ManualInOut/0?mvc=1"
@@ -381,342 +418,572 @@
     redirect: "follow"
   });
   const pageHtml = await pageRes.text();
-
-  // filterModel is the page's own search state - LoginEmpNumber is the
-  // encoded token every search call on this screen is keyed by.
   const filterModel = parseJsonLiteral(pageHtml, "filterModel") || {};
-  const loginEmpMatch = pageHtml.match(/"LoginEmpNumber"\s*:\s*"([^"]+)"/);
-  const loggedEmpNumber = filterModel.LoginEmpNumber || (loginEmpMatch ? loginEmpMatch[1] : null);
+  const pageModel = parseJsonLiteral(pageHtml, "model") || {};
 
-  if (!loggedEmpNumber) {
+  // Page-hit audit the screen records on every load (captured pageLoad2) - best-effort, empty response.
+  try {
+    const pagePath = pageUrl.slice(baseUrl.length + 1);
+    await fetch(`${baseUrl}/api/securityapi/pagehit?pageUrl=${encodeURIComponent(`../${pagePath}`)}&_=${Date.now()}`, {
+      method: "GET",
+      headers: {
+        "accept": "application/json, text/javascript, */*; q=0.01",
+        "content-type": "application/json; charset=utf-8",
+        "x-requested-with": "XMLHttpRequest"
+      },
+      redirect: "follow"
+    });
+  } catch (e) { /* the audit never blocks the tool */ }
+
+  if (!filterModel.LoginEmpNumber) {
     return {
       error: true,
-      message: "Unable to initialize the employee search. Please try again.",
-      // Structural signals only - no cookies or tokens.
+      message: "Unable to open the Manual In and Out screen. Please try again.",
       diagnostics: {
         pageUrl,
-        updateUrlProvidedDigest: !!(updateUrl && updateUrl.updateUrl),
-        httpStatus: pageRes.status,
-        htmlLength: pageHtml.length,
-        containsFilterModel: pageHtml.includes("filterModel"),
-        containsLoginEmpNumber: pageHtml.includes("LoginEmpNumber"),
+        pageStatus: pageRes.status,
+        hasFilterModel: Object.keys(filterModel).length > 0,
         looksLikeLoginPage: /login/i.test(pageHtml.slice(0, 500))
       }
     };
   }
 
+  // The employee's search token, once the search component has issued it.
+  let empNumber = null;
+
+  // The page mode the screen itself declares - the /0 of the URL loaded above.
+  const pageMode = filterModel.PageMode !== undefined ? filterModel.PageMode : pageModel.PageMode;
+
+  // The reason dropdown's first option is its "nothing selected" value.
+  const reasonList = Array.isArray(pageModel.ReasonList) ? pageModel.ReasonList : [];
+  const noReasonCode = reasonList.length > 0 ? reasonList[0].ReasonCode : null;
+
+  /* The grid pages its rows, and the fixed / rejected / submit calls post
+   * only the page on screen: every captured payload is exactly PageSize
+   * (20) rows of one tab. A model with no page size means no paging. */
+  const pageSize = Number(pageModel.GridPageData && pageModel.GridPageData.PageSize) || 0;
+  function pageOf(rows, pageIndex) {
+    if (!pageSize) return rows;
+    return rows.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize);
+  }
+
   /* -------------------------------------------------
-   * The search dropdown is not part of the page HTML - divSearch comes
-   * back empty and the page fills it by loading filterModel's
-   * EmployeeSearchURL. That render is what issues the key the feed is
-   * keyed by, and it carries its own empNumber token, which is a
-   * different nonce from filterModel.LoginEmpNumber. Inventing a key
-   * gets a 200 with an empty result set, so the component has to be
-   * loaded exactly as the page loads it.
+   * The grid's tabs, read off the screen rather than assumed. Each tab
+   * link is bound to InOutRecordType.<Member>, shows its label, and
+   * counts from ManualVM.<CountField>; a link can be hidden by a
+   * ConfigData flag (Off Shifts is, by EnableManualInOutOffShiftTab).
    * ------------------------------------------------- */
-  function resolveSearchUrl(rawUrl) {
-    if (!rawUrl) return null;
-    // The model stores it relative to window.$ROOT (/<sl>/TNAV9/).
-    const path = String(rawUrl).replace(/^(\.\.\/)+/, "").replace(/^\/+/, "");
-    return `${baseUrl}/${path}`;
-  }
-
-  function getQueryParam(url, name) {
-    const m = String(url || "").match(new RegExp("[?&]" + name + "=([^&]*)"));
-    if (!m) return null;
-    try {
-      return decodeURIComponent(m[1]);
-    } catch (e) {
-      return m[1];
+  function readTabLinks(html) {
+    const links = [];
+    const rx = /<li\b([^>]*)>\s*<a\b[^>]*InOutRecordType\.(\w+)[^>]*>\s*([^<]*?)\s*<span[^>]*text:\s*ManualVM\.(\w+)/g;
+    let m;
+    while ((m = rx.exec(html || "")) !== null) {
+      const flag = (m[1].match(/visible\s*:\s*ManualVM\.ConfigData\(\)\.(\w+)/) || [])[1] || null;
+      links.push({ member: m[2], label: m[3].trim(), countField: m[4], visibleFlag: flag });
     }
+    return links;
   }
 
-  function parseSearchKey(html) {
-    if (!html) return null;
-    const patterns = [
-      /data-key="([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})"/,
-      /"KeyValue"\s*:\s*"([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})"/,
-      /\bkey\s*[:=]\s*['"]([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})['"]/,
-      /[?&]key=([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/
-    ];
-    for (let i = 0; i < patterns.length; i++) {
-      const m = html.match(patterns[i]);
-      if (m) return m[1];
+  /* The number behind each InOutRecordType member, from the scripts the
+   * page itself loads - the screen's own script first. A plain object
+   * literal and a compiled enum are both understood. */
+  /* The screen's own scripts (/Scripts/app/), de-duplicated - not the
+   * shared libraries - the page's own script first. */
+  function ownScriptUrls(html) {
+    const pageSegments = pageUrl.split("?")[0].split("/").filter(Boolean);
+    function score(src) {
+      return (/\/Scripts\/app\//i.test(src) ? 1 : 0)
+        + (pageSegments.some(function (s) { return src.indexOf(`/${s}.js`) !== -1; }) ? 2 : 0);
     }
-    // The component renders exactly one guid - take it rather than fail.
-    const anyGuid = html.match(/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/);
-    return anyGuid ? anyGuid[0] : null;
+    const srcs = [];
+    const rx = /<script\b[^>]*\bsrc="([^"]+)"/g;
+    let m;
+    while ((m = rx.exec(html || "")) !== null) srcs.push(m[1]);
+    const own = srcs.filter(function (src, i) { return score(src) > 0 && srcs.indexOf(src) === i; });
+    own.sort(function (a, b) { return score(b) - score(a); });
+    return own;
   }
 
-  const searchComponentUrl = resolveSearchUrl(filterModel.EmployeeSearchURL || filterModel.EmployeeSearchModalUrl);
-  let searchHtml = "";
-  let searchStatus = 0;
+  async function readRecordTypeValues(html) {
+    // The tab counts are the fallback when the enum is not found in the screen's scripts.
+    const own = ownScriptUrls(html);
 
-  if (searchComponentUrl) {
-    try {
-      const searchRes = await fetch(searchComponentUrl, {
-        method: "GET",
-        headers: { "x-requested-with": "XMLHttpRequest" },
-        redirect: "follow"
+    for (const src of own) {
+      let js = "";
+      try {
+        const res = await fetch(new URL(src, pageUrl).href, { method: "GET", redirect: "follow" });
+        if (!res.ok) continue;
+        js = await res.text();
+      } catch (e) { continue; }
+
+      const values = {};
+      const literal = js.match(/InOutRecordType\s*=\s*(?:Object\.freeze\(\s*)?\{([^}]*)\}/);
+      if (literal) {
+        const pair = /["']?(\w+)["']?\s*:\s*(-?\d+)/g;
+        let p;
+        while ((p = pair.exec(literal[1])) !== null) values[p[1]] = Number(p[2]);
+      }
+      const compiled = /InOutRecordType\[\s*InOutRecordType\[\s*["'](\w+)["']\s*\]\s*=\s*(-?\d+)\s*\]/g;
+      let c;
+      while ((c = compiled.exec(js)) !== null) values[c[1]] = Number(c[2]);
+      if (Object.keys(values).length > 0) return values;
+    }
+    return {};
+  }
+
+  /* The ActionType the screen gives a break it deletes - read from the
+   * screen's own scripts (an action enum with a Delete/Remove member),
+   * only when a break is being deleted. null when the scripts do not say. */
+  async function readBreakDeleteAction(html) {
+    for (const src of ownScriptUrls(html)) {
+      let js = "";
+      try {
+        const res = await fetch(new URL(src, pageUrl).href, { method: "GET", redirect: "follow" });
+        if (!res.ok) continue;
+        js = await res.text();
+      } catch (e) { continue; }
+      const isDelete = function (name) { return /^(delete|deleted|remove|removed)$/i.test(name); };
+      const literal = /(\w*Action\w*)\s*[:=]\s*(?:Object\.freeze\(\s*)?\{([^{}]*)\}/g;
+      let m;
+      while ((m = literal.exec(js)) !== null) {
+        const pair = /["']?(\w+)["']?\s*:\s*(-?\d+)/g;
+        let p;
+        while ((p = pair.exec(m[2])) !== null) if (isDelete(p[1])) return Number(p[2]);
+      }
+      const compiled = /(\w*Action\w*)\[\s*\1\[\s*["'](\w+)["']\s*\]\s*=\s*(-?\d+)\s*\]/g;
+      while ((m = compiled.exec(js)) !== null) if (isDelete(m[2])) return Number(m[3]);
+    }
+    return null;
+  }
+
+  /* Which rows each tab holds. A tab holds the rows of its record type
+   * when that is what the count the grid reports for it adds up to;
+   * otherwise, when the count is the number of off shift days, it holds
+   * the off shift days whatever their record type - Off Shifts does
+   * (self capture: 9 open + 1 pending = 10; team capture: 22 of the 52
+   * type 0 rows, the other 30 being REST days on no tab but View All).
+   * A record type the scripts did not give is inferred from the counts -
+   * the one type whose rows add up to the tab's count. A tab whose rows
+   * cannot be told apart (View All) is left out. */
+  function buildTabs(links, typeValues, gridBody, rows) {
+    const config = pageModel.ConfigData || {};
+    const typeCount = {};
+    rows.forEach(function (r) { typeCount[r.InOutRecordType] = (typeCount[r.InOutRecordType] || 0) + 1; });
+
+    const offShiftCount = rows.filter(function (r) { return r.IsShiftOffShift === true; }).length;
+
+    function fit(type, reported) {
+      if (typeof reported !== "number") return type === null ? null : "type";
+      if (type !== null && (typeCount[type] || 0) === reported) return "type";
+      return offShiftCount === reported ? "offShift" : null;
+    }
+
+    const built = links
+      .filter(function (l) { return !l.visibleFlag || config[l.visibleFlag] !== false; })
+      .map(function (l) {
+        const value = typeValues[l.member];
+        return {
+          member: l.member,
+          label: l.label,
+          countField: l.countField,
+          value: value === undefined ? null : value,
+          reported: gridBody ? gridBody[l.countField] : undefined
+        };
       });
-      searchStatus = searchRes.status;
-      searchHtml = await searchRes.text();
-    } catch (e) {
-      searchHtml = "";
-    }
-  }
 
-  const componentKey = parseSearchKey(searchHtml);
-  const pageSearchKey = componentKey || parseSearchKey(pageHtml);
-  const searchKey = pageSearchKey
-    || (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`);
-
-  // The component's own empNumber is the token the feed expects; the
-  // page-level LoginEmpNumber is the fallback.
-  const searchEmpNumber = getQueryParam(filterModel.EmployeeSearchURL || filterModel.EmployeeSearchModalUrl, "empNumber")
-    || loggedEmpNumber;
-
-  /* -------------------------------------------------
-   * Step 3: find the employee. The dropdown feed takes no search
-   * term - it hands back the whole scope 50 at a time with
-   * pagination.more, and the widget filters what it has client
-   * side. So the matching happens here, page by page, and the
-   * first page is requested exactly as the page requests it.
-   * ------------------------------------------------- */
-  const searchContexts = [];
-  function addContext(empNumber, key, label) {
-    if (!empNumber || !key) return;
-    const duplicate = searchContexts.some(function (c) { return c.empNumber === empNumber && c.key === key; });
-    if (!duplicate) searchContexts.push({ empNumber, key, label });
-  }
-  addContext(searchEmpNumber, searchKey, "component");
-  addContext(loggedEmpNumber, searchKey, "loginEmpNumber");
-  if (pageSearchKey) {
-    const generated = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-    addContext(searchEmpNumber, generated, "generatedKey");
-  }
-
-  async function fetchTypeaheadPage(context, page) {
-    const params = new URLSearchParams({
-      empNumber: context.empNumber,
-      key: context.key,
-      _: String(Date.now())
-    });
-    // Page 1 is the captured call verbatim; later pages are the
-    // select2 infinite-scroll continuation.
-    if (page > 1) params.set("page", String(page));
-
-    const result = await safeGetJson(`${baseUrl}/CommonComponents/Search/GetPaginatedTypeaheadList/?${params.toString()}`);
-    const body = result.body || {};
-    return {
-      status: result.status,
-      results: Array.isArray(body.results) ? body.results : [],
-      hasMore: !!(body.pagination && body.pagination.more)
-    };
-  }
-
-  /* The feed's id is an internal key, not the employee number on
-   * screen - {"id":"00010325","text":"00000007 - George Silva"}.
-   * The number the user types is the one in text, so split it out
-   * and match on that; id stays the value the token call needs. */
-  function displayNumberOf(r) {
-    const text = String(r && r.text || "");
-    const sep = text.indexOf(" - ");
-    return (sep === -1 ? text : text.slice(0, sep)).trim();
-  }
-
-  function displayNameOf(r) {
-    const text = String(r && r.text || "");
-    const sep = text.indexOf(" - ");
-    return (sep === -1 ? text : text.slice(sep + 3)).trim();
-  }
-
-  function stripZeros(value) {
-    return String(value || "").replace(/^0+/, "").toLowerCase();
-  }
-
-  const searchTerm = (args.employeeNumber || args.employeeName || "").trim();
-  const wantedNumber = (args.employeeNumber || "").toLowerCase().trim();
-  const wantedName = (args.employeeName || "").toLowerCase().trim();
-
-  function findMatches(pool) {
-    let found = [];
-    if (wantedNumber) {
-      found = pool.filter(function (r) {
-        return displayNumberOf(r).toLowerCase() === wantedNumber;
+    let progress = true;
+    while (progress) {
+      progress = false;
+      const taken = built.filter(function (t) { return t.value !== null; }).map(function (t) { return t.value; });
+      built.filter(function (t) { return t.value === null && typeof t.reported === "number"; }).forEach(function (t) {
+        const candidates = Object.keys(typeCount).map(Number).filter(function (type) {
+          return taken.indexOf(type) === -1 && typeCount[type] === t.reported;
+        });
+        if (candidates.length === 1) {
+          t.value = candidates[0];
+          taken.push(t.value);
+          progress = true;
+        }
       });
-      // An employee number is often typed without its leading zeros.
-      if (found.length === 0) {
-        found = pool.filter(function (r) {
-          return stripZeros(displayNumberOf(r)) === stripZeros(wantedNumber);
-        });
+    }
+
+    return built
+      // A tab the screen counts as 0 is kept as an empty tab - nothing on it, but it is still a tab.
+      .map(function (t) { return Object.assign(t, { mode: fit(t.value, t.reported) || (t.reported === 0 ? "empty" : null) }); })
+      .filter(function (t) { return t.mode !== null; });
+  }
+  const tabLinks = readTabLinks(pageHtml);
+  const typeValues = await readRecordTypeValues(pageHtml);
+  let tabs = [];
+
+  function inTab(row, tab) {
+    if (!tab) return false;
+    if (tab.mode === "empty") return false;
+    return tab.mode === "offShift" ? row.IsShiftOffShift === true : row.InOutRecordType === tab.value;
+  }
+  function tabsOf(row) { return tabs.filter(function (t) { return inTab(row, t); }); }
+  function tabByMember(member) { return tabs.find(function (t) { return t.member === member; }) || null; }
+
+  // The page's own names for the tabs this tool cares about.
+  const OWN_TAB = "Valid";
+  const PENDING_TAB = "Pending";
+  const TOOL_FOR_TAB = { Regularize: "submitManualInAndOutByAdmin", Offshift: "submitAdminOffShifts", Valid: "editManualInAndOutByAdmin" };
+
+  function isEditableRow(row) {
+    return row.IsLockedRecord !== true && !inTab(row, tabByMember(PENDING_TAB));
+  }
+
+  // One day as the screen shows it - the tab(s) it sits on and what is recorded.
+  function describeDay(row) {
+    return {
+      date: row.InDateText || null,
+      tabs: tabsOf(row).map(function (t) { return t.label; }),
+      status: row.RecordStatusText || null,
+      shift: row.ShiftAbbreviation || null,
+      dayType: row.DayAbbreviation || null,
+      isOffShift: row.IsShiftOffShift === true,
+      inDate: row.InDateText || null,
+      inTime: hasTime(row.InTime) ? (row.InTimeText || hhmmToText(row.InTime)) : null,
+      outDate: row.OutDateText || null,
+      outTime: hasTime(row.OutTime) ? (row.OutTimeText || hhmmToText(row.OutTime)) : null,
+      breakCount: row.BreakCount,
+      comment: row.Comment || null,
+      locked: row.IsLockedRecord === true,
+      shiftToolTip: row.ShiftToolTip || null
+    };
+  }
+
+  /* -------------------------------------------------
+   * The shift as the API describes it for the day - shown to the user
+   * before any time is asked for. Everything comes from the row and its
+   * ShiftToolTip; the day's breaks come from GetEmployeeBreaksByDate.
+   * ------------------------------------------------- */
+  function breakText(br) {
+    const s = br.BStartTimeText || hhmmToText(br.BStartTime);
+    const e = br.BEndTimeText || hhmmToText(br.BEndTime);
+    return { breakIn: s || null, breakOut: e || null, startDate: br.BStartDateText || null, endDate: br.BEndDateText || null };
+  }
+
+  /* -------------------------------------------------
+   * The request behind a Pending day, as the screen shows it when the
+   * day's pending details are opened (captured GetEmployeePendingApprovalData, posted
+   * {empNumber, datInDateText} with the row's own EmpNumber token). One
+   * entry per requested change: which time (TimeModeText), New or Change
+   * (ActionTypeText), the old and new date/time (MClockData), the comment,
+   * and - when the API names one - the approver it is waiting for.
+   * ------------------------------------------------- */
+  async function loadPendingRequest(row) {
+    const res = await safePostJson(`${baseUrl}/TNAV9/api/ManualInOut/GetEmployeePendingApprovalData/`, {
+      empNumber: row.EmpNumber || empNumber,
+      datInDateText: row.InDateText || dateText
+    }, ajaxHeaders);
+    const list = Array.isArray(res.body) ? res.body : [];
+
+    function whenText(isoDate, time) {
+      if (!hasTime(time)) return null;
+      const parsed = isoToParsed(isoDate);
+      return `${parsed ? formatCultureDate(parsed) + " " : ""}${hhmmToText(time)}`;
+    }
+
+    const changes = list.map(function (p) {
+      const m = p.MClockData || {};
+      return {
+        field: p.TimeModeText || null,
+        action: p.ActionTypeText || null,
+        from: whenText(m.OldDate, m.OldTime),
+        to: whenText(m.NewDate, m.NewTime),
+        comment: m.Comment || null,
+        approvalComment: m.ApprovalComment || null,
+        approver: p.AppEmpDisplayName ? `${p.AppEmpDisplayNumber ? p.AppEmpDisplayNumber + " - " : ""}${String(p.AppEmpDisplayName).trim()}` : null,
+        workflowId: p.WFMainId || null
+      };
+    });
+    const unique = function (values) { return values.filter(function (v, i) { return v && values.indexOf(v) === i; }); };
+    const approvers = unique(changes.map(function (c) { return c.approver; }));
+    const comments = unique(changes.map(function (c) { return c.comment; }));
+    const approvalComments = unique(changes.map(function (c) { return c.approvalComment; }));
+
+    const requested = changes.map(function (c) {
+      return c.from
+        ? `${c.field}: ${c.from} -> ${c.to || "-"} (${c.action || "Change"})`
+        : `${c.field}: ${c.to || "-"} (${c.action || "New"})`;
+    });
+    const text = changes.length > 0
+      ? ` Requested: ${requested.join("; ")}.${comments.length ? ` Comment: "${comments.join('", "')}".` : ""}${approvers.length ? ` Waiting for approval by ${approvers.join(", ")}.` : ""}${approvalComments.length ? ` Approver comment: "${approvalComments.join('", "')}".` : ""}`
+      : " No details of the pending request were returned.";
+
+    return { status: row.RecordStatusText || null, changes, approvers, text };
+  }
+  function shiftDetailsOf(row, window, existing) {
+    return {
+      date: row.InDateText || null,
+      dayType: row.DayAbbreviation || null,
+      dayDescription: row.DayCaption || null,
+      shift: row.ShiftAbbreviation || null,
+      shiftTime: window ? (window.shiftInClock ? `${window.shiftInClock} - ${window.shiftOutClock}` : window.text) : null,
+      swipesAllowedFrom: window ? window.startText : null,
+      swipesAllowedTo: window ? window.endText : null,
+      canEndNextDay: window ? window.spansNextDay : (row.IsMidNightShift === 1),
+      isOffShift: row.IsShiftOffShift === true,
+      tabs: tabsOf(row).map(function (t) { return t.label; }),
+      status: row.RecordStatusText || null,
+      recordedIn: hasTime(row.InTime) ? `${row.InDateText} ${row.InTimeText || hhmmToText(row.InTime)}` : null,
+      recordedOut: hasTime(row.OutTime) ? `${row.OutDateText} ${row.OutTimeText || hhmmToText(row.OutTime)}` : null,
+      recordedBreaks: existing.map(function (br, i) { return Object.assign({ breakNo: i + 1 }, breakText(br)); })
+    };
+  }
+
+  function shiftDetailsText(d) {
+    const parts = [`Shift details for ${d.date}${d.dayType ? ` (${d.dayType})` : ""}: shift ${d.shift || "-"}`];
+    if (d.shiftTime) parts.push(`shift time ${d.shiftTime}`);
+    if (d.swipesAllowedFrom) parts.push(`swipes allowed from ${d.swipesAllowedFrom} to ${d.swipesAllowedTo}`);
+    if (d.canEndNextDay) parts.push("the shift can end on the following day");
+    parts.push(`recorded In ${d.recordedIn || "-"}, Out ${d.recordedOut || "-"}`);
+    parts.push(d.recordedBreaks.length > 0
+      ? `recorded breaks ${d.recordedBreaks.map(function (b) { return `${b.breakNo}) ${b.breakIn} - ${b.breakOut}`; }).join(", ")}`
+      : "no breaks recorded");
+    return parts.join("; ") + ".";
+  }
+
+  /* -------------------------------------------------
+   * Breaks. The user can give any number of them, or none: as the
+   * breaks list, or as one breakInTime/breakOutTime pair. A break with a
+   * breakNo changes that recorded break; any other is added. Each one is
+   * checked the way the screen checks it - both edges, HH:mm, end after
+   * start, inside the In -> Out span ("Break Start/End Dates should be
+   * within In/Out Dates"), inside the shift's allowed window - and no
+   * break may overlap another break of the day.
+   * ------------------------------------------------- */
+  function requestedBreaksOf(a) {
+    const list = Array.isArray(a.breaks)
+      ? a.breaks.filter(function (b) { return b && (b.breakInTime || b.breakOutTime); })
+      : [];
+    if (a.breakInTime || a.breakOutTime) list.push({ breakInTime: a.breakInTime, breakOutTime: a.breakOutTime });
+    return list;
+  }
+
+  function isClockTime(hhmm) {
+    if (!hhmm || typeof hhmm !== "string" || !/^\d{1,2}:\d{2}$/.test(hhmm.trim())) return false;
+    const [h, m] = hhmm.trim().split(":").map(Number);
+    return h >= 0 && h <= 23 && m >= 0 && m <= 59;
+  }
+
+  // The shape of every break, before anything is placed.
+  function checkBreakShapes(list, existing) {
+    for (let i = 0; i < list.length; i++) {
+      const b = list[i];
+      const name = `Break ${i + 1}`;
+      if (!b.breakInTime || !b.breakOutTime) {
+        return {
+          needsInput: true,
+          message: `${name} has only one time. Please give both its Break In Time and Break Out Time (HH:mm), or leave that break out.`,
+          missingFields: [b.breakInTime ? `${name} Out Time` : `${name} In Time`]
+        };
       }
-      // Last resort: the internal id, for a caller that already has one.
-      if (found.length === 0) {
-        found = pool.filter(function (r) {
-          return String(r.id || "").toLowerCase().trim() === wantedNumber;
-        });
+      if (!isClockTime(b.breakInTime) || !isClockTime(b.breakOutTime)) {
+        return invalid(`${name} times must be in HH:mm 24-hour format, e.g. 12:00 and 13:00.`, { missingFields: [`${name} In Time`, `${name} Out Time`] });
+      }
+      if (b.breakNo !== undefined && b.breakNo !== null) {
+        const n = Number(b.breakNo);
+        if (!Number.isInteger(n) || n < 1 || n > existing.length) {
+          return invalid(existing.length > 0
+            ? `${name} refers to recorded break ${b.breakNo}, but the day has breaks 1 to ${existing.length}. Leave breakNo out to add a new break.`
+            : `${name} refers to recorded break ${b.breakNo}, but the day has no recorded breaks. Leave breakNo out to add a new break.`, {
+            recordedBreaks: existing.map(function (br, k) { return Object.assign({ breakNo: k + 1 }, breakText(br)); })
+          });
+        }
+        if (list.some(function (o, k) { return k !== i && Number(o.breakNo) === n; })) {
+          return invalid(`Recorded break ${n} is changed twice. Give it only once.`);
+        }
       }
     }
-    if (found.length === 0 && wantedName) {
-      found = pool.filter(function (r) {
-        return displayNameOf(r).toLowerCase() === wantedName;
+    return null;
+  }
+
+  function isoToParsed(iso) {
+    const day = isoDayOf(iso);
+    if (!day) return null;
+    const [yyyy, mm, dd] = day.split("-");
+    return { yyyy, mm, dd };
+  }
+
+  /* The first date from the In date to the Out date on which the clock
+   * time sits inside the In -> Out span and after notBefore. */
+  function placeOnSpan(hhmm, span, notBefore) {
+    const lastDay = toDateKey(span.outParsed);
+    for (let day = span.inParsed; toDateKey(day) <= lastDay; day = addDays(day, 1)) {
+      const key = toMinuteKey(day, hhmm);
+      if (key !== null && key > notBefore && key >= span.inKey && key <= span.outKey) return { parsed: day, key };
+    }
+    return null;
+  }
+
+  /* Places and checks every requested break against the In -> Out span,
+   * the shift's window and every other break that will stand on the day.
+   * Returns { response } for the first problem, or { placed }. */
+  function placeBreaks(list, span, window, existing) {
+    /* Only an In or only an Out was given: the missing edge is the day's
+     * own allowed window (the row's ShiftToolTip), so a break is placed
+     * against what the API states rather than against nothing. */
+    span = Object.assign({}, span);
+    if (span.inKey === null) span.inKey = window ? window.start : toMinuteKey(span.inParsed, "00:00");
+    if (span.outKey === null) {
+      span.outKey = window ? window.end : toMinuteKey(span.outParsed, "23:59");
+      if (window) {
+        const endDay = String(Math.floor(window.end / 10000));
+        const endParsed = { yyyy: endDay.slice(0, 4), mm: endDay.slice(4, 6), dd: endDay.slice(6, 8) };
+        if (toDateKey(endParsed) > toDateKey(span.outParsed)) span.outParsed = endParsed;
+      }
+    }
+    const inEdge = span.inText ? `${span.inDateText} ${span.inText}` : (window ? `${window.startText} (no In given - start of the allowed window)` : `${span.inDateText} -`);
+    const outEdge = span.outText ? `${span.outDateText} ${span.outText}` : (window ? `${window.endText} (no Out given - end of the allowed window)` : `${span.outDateText} -`);
+    const spanText = `${inEdge} - ${outEdge}`;
+    const changed = list.map(function (b) { return Number(b.breakNo); });
+    const standing = existing
+      .map(function (br, k) {
+        const s = isoToParsed(br.BStartDate);
+        const e = isoToParsed(br.BEndDate);
+        const t = breakText(br);
+        return {
+          breakNo: k + 1,
+          label: `recorded break ${k + 1} (${t.breakIn} - ${t.breakOut})`,
+          start: s && t.breakIn ? toMinuteKey(s, t.breakIn) : null,
+          end: e && t.breakOut ? toMinuteKey(e, t.breakOut) : null
+        };
+      })
+      .filter(function (t) { return changed.indexOf(t.breakNo) === -1 && t.start !== null && t.end !== null; });
+
+    const placed = [];
+    for (let i = 0; i < list.length; i++) {
+      const bIn = normaliseHHMM(list[i].breakInTime);
+      const bOut = normaliseHHMM(list[i].breakOutTime);
+      const name = `Break ${i + 1} (${bIn} - ${bOut})`;
+      const fields = [`Break ${i + 1} In Time`, `Break ${i + 1} Out Time`];
+
+      const start = placeOnSpan(bIn, span, span.inKey - 1);
+      if (!start) {
+        return { response: invalid(`${name} does not start within the In and Out (${spanText}). Break start and end must be within the In/Out dates and times.`, { missingFields: fields }) };
+      }
+      const end = placeOnSpan(bOut, span, start.key);
+      if (!end) {
+        return { response: invalid(`${name} must end after it starts and no later than the Out (${spanText}). Break start and end must be within the In/Out dates and times.`, { missingFields: fields }) };
+      }
+      if (window && (start.key < window.start || end.key > window.end)) {
+        return { response: invalid(`${name} is not within the shift's allowed period (${window.startText} - ${window.endText}). Please give break times inside that period.`, { missingFields: fields }) };
+      }
+
+      standing.push({ label: `break ${i + 1} (${bIn} - ${bOut})`, start: start.key, end: end.key });
+      placed.push({
+        breakNo: list[i].breakNo ? Number(list[i].breakNo) : null,
+        inText: bIn,
+        outText: bOut,
+        start: start.parsed,
+        end: end.parsed
       });
-      if (found.length === 0) {
-        found = pool.filter(function (r) {
-          return String(r.text || "").toLowerCase().trim() === wantedName;
-        });
-      }
-      if (found.length === 0) {
-        found = pool.filter(function (r) {
-          return String(r.text || "").toLowerCase().includes(wantedName);
-        });
-      }
     }
-    return found;
+    return { placed };
   }
 
-  const MAX_SEARCH_PAGES = 40;
-  const seenIds = {};
-  const candidates = [];
-  let matches = [];
-  let pagesFetched = 0;
-  let moreAvailable = false;
-  let firstPageStatus = 0;
-
-  /* Settle on a context first: whichever pair the feed answers with rows
-   * for is the one the page itself would have used. */
-  let activeContext = null;
-  let firstPage = null;
-  const contextAttempts = [];
-
-  for (let i = 0; i < searchContexts.length; i++) {
-    const attempt = await fetchTypeaheadPage(searchContexts[i], 1);
-    contextAttempts.push({
-      context: searchContexts[i].label,
-      status: attempt.status,
-      rows: attempt.results.length
+  /* The day's break list as it goes out: the recorded breaks carried
+   * as they are, a changed one updated in place, a new one appended with
+   * the next SeqNo. ActionType is the "was this break touched" flag - 1
+   * for one the user added or changed (a new break sent as 0 is read as
+   * unmodified, "No modifications to save"), the captured 0/1 otherwise. */
+  /* A recorded break deleted on the Valid Swipes grid (captured): its
+   * start and end emptied, what it was kept as the Old values, its texts
+   * left as they were, and the delete ActionType. */
+  function deletedBreak(br, action, empty) {
+    return Object.assign({}, br, {
+      BStartOldDate: br.BStartDate !== undefined ? br.BStartDate : br.BStartOldDate,
+      BStartOldTime: hasTime(br.BStartTime) ? br.BStartTime : (br.BStartOldTime !== undefined ? br.BStartOldTime : empty),
+      BEndOldDate: br.BEndDate !== undefined ? br.BEndDate : br.BEndOldDate,
+      BEndOldTime: hasTime(br.BEndTime) ? br.BEndTime : (br.BEndOldTime !== undefined ? br.BEndOldTime : empty),
+      BStartDate: null,
+      BStartTime: empty,
+      BEndDate: null,
+      BEndTime: empty,
+      ActionType: action
     });
-    if (i === 0) firstPageStatus = attempt.status;
-    if (attempt.results.length > 0) {
-      activeContext = searchContexts[i];
-      firstPage = attempt;
-      firstPageStatus = attempt.status;
-      break;
-    }
   }
 
-  if (!activeContext) {
-    return {
-      error: true,
-      message: "The employee search returned nobody, so the employee list could not be read. Please try again, or contact HR Admin if this persists.",
-      diagnostics: {
-        loadedSearchComponent: !!searchComponentUrl,
-        searchComponentStatus: searchStatus,
-        foundComponentKey: !!componentKey,
-        usedPageSearchKey: !!pageSearchKey,
-        contextAttempts
+  function mergeBreaks(existing, placed, row) {
+    let seq = existing.reduce(function (maxVal, br) {
+      const n = Number(br && br.SeqNo);
+      return Number.isFinite(n) && n > maxVal ? n : maxVal;
+    }, 0);
+    const list = existing.map(function (br) { return Object.assign({}, br); });
+    placed.forEach(function (b) {
+      const edges = {
+        BStartDate: formatIsoDateOnly(b.start),
+        BStartTime: toWireTime(b.inText),
+        BEndDate: formatIsoDateOnly(b.end),
+        BEndTime: toWireTime(b.outText)
+      };
+      const texts = {
+        BStartDateText: formatCultureDate(b.start),
+        BEndDateText: formatCultureDate(b.end),
+        BStartTimeText: b.inText,
+        BEndTimeText: b.outText,
+        ActionType: 1
+      };
+      if (b.breakNo) {
+        list[b.breakNo - 1] = Object.assign(list[b.breakNo - 1], edges, texts);
+        return;
       }
-    };
-  }
-
-  for (let page = 1; page <= MAX_SEARCH_PAGES; page++) {
-    const pageResult = page === 1 ? firstPage : await fetchTypeaheadPage(activeContext, page);
-    pagesFetched = page;
-    moreAvailable = pageResult.hasMore;
-
-    let added = 0;
-    pageResult.results.forEach(function (r) {
-      const id = String(r.id || "");
-      if (id && seenIds[id]) return;
-      if (id) seenIds[id] = true;
-      candidates.push(r);
-      added++;
+      seq += 1;
+      list.push(Object.assign({
+        DatInDate: row.DatInDate || formatIsoDateOnly(parsedDate),
+        EmpNumber: row.EmpNumber || empNumber,
+        SeqNo: seq
+      }, edges, {
+        BStartOldDate: null,
+        BStartOldTime: -1,
+        BEndOldDate: null,
+        BEndOldTime: -1
+      }, texts));
     });
-
-    // A page that repeats what we already hold means the feed ignored
-    // the page parameter - keep going would loop on the same 50 rows.
-    if (added === 0) break;
-
-    matches = findMatches(candidates);
-    // An employee number is unique, so a hit on it ends the search, and
-    // two hits are already an ambiguity to put to the user. A single
-    // name hit is not enough - the same name can sit on a later page,
-    // and stopping here would silently pick one of two people.
-    if (wantedNumber && matches.length > 0) break;
-    if (matches.length > 1) break;
-    if (!pageResult.hasMore) break;
+    return list;
   }
-
-  if (matches.length === 0) {
-    return {
-      error: true,
-      message: `Could not find "${searchTerm}" among the employees available to you. Please check the employee number or name.`,
-      availableEmployees: candidates.slice(0, 50).map(function (r) { return { employeeNumber: displayNumberOf(r), employee: r.text }; }),
-      diagnostics: {
-        searchContext: activeContext.label,
-        listStatus: firstPageStatus,
-        pagesFetched,
-        employeesRead: candidates.length,
-        moreResultsAvailable: moreAvailable
-      }
-    };
-  }
-
-  // Never guess between people - a wrong pick edits the wrong person's attendance.
-  if (matches.length > 1) {
-    return {
-      needsInput: true,
-      message: `"${searchTerm}" matches more than one employee. Please tell me which one.`,
-      missingFields: ["Employee"],
-      candidates: matches.slice(0, 25).map(function (r) { return { employeeNumber: displayNumberOf(r), employee: r.text }; })
-    };
-  }
-
-  const match = matches[0];
-
-  // Identity shown to the user. The typeahead text is the starting point;
-  // the grid's EmployeeList and GetDynamicEmployeeSummary refine it once
-  // the search has run.
-  let employeeLabel = String(match.text || "").trim();
-  let employeeDisplayNumber = displayNumberOf(match);
-  let employeeDesignation = null;
 
   /* -------------------------------------------------
-   * Step 4: resolve the encoded EmpNumber token the ManualInOut
-   * APIs require for the selected employee. This call takes the
-   * feed's own id - the internal key, not the display number, and
-   * the same pair the list came back on.
+   * Rosters (captured GetRostersByGroupId): the groups come from
+   * filterModel.RosterGroupList, the rosters of a group from
+   * GetRostersByGroupId. With nothing chosen the page's own dropdowns sit
+   * on their first option - the capture posted group "6" (the first
+   * listed) and searched with "000058" (MAK01), its first roster.
    * ------------------------------------------------- */
-  const tokenResult = await safeGetJson(
-    `${baseUrl}/CommonComponents/Search/GetEmpNumberFromTypeahead/?loggedEmpNumber=${encodeURIComponent(activeContext.empNumber)}&empNumber=${encodeURIComponent(match.id)}&key=${encodeURIComponent(activeContext.key)}&_=${Date.now()}`
-  );
-  const empToken = tokenResult.body && tokenResult.body.Status ? tokenResult.body.Message : null;
+  const rosterGroupList = Array.isArray(filterModel.RosterGroupList) ? filterModel.RosterGroupList : [];
 
-  if (!empToken) {
-    return {
-      error: true,
-      message: `Unable to resolve ${employeeLabel}. Please try again.`,
-      diagnostics: {
-        tokenStatus: tokenResult.status,
-        searchContext: activeContext.label,
-        apiMessage: (tokenResult.body && tokenResult.body.Message) || null
-      }
-    };
+  function availableGroups() {
+    return rosterGroupList.map(function (g) { return { groupId: g.GroupId, groupName: g.GroupName }; });
   }
-  BeaconBar.setSharedData("empNumber", empToken);
 
-  /* -------------------------------------------------
-   * Page-load parity: load the roster list for the roster group
-   * and resolve the roster the user named, if any.
-   * ------------------------------------------------- */
-  const rosterGroup = args.rosterGroup || "1";
-  const rosterResult = await safePostJson(
-    `${baseUrl}/TNAV9/api/Common/GetRostersByGroupId/`,
-    { rosterGroup: String(rosterGroup) },
-    ajaxHeaders
-  );
-  const rosterList = Array.isArray(rosterResult.body) ? rosterResult.body : [];
+  let rosterGroupEntry = null;
+  if (args.rosterGroup) {
+    const w = String(args.rosterGroup).toLowerCase().trim();
+    rosterGroupEntry = rosterGroupList.find(function (g) { return String(g.GroupId).toLowerCase() === w; })
+      || rosterGroupList.find(function (g) { return String(g.GroupName || "").toLowerCase().trim() === w; })
+      || rosterGroupList.find(function (g) { return String(g.GroupName || "").toLowerCase().includes(w); })
+      || null;
+    if (!rosterGroupEntry) {
+      return invalid(`Could not find a roster group "${args.rosterGroup}". Please pick one of the available roster groups.`, {
+        availableRosterGroups: availableGroups()
+      });
+    }
+  } else if (rosterGroupList.length > 0) {
+    rosterGroupEntry = rosterGroupList[0];
+  }
+  const rosterGroup = rosterGroupEntry ? String(rosterGroupEntry.GroupId) : null;
+
+  let rosterList = [];
+  if (rosterGroup !== null) {
+    const rosterResult = await safePostJson(
+      `${baseUrl}/TNAV9/api/Common/GetRostersByGroupId/`,
+      { rosterGroup },
+      ajaxHeaders
+    );
+    rosterList = Array.isArray(rosterResult.body) ? rosterResult.body : [];
+  }
 
   let rosterCode = args.rosterCode || null;
   if (!rosterCode && args.rosterName) {
@@ -726,222 +993,476 @@
     }) || rosterList.find(function (r) {
       return String(r.RosterName || "").toLowerCase().includes(wanted);
     });
-
     if (!rosterMatch) {
-      return {
-        error: true,
-        message: `Could not find a roster named "${args.rosterName}". Please pick one of the available rosters.`,
-        availableRosters: rosterList.map(function (r) { return { rosterCode: r.RosterCode, rosterName: r.RosterName }; })
-      };
+      return invalid(`Could not find a roster named "${args.rosterName}"${rosterGroupEntry ? ` in roster group ${rosterGroupEntry.GroupName}` : ""}. Please pick one of the available rosters.`, {
+        availableRosters: rosterList.map(function (r) { return { rosterCode: r.RosterCode, rosterName: r.RosterName }; }),
+        availableRosterGroups: availableGroups()
+      });
     }
     rosterCode = rosterMatch.RosterCode;
   }
+  if (!rosterCode && rosterList.length > 0) rosterCode = rosterList[0].RosterCode;
 
   /* -------------------------------------------------
-   * Build the search range from the date-selection mode.
+   * The employee search component, loaded the way the page loads it
+   * (captured api1): filterModel's EmployeeSearchURL renders the
+   * typeahead. The typeahead element carries the two values the
+   * employee calls are keyed by - data-key and data-empnumber (the
+   * captured selection used exactly those, not LoginEmpNumber and not
+   * the empNumber in the URL).
    * ------------------------------------------------- */
-  let requestedMode = String(args.dateSelectMode || "period").toLowerCase();
-  if (["last7days", "last30days", "period"].indexOf(requestedMode) === -1) {
-    return { error: true, message: 'dateSelectMode must be one of "last7days", "last30days" or "period".' };
+  function resolvePageRelative(rawUrl) {
+    if (!rawUrl) return null;
+    // Stored relative to /<sl>/TNAV9/ - "../CommonComponents/..." is /<sl>/CommonComponents/...
+    const path = String(rawUrl).replace(/^(\.\.\/)+/, "").replace(/^\/+/, "");
+    return `${baseUrl}/${path}`;
   }
 
-  const modeRange = getRangeForMode(requestedMode);
-  let fromDateText = modeRange.from;
-  let toDateText = modeRange.to;
-
-  if (requestedMode === "period") {
-    if (args.fromDate) {
-      const parsedFrom = parseCultureDate(args.fromDate);
-      if (!parsedFrom) return { error: true, message: `Invalid fromDate. Please provide it as ${dateFormatName}.` };
-      fromDateText = formatCultureDate(parsedFrom);
+  async function getText(url) {
+    if (!url) return { status: 0, text: "" };
+    try {
+      const res = await fetch(`${url}${url.indexOf("?") === -1 ? "?" : "&"}_=${Date.now()}`, {
+        method: "GET",
+        headers: { "x-requested-with": "XMLHttpRequest" },
+        redirect: "follow"
+      });
+      return { status: res.status, text: await res.text() };
+    } catch (e) {
+      return { status: 0, text: "" };
     }
-    if (args.toDate) {
-      const parsedTo = parseCultureDate(args.toDate);
-      if (!parsedTo) return { error: true, message: `Invalid toDate. Please provide it as ${dateFormatName}.` };
-      toDateText = formatCultureDate(parsedTo);
+  }
+
+  async function getJson(url) {
+    try {
+      const res = await fetch(url, { method: "GET", headers: { "x-requested-with": "XMLHttpRequest" }, redirect: "follow" });
+      const body = await res.json().catch(function () { return null; });
+      return { ok: res.ok, status: res.status, body };
+    } catch (e) {
+      return { ok: false, status: 0, body: null };
     }
   }
 
-  const targetKey = toDateKey(parsedDate);
-  const fromKey = toDateKey(parseCultureDate(fromDateText));
-  const toKey = toDateKey(parseCultureDate(toDateText));
-
-  if (fromKey > toKey) {
-    return { error: true, message: `The search range is invalid: From Date (${fromDateText}) is after To Date (${toDateText}).` };
+  function attrOf(html, name) {
+    const m = String(html || "").match(new RegExp(`${name}="([^"]+)"`));
+    return m ? m[1] : null;
   }
-  if (targetKey < fromKey || targetKey > toKey) {
+
+  const searchComponent = await getText(resolvePageRelative(filterModel.EmployeeSearchURL));
+
+
+  const searchKey = attrOf(searchComponent.text, "data-key")
+    || ((searchComponent.text.match(/"KeyValue"\s*:\s*"([^"]+)"/) || [])[1] || null);
+  const searchEmpNumber = attrOf(searchComponent.text, "data-empnumber");
+
+  if (!searchKey || !searchEmpNumber) {
     return {
       error: true,
-      message: `${dateText} is outside the selected search range (${fromDateText} - ${toDateText}). Please widen the range so it includes ${dateText}.`,
-      searchRange: { dateSelectMode: requestedMode, fromDate: fromDateText, toDate: toDateText }
-    };
-  }
-
-  /* -------------------------------------------------
-   * Step 5: search the employee's grid (PageMode 0).
-   * FilterMode "1" is the "Select Employee" radio.
-   * ------------------------------------------------- */
-  const isGroupByEmployee = args.isGroupByEmployee === true;
-
-  function buildGridPayload(roster) {
-    return {
-      FromDateText: fromDateText,
-      ToDateText: toDateText,
-      IsGroupByEmployee: isGroupByEmployee,
-      FilterMode: "1",
-      EmpNumber: empToken,
-      RosterCode: roster,
-      callBackId: 1,
-      isShowShiftHoursInShiftAdjEnabled: false,
-      IsClientUoc: false,
-      PageMode: 0
-    };
-  }
-
-  // The roster dropdown is pre-selected on "000017 - Default Yes", which
-  // is what the page sends when nobody touches it, so that is the default
-  // here too. An empty code is the fallback, so a roster mismatch never
-  // reads as "the day does not exist".
-  const rosterAttempts = [];
-  if (rosterCode) rosterAttempts.push(rosterCode);
-  if (rosterAttempts.indexOf("000017") === -1) rosterAttempts.push("000017");
-  rosterAttempts.push("");
-
-  let gridPayload = null;
-  let recordList = [];
-  let gridEmployeeList = [];
-  let usedRosterCode = null;
-
-  for (let i = 0; i < rosterAttempts.length; i++) {
-    const attemptPayload = buildGridPayload(rosterAttempts[i]);
-    const attempt = await safePostJson(`${baseUrl}/TNAV9/api/ManualInOut/GetGridDataByCriteria/`, attemptPayload, jsonHeaders);
-    const rows = (attempt.body && attempt.body.ManualInOutDetailList) || [];
-    if (rows.length > 0) {
-      gridPayload = attemptPayload;
-      recordList = rows;
-      gridEmployeeList = (attempt.body && attempt.body.EmployeeList) || [];
-      usedRosterCode = rosterAttempts[i];
-      break;
-    }
-    if (gridPayload === null) {
-      gridPayload = attemptPayload;
-      usedRosterCode = rosterAttempts[i];
-    }
-    // An explicit roster the user named is not silently replaced.
-    if (args.rosterCode || args.rosterName) break;
-  }
-
-  /* -------------------------------------------------
-   * Search parity: the page loads the employee summary straight after
-   * the grid comes back. The grid's own EmployeeList and the summary's
-   * EmployeeData both name whoever the search actually resolved to -
-   * worth showing before an admin confirms a change to someone else's
-   * attendance.
-   *
-   * The EmpNumber tokens are per-response nonces - the grid rows come
-   * back with a different one than the typeahead handed us, and the page
-   * always uses the freshest.
-   * ------------------------------------------------- */
-  const gridEmpToken = (recordList[0] && recordList[0].EmpNumber) || empToken;
-
-  const gridEmployee = gridEmployeeList[0] || null;
-  if (gridEmployee) {
-    employeeLabel = gridEmployee.EmpCompleteName || gridEmployee.EmpDisplayName || employeeLabel;
-    employeeDisplayNumber = gridEmployee.EmpDisplayNumber || employeeDisplayNumber;
-    employeeDesignation = gridEmployee.Designation || employeeDesignation;
-  }
-
-  const summaryResult = await safePostJson(
-    `${baseUrl}/TNAV9/api/Common/GetDynamicEmployeeSummary/`,
-    { pageId: 1, empNumber: gridEmpToken, fromDateText, toDateText },
-    ajaxHeaders
-  );
-  const employeeData = (summaryResult.body && summaryResult.body.EmployeeData) || null;
-  if (employeeData) {
-    employeeLabel = employeeData.EmpCompleteName || employeeData.EmpDisplayName || employeeLabel;
-    employeeDisplayNumber = employeeData.EmpDisplayNumber || employeeDisplayNumber;
-    employeeDesignation = employeeData.Designation || employeeDesignation;
-  }
-
-  const gridRow = recordList.find(function (item) {
-    return isoDayOf(item.DatInDate) === targetIsoDay;
-  });
-
-  if (!gridRow) {
-    return {
-      error: true,
-      message: `${dateText} is not in the system for ${employeeLabel} - there is no attendance day recorded for that date, so there is nothing to edit. Please check the date and try again.`,
+      message: "Unable to open the employee search. Please try again.",
       diagnostics: {
-        employee: employeeLabel,
-        searchedDate: dateText,
-        dateSelectMode: requestedMode,
-        fromDateText,
-        toDateText,
-        rosterCode: usedRosterCode,
-        rowsReturned: recordList.length
+        searchComponentStatus: searchComponent.status,
+        foundKey: !!searchKey,
+        foundEmpNumber: !!searchEmpNumber
       }
     };
   }
 
   /* -------------------------------------------------
-   * The grid is split across tabs by InOutRecordType, and the
-   * Submit button posts only the rows of the tab you are on -
-   * mixing types in one submit is what the server rejects, so
-   * scope the list to the tab the selected day actually lives in.
+   * Selecting the employee (captured selectEmployee, selectEmployee2):
+   *   GetPaginatedTypeaheadList?empNumber=<data-empnumber>&key=<data-key>
+   *   -> {"results":[{"id":"000006","text":"000006 - Liam Taylor"}, ...],
+   *       "pagination":{"more":true}}
+   *   GetEmpNumberFromTypeahead?loggedEmpNumber=<data-empnumber>&empNumber=<id>&key=<data-key>
+   *   -> {"Message":"<the employee's search token>","Status":true}
+   * The feed takes no search term - it hands the admin's whole scope back
+   * a page at a time (pagination.more), and the dropdown filters it. So
+   * the match is made here, page by page: page 1 exactly as captured,
+   * later pages as the dropdown's scroll continuation (page=N). An
+   * employee number is unique and ends the search; a name keeps reading
+   * so a second person of the same name is never missed.
    * ------------------------------------------------- */
-  const tabRecordType = gridRow.InOutRecordType;
-  const tabSourceRows = recordList.filter(function (r) { return r.InOutRecordType === tabRecordType; });
-  const tabRows = tabSourceRows.map(toSubmitRow);
-  const tabIndex = tabSourceRows.findIndex(function (r) { return isoDayOf(r.DatInDate) === targetIsoDay; });
-  const targetRow = tabRows[tabIndex];
+  // "000006 - Liam Taylor": the number is before " - ", the name after it.
+  function displayNumberOf(r) {
+    const text = String(r && r.text || "");
+    const sep = text.indexOf(" - ");
+    return (sep === -1 ? text : text.slice(0, sep)).trim();
+  }
+  function displayNameOf(r) {
+    const text = String(r && r.text || "");
+    const sep = text.indexOf(" - ");
+    return (sep === -1 ? text : text.slice(sep + 3)).trim();
+  }
+  function stripZeros(value) {
+    return String(value || "").replace(/^0+/, "").toLowerCase();
+  }
+
+  const wantedNumber = String(args.employeeNumber || "").toLowerCase().trim();
+  const wantedName = String(args.employeeName || "").toLowerCase().trim();
+
+  function findMatches(pool) {
+    let found = [];
+    if (wantedNumber) {
+      found = pool.filter(function (r) { return displayNumberOf(r).toLowerCase() === wantedNumber; });
+      if (found.length === 0) found = pool.filter(function (r) { return stripZeros(displayNumberOf(r)) === stripZeros(wantedNumber); });
+      if (found.length === 0) found = pool.filter(function (r) { return String(r.id || "").toLowerCase().trim() === wantedNumber; });
+    }
+    if (found.length === 0 && wantedName) {
+      found = pool.filter(function (r) { return displayNameOf(r).toLowerCase() === wantedName; });
+      if (found.length === 0) found = pool.filter(function (r) { return String(r.text || "").toLowerCase().includes(wantedName); });
+    }
+    return found;
+  }
+
+  async function typeaheadPage(page) {
+    const res = await getJson(
+      `${baseUrl}/CommonComponents/Search/GetPaginatedTypeaheadList/?empNumber=${encodeURIComponent(searchEmpNumber)}&key=${encodeURIComponent(searchKey)}${page > 1 ? `&page=${page}` : ""}&_=${Date.now()}`
+    );
+    const body = res.body || {};
+    return {
+      status: res.status,
+      results: Array.isArray(body.results) ? body.results : [],
+      more: !!(body.pagination && body.pagination.more)
+    };
+  }
+
+  const seenIds = {};
+  const employees = [];
+  let matches = [];
+  let listStatus = 0;
+  for (let page = 1; page <= 100; page++) {
+    const result = await typeaheadPage(page);
+    if (page === 1) listStatus = result.status;
+    let added = 0;
+    result.results.forEach(function (r) {
+      const id = String(r.id || "");
+      if (id && seenIds[id]) return;
+      if (id) seenIds[id] = true;
+      employees.push(r);
+      added++;
+    });
+    // A page that only repeats what is held means the feed ignored the page number.
+    if (added === 0) break;
+    matches = findMatches(employees);
+    if (wantedNumber && matches.length > 0) break;
+    if (matches.length > 1) break;
+    if (!result.more) break;
+  }
+
+  if (employees.length === 0) {
+    return invalid("No employees are available to you on the Manual In and Out screen. Please contact HR Admin if you expected to see employees here.", {
+      needsInput: false,
+      diagnostics: { listStatus }
+    });
+  }
+
+  if (matches.length === 0) {
+    return invalid(`Could not find "${args.employeeNumber || args.employeeName}" among the employees available to you. Please check the employee number or name.`, {
+      missingFields: ["Employee"],
+      diagnostics: { employeesRead: employees.length }
+    });
+  }
+
+  // Never guess between people - a wrong pick writes the wrong person's attendance.
+  if (matches.length > 1) {
+    return {
+      needsInput: true,
+      message: `"${args.employeeNumber || args.employeeName}" matches more than one employee. Please tell me which one.`,
+      missingFields: ["Employee"],
+      candidates: matches.slice(0, 25).map(function (r) { return { employeeNumber: displayNumberOf(r), employee: r.text }; })
+    };
+  }
+  const match = matches[0];
+  let employeeLabel = String(match.text || "").trim();
+  let employeeDisplayNumber = displayNumberOf(match);
+  let employeeDesignation = null;
+
+  const tokenResult = await getJson(
+    `${baseUrl}/CommonComponents/Search/GetEmpNumberFromTypeahead/?loggedEmpNumber=${encodeURIComponent(searchEmpNumber)}&empNumber=${encodeURIComponent(match.id)}&key=${encodeURIComponent(searchKey)}&_=${Date.now()}`
+  );
+  const empToken = tokenResult.body && tokenResult.body.Status !== false ? (tokenResult.body.Message || null) : null;
+
+  if (!empToken) {
+    return {
+      error: true,
+      message: `Unable to open ${employeeLabel}'s Manual In and Out. Please try again.`,
+      diagnostics: { tokenStatus: tokenResult.status, apiMessage: (tokenResult.body && tokenResult.body.Message) || null }
+    };
+  }
+  empNumber = empToken;
 
   /* -------------------------------------------------
-   * Valid Swipes parity: opening that tab posts the whole array
-   * back and gets the per-day stored/computed values - work hours,
-   * OT, nopay. Worth showing next to a change to the times.
+   * The search range. The captured search ran 01/01/2023 - 06/10/2026:
+   * the first day of the year three years back, to today. It is widened
+   * only as far as needed to contain the date asked about.
    * ------------------------------------------------- */
-  const validSwipeRows = recordList
-    .filter(function (r) { return r.InOutRecordType === 3; })
-    .map(toSubmitRow);
-
-  const fixedResult = await safePostJson(
-    `${baseUrl}/TNAV9/api/ManualInOut/GetManuallyTimeFixedData/`,
-    validSwipeRows,
-    jsonHeaders
-  );
-  const fixedList = Array.isArray(fixedResult.body) ? fixedResult.body : [];
-  const calculatedRow = fixedList.find(function (r) {
-    return isoDayOf(r.DatInDate) === targetIsoDay
-      && (!gridRow.EmpDisplayNumber || r.EmpDisplayNumber === gridRow.EmpDisplayNumber);
-  }) || null;
-
-  const calculated = calculatedRow ? {
-    workHours: hhmmToText(calculatedRow.WorkHours),
-    inOutDiffHours: hhmmToText(calculatedRow.InOutDiffHours),
-    noPayDays: calculatedRow.NoPayDays
-  } : null;
-
-  /* Rejected tab parity: it takes the Manual tab's rows and answers
-   * with the rejected manual adjustments for the employee. Surfaced so
-   * an admin can see the day was rejected before. */
-  const manualTabRows = recordList
-    .filter(function (r) { return r.InOutRecordType === 1; })
-    .map(toSubmitRow);
-
-  const rejectedResult = await safePostJson(
-    `${baseUrl}/TNAV9/api/ManualInOut/GetManualRejectedData/`,
-    manualTabRows,
-    jsonHeaders
-  );
-  const rejectedList = Array.isArray(rejectedResult.body) ? rejectedResult.body : [];
-  const rejectedOnThisDay = rejectedList.filter(function (r) {
-    return isoDayOf(r.DatInDate) === targetIsoDay;
-  }).length;
+  const today = new Date();
+  const targetJsDate = parsedDate ? new Date(Number(parsedDate.yyyy), Number(parsedDate.mm) - 1, Number(parsedDate.dd)) : today;
+  const rangeStartJsDate = new Date(Math.min(parsedDate ? Number(parsedDate.yyyy) : today.getFullYear(), today.getFullYear() - 3), 0, 1);
+  const rangeEndJsDate = targetJsDate > today ? targetJsDate : today;
+  const fromDateText = formatRangeDate(rangeStartJsDate);
+  const toDateText = formatRangeDate(rangeEndJsDate);
 
   /* -------------------------------------------------
-   * Locked or disabled rows cannot be changed. Catch this here so
-   * the user gets a reason instead of a server error after they
-   * have already confirmed.
+   * Step 2: Search, as the button does it (captured "when click the
+   * search button"): GetGridDataByCriteria -> GetManuallyTimeFixedData
+   * -> GetManualRejectedData (both posted the SAME array: the grid's
+   * first tab, first page - 20 Regularize rows) -> GetLocalizedMessage
+   * (CommonSelectAllBtn) -> GetDynamicEmployeeSummary (keyed by the
+   * token the grid rows come back with).
+   * ------------------------------------------------- */
+  const gridPayload = {
+    FromDateText: fromDateText,
+    ToDateText: toDateText,
+    IsGroupByEmployee: typeof args.isGroupByEmployee === "boolean" ? args.isGroupByEmployee : filterModel.IsGroupByEmployee === true,
+    FilterMode: "1",
+    EmpNumber: empToken,
+    RosterCode: rosterCode,
+    callBackId: filterModel.CallBackId !== undefined ? filterModel.CallBackId : 1,
+    isShowShiftHoursInShiftAdjEnabled: filterModel.isShowShiftHoursInShiftAdjEnabled === true,
+    IsClientUoc: filterModel.IsClientUOC === true,
+    PageMode: pageMode
+  };
+
+  function rowsOf(gridBody) {
+    return (gridBody && Array.isArray(gridBody.ManualInOutDetailList)) ? gridBody.ManualInOutDetailList : [];
+  }
+
+  // The on-screen page of the tab the grid opens on - its first tab.
+  function regularizePage(list) {
+    const firstTab = tabs[0] || null;
+    return pageOf(
+      list.filter(function (r) { return inTab(r, firstTab); }).map(function (r) { return toValidSwipeRow(r, noReasonCode); }),
+      0
+    );
+  }
+
+  // The employee token the summary is keyed by - the one on the rows.
+  function summaryTokenOf(gridBody, list) {
+    const fromRow = list.find(function (r) { return r && r.EmpNumber; });
+    if (fromRow) return fromRow.EmpNumber;
+    const emp = gridBody && Array.isArray(gridBody.EmployeeList) ? gridBody.EmployeeList[0] : null;
+    return (emp && emp.EmpNumber) || empToken;
+  }
+
+  async function postFixedAndRejected(rows) {
+    const fixedRes = await safePostJson(`${baseUrl}/TNAV9/api/ManualInOut/GetManuallyTimeFixedData/`, rows, jsonHeaders);
+    const rejectedRes = await safePostJson(`${baseUrl}/TNAV9/api/ManualInOut/GetManualRejectedData/`, rows, jsonHeaders);
+    return {
+      fixedList: Array.isArray(fixedRes.body) ? fixedRes.body : [],
+      rejectedList: Array.isArray(rejectedRes.body) ? rejectedRes.body : []
+    };
+  }
+
+  async function postSummary(token) {
+    const res = await safePostJson(`${baseUrl}/TNAV9/api/Common/GetDynamicEmployeeSummary/`, {
+      pageId: 1,
+      empNumber: token,
+      fromDateText,
+      toDateText
+    }, ajaxHeaders);
+    return res.body && typeof res.body === "object" ? res.body : null;
+  }
+
+  // Flattens SummaryData_01, _02, ... into one readable list.
+  function shapeSummary(summary) {
+    if (!summary) return null;
+    const fields = [];
+    Object.keys(summary)
+      .filter(function (k) { return k.indexOf("SummaryData_") === 0 && Array.isArray(summary[k]); })
+      .sort()
+      .forEach(function (k) {
+        summary[k].forEach(function (f) {
+          fields.push({ field: String(f.FieldName || "").trim(), value: f.FieldValue });
+        });
+      });
+    return { period: summary.SummaryPeriod || null, fields };
+  }
+
+  // The day's employee as the summary names them.
+  function adoptEmployee(summaryBody) {
+    const employeeData = summaryBody && summaryBody.EmployeeData;
+    if (!employeeData) return;
+    employeeLabel = employeeData.EmpCompleteName || employeeData.EmpDisplayName || employeeLabel;
+    employeeDisplayNumber = employeeData.EmpDisplayNumber || employeeDisplayNumber;
+    employeeDesignation = employeeData.Designation || employeeDesignation;
+  }
+
+  const gridResult = await safePostJson(`${baseUrl}/TNAV9/api/ManualInOut/GetGridDataByCriteria/`, gridPayload, jsonHeaders);
+  const gridData = gridResult.body || {};
+  const recordList = rowsOf(gridResult.body);
+  tabs = buildTabs(tabLinks, typeValues, gridData, recordList);
+
+  await postFixedAndRejected(regularizePage(recordList));
+
+  await safePostJson(`${baseUrl}/TNAV9/api/Common/GetLocalizedMessage/`, {
+    resourceKey: "CommonSelectAllBtn",
+    parameter: "",
+    classKey: "Common"
+  }, ajaxHeaders);
+
+  const searchSummaryBody = await postSummary(summaryTokenOf(gridData, recordList));
+  adoptEmployee(searchSummaryBody);
+  const summary = shapeSummary(searchSummaryBody);
+  if (recordList.length === 0) {
+    return invalid(`There are no attendance days for ${employeeLabel} between ${fromDateText} and ${toDateText}, so there is nothing to show or submit${dateText ? ` for ${dateText}` : ""}.`, {
+      needsInput: false,
+      searchRange: { fromDate: fromDateText, toDate: toDateText },
+      diagnostics: gridResult.ok ? { rosterGroup, rosterCode } : { gridHttpStatus: gridResult.status, rosterGroup, rosterCode }
+    });
+  }
+
+  /* -------------------------------------------------
+   * One tab's dates (showTab): "what are the dates in the Pending tab"
+   * and the like. The tab is opened the way the screen opens it
+   * (GetManuallyTimeFixedData -> GetManualRejectedData with its page),
+   * and only the days on that tab are returned - nothing is asked for
+   * and nothing is sent. The tab is matched by the screen's own label.
+   * ------------------------------------------------- */
+  if (wantsTab) {
+    const norm = function (s) { return String(s || "").toLowerCase().replace(/[^a-z]/g, ""); };
+    const wanted = norm(args.showTab);
+    const tab = tabs.find(function (t) {
+      const label = norm(t.label), member = norm(t.member);
+      return member === wanted || label === wanted || (wanted.length >= 3 && (label.indexOf(wanted) === 0 || wanted.indexOf(label) === 0 || wanted.indexOf(member) === 0));
+    }) || null;
+    if (!tab) {
+      return invalid(`There is no "${args.showTab}" tab on the Manual In and Out screen. The tabs are: ${tabs.map(function (t) { return t.label; }).join(", ")}.`, {
+        missingFields: ["Tab"],
+        availableTabs: tabs.map(function (t) { return t.label; })
+      });
+    }
+    await openTab(tab);
+
+    const who = typeof employeeLabel !== "undefined" ? employeeLabel : null;
+    const days = recordList.filter(function (r) { return inTab(r, tab); }).map(function (r) {
+      return {
+        date: r.InDateText,
+        day: r.DayAbbreviation || null,
+        shift: r.ShiftAbbreviation || null,
+        inTime: hasTime(r.InTime) ? (r.InTimeText || hhmmToText(r.InTime)) : null,
+        outDate: hasTime(r.OutTime) ? (r.OutDateText || null) : null,
+        outTime: hasTime(r.OutTime) ? (r.OutTimeText || hhmmToText(r.OutTime)) : null,
+        status: r.RecordStatusText || null
+      };
+    });
+    const SHOWN = 60;
+    const listed = days.slice(0, SHOWN).map(function (d) { return d.date; }).join(", ");
+    return {
+      tab: tab.label,
+      employee: who,
+      count: days.length,
+      searchRange: { fromDate: fromDateText, toDate: toDateText },
+      days,
+      message: days.length > 0
+        ? `${who ? `${who} has` : "There are"} ${days.length} date${days.length === 1 ? "" : "s"} on the ${tab.label} tab between ${fromDateText} and ${toDateText}: ${listed}${days.length > SHOWN ? ` ... and ${days.length - SHOWN} more` : ""}.`
+        : `There are no dates on the ${tab.label} tab${who ? ` for ${who}` : ""} between ${fromDateText} and ${toDateText}.`
+    };
+  }
+  const gridRow = recordList.find(function (item) {
+    return isoDayOf(item.DatInDate) === targetIsoDay;
+  });
+
+  if (!gridRow) {
+    return invalid(`${dateText} is not in ${employeeLabel}'s Manual In and Out grid between ${fromDateText} and ${toDateText} - there is no attendance day recorded for that date, so there is nothing to edit. Please check the date and try again.`, {
+      employee: employeeLabel,
+      missingFields: ["Date"],
+      searchRange: { fromDate: fromDateText, toDate: toDateText },
+      diagnostics: { rosterGroup, rosterCode, rowsReturned: recordList.length }
+    });
+  }
+
+  if (tabs.length === 0) {
+    return {
+      error: true,
+      message: "Could not read the tabs of the Manual In and Out screen, so the day cannot be placed. Please try again, or use the screen directly.",
+      diagnostics: { tabLinksFound: tabLinks.length, recordTypeValues: typeValues, pageUrl }
+    };
+  }
+
+  /* -------------------------------------------------
+   * Opening a tab, the way the screen does it (captured on loading the
+   * Pending, Valid Swipes and Off Shifts tabs): GetManuallyTimeFixedData
+   * -> GetManualRejectedData, both posted the SAME array - the tab's
+   * on-screen page of rows. The page opened is the one holding the day.
+   * ------------------------------------------------- */
+  async function openTab(tab) {
+    const source = recordList.filter(function (r) { return inTab(r, tab); });
+    const index = source.findIndex(function (r) { return isoDayOf(r.DatInDate) === targetIsoDay; });
+    const pageIndex = index >= 0 && pageSize ? Math.floor(index / pageSize) : 0;
+    const pageRows = pageOf(source.map(function (r) { return toValidSwipeRow(r, noReasonCode); }), pageIndex);
+    const opened = await postFixedAndRejected(pageRows);
+    return {
+      source,
+      pageIndex,
+      rows: pageRows.map(function (r) { return withManualHighlight(r, opened.fixedList); }),
+      indexOnPage: index < 0 ? -1 : (pageSize ? index - (pageIndex * pageSize) : index),
+      fixedList: opened.fixedList,
+      rejectedList: opened.rejectedList
+    };
+  }
+
+  function historyOf(opened) {
+    return {
+      previouslyManuallyFixed: opened.fixedList.some(function (r) {
+        return isoDayOf(r.DatInDate) === targetIsoDay
+          && (!gridRow.EmpDisplayNumber || !r.EmpDisplayNumber || r.EmpDisplayNumber === gridRow.EmpDisplayNumber);
+      }),
+      previouslyRejected: opened.rejectedList.some(function (r) { return isoDayOf(r.DatInDate) === targetIsoDay; })
+    };
+  }
+
+  const pendingTab = tabByMember(PENDING_TAB);
+  const ownTab = tabByMember(OWN_TAB);
+
+  /* A day on the Pending tab is in the approval process - the screen
+   * disables every cell of it. Opening the tab is all the screen does
+   * (captured Pending Tab: GetManuallyTimeFixedData ->
+   * GetManualRejectedData with the pending row, disabled); nothing is
+   * asked for and nothing is sent. */
+  if (inTab(gridRow, pendingTab)) {
+    const day = Object.assign(describeDay(gridRow), historyOf(await openTab(pendingTab)), { employee: employeeLabel });
+    const pendingRequest = await loadPendingRequest(gridRow);
+    return {
+      pending: true,
+      message: `${dateText} is in the pending process for ${employeeLabel} (status ${pendingRequest.status || "-"}), so you cannot edit or submit a manual In and Out for this date.${pendingRequest.text}`,
+      day,
+      pendingRequest
+    };
+  }
+
+  /* A day on another tab belongs to the tool that drives that tab. */
+  if (!inTab(gridRow, ownTab)) {
+    const rowTabs = tabsOf(gridRow);
+    const home = rowTabs.find(function (t) { return TOOL_FOR_TAB[t.member]; }) || rowTabs[0] || null;
+    const day = Object.assign(describeDay(gridRow), { employee: employeeLabel });
+    if (home) Object.assign(day, historyOf(await openTab(home)));
+    const useTool = home ? (TOOL_FOR_TAB[home.member] || null) : null;
+    return {
+      wrongTab: true,
+      useTool,
+      message: home
+        ? `${dateText} is on the ${home.label} tab for ${employeeLabel} (In: ${day.inDate || dateText} ${day.inTime || "-"}, Out: ${day.outDate || dateText} ${day.outTime || "-"}, status ${day.status || "-"}), not on the ${ownTab ? ownTab.label : OWN_TAB} tab, so it is not edited here.${useTool ? ` Use the ${useTool} tool for it.` : ""}`
+        : `${dateText} is not on the Regularize, Pending, Valid Swipes or Off Shifts tab for ${employeeLabel} (shift ${day.shift || "-"}), so there is nothing to edit for it.`,
+      day
+    };
+  }
+
+  /* -------------------------------------------------
+   * The day is on this tool's tab. The Submit button posts only the
+   * on-screen page of the tab you are on, so the page holding the day
+   * is opened (captured "when click the valid swipes tab").
+   * ------------------------------------------------- */
+  const opened = await openTab(ownTab);
+  const validSourceRows = opened.source;
+  const validPageIndex = opened.pageIndex;
+  const tabRows = opened.rows;
+  const rowIndexOnPage = opened.indexOnPage;
+  const targetRow = tabRows[rowIndexOnPage];
+  const history = historyOf(opened);
+  const previouslyManuallyFixed = history.previouslyManuallyFixed;
+  const previouslyRejected = history.previouslyRejected;
+
+  /* -------------------------------------------------
+   * Locked or disabled rows cannot be changed.
    * ------------------------------------------------- */
   const blockers = [];
   if (targetRow.IsLockedRecord === true) blockers.push("the record is locked");
@@ -951,273 +1472,431 @@
   if (targetRow.IsAdjustmentEnabled === false) blockers.push("adjustments are disabled for this record");
 
   if (blockers.length > 0) {
-    return {
-      error: true,
-      message: `The manual In and Out for ${employeeLabel} on ${dateText} cannot be edited because ${blockers.join(" and ")}. Please contact HR Admin.`,
-      current: {
-        employee: employeeLabel,
-        date: dateText,
-        inTime: targetRow.InTimeText || hhmmToText(targetRow.InTime),
-        outTime: targetRow.OutTimeText || hhmmToText(targetRow.OutTime)
-      }
-    };
+    return invalid(`The manual In and Out for ${employeeLabel} on ${dateText} cannot be edited because ${blockers.join(" and ")}. Please contact HR Admin.`, {
+      needsInput: false,
+      locked: true,
+      day: Object.assign(describeDay(gridRow), history)
+    });
   }
 
   /* -------------------------------------------------
-   * Step 6: there must be something recorded to edit.
+   * Step 3: the day's shift and what is recorded, shown before anything
+   * is asked. The grid row carries DABreakList null, so the day's real
+   * breaks come from GetEmployeeBreaksByDate, keyed by the row's own
+   * EmpNumber token. They are loaded when the user is adding or changing
+   * a break, and when the day already has breaks - those have to be
+   * shown, and carried on the submit, or the day would lose them.
    * ------------------------------------------------- */
-  const hasExistingIn = hasTime(targetRow.InTime);
-  const hasExistingOut = hasTime(targetRow.OutTime);
+  const currentInText = hasTime(targetRow.InTime) ? (targetRow.InTimeText || hhmmToText(targetRow.InTime)) : null;
+  const currentOutText = hasTime(targetRow.OutTime) ? (targetRow.OutTimeText || hhmmToText(targetRow.OutTime)) : null;
+  const requestedBreaks = requestedBreaksOf(args);
 
-  const currentInText = hasExistingIn ? (targetRow.InTimeText || hhmmToText(targetRow.InTime)) : null;
-  const currentOutText = hasExistingOut ? (targetRow.OutTimeText || hhmmToText(targetRow.OutTime)) : null;
+  /* The Valid Swipes grid also lets a recorded In or Out be emptied, and a
+   * recorded break be deleted, and the row submitted (captured). */
+  const clearIn = args.clearInTime === true;
+  const clearOut = args.clearOutTime === true;
+  const deleteBreakNos = (Array.isArray(args.deleteBreaks)
+    ? args.deleteBreaks
+    : (args.deleteBreaks !== undefined && args.deleteBreaks !== null && args.deleteBreaks !== "" ? [args.deleteBreaks] : []))
+    .map(Number);
+  const clearing = clearIn || clearOut || deleteBreakNos.length > 0;
 
-  if (!hasExistingIn && !hasExistingOut) {
-    return {
-      error: true,
-      message: `There is no In or Out time recorded for ${employeeLabel} on ${dateText}, so there is nothing to edit. Adding a new manual In and Out is handled by the submitManualInAndOutBySAdmin tool.`,
-      current: { employee: employeeLabel, employeeNumber: employeeDisplayNumber, date: dateText, inTime: null, outTime: null }
-    };
+  const rowEmpToken = targetRow.EmpNumber || empNumber;
+  const rowDateText = targetRow.InDateText || dateText;
+
+  let existingBreaks = [];
+  if (requestedBreaks.length > 0 || deleteBreakNos.length > 0 || Number(targetRow.BreakCount) > 0) {
+    const breaksResult = await safePostJson(
+      `${baseUrl}/TNAV9/api/ManualInOut/GetEmployeeBreaksByDate/`,
+      { empNumber: rowEmpToken, datInDateText: rowDateText },
+      ajaxHeaders
+    );
+    existingBreaks = Array.isArray(breaksResult.body) ? breaksResult.body : [];
   }
 
   const shiftWindow = parseGraceWindow(targetRow.ShiftToolTip);
-  const rowEmpToken = targetRow.EmpNumber || empToken;
+  const shiftDetails = shiftDetailsOf(targetRow, shiftWindow, existingBreaks);
+
+  /* What the API says about this shift, handed to the caller so the user
+   * is asked for times against the real period rather than a guess. */
+  const shiftInfo = {
+    shift: targetRow.ShiftAbbreviation || null,
+    shiftPeriod: shiftWindow ? shiftWindow.text : null,
+    shiftStart: shiftWindow ? shiftWindow.shiftInClock : null,
+    shiftEnd: shiftWindow ? shiftWindow.shiftOutClock : null,
+    shiftAllowedFrom: shiftWindow ? shiftWindow.startText : null,
+    shiftAllowedTo: shiftWindow ? shiftWindow.endText : null,
+    shiftCanEndNextDay: shiftWindow ? shiftWindow.spansNextDay : (targetRow.IsMidNightShift === 1),
+    isMidNightShift: targetRow.IsMidNightShift,
+    shiftToolTip: targetRow.ShiftToolTip || null
+  };
 
   /* -------------------------------------------------
-   * A day can carry state the admin should see before changing its
-   * times: RecordStatus 1 / "P/A" is a manual adjustment still waiting
-   * for approval (the Pending tab), and a day on leave has its type and
-   * hours on the row. Neither is refused here - the page lets both be
-   * edited - but both change what the edit means, so they are surfaced.
+   * Step 4: the recorded values are shown first and the user picks what
+   * to change - In Date, In Time, Out Date and/or Out Time - then gives
+   * only the new values for those. Anything not picked stays as recorded.
+   * Breaks are optional - none, one or several; one with a breakNo changes
+   * that recorded break, any other is added.
    * ------------------------------------------------- */
-  const isPendingApproval = targetRow.RecordStatus === 1;
-  const leaveInfo = targetRow.LeaveType
-    ? { leaveType: targetRow.LeaveType, leaveDays: targetRow.LeaveDaysLabelString || targetRow.LeaveDays || null }
-    : null;
+  const suggestedInDateText = targetRow.InDateText || dateText;
+  const suggestedOutDateText = targetRow.OutDateText || dateText;
+  const nextDayNote = shiftInfo.shiftCanEndNextDay
+    ? ` This shift can end on the following day, so an Out Date of ${formatCultureDate(addDays(parseCultureDate(suggestedInDateText) || parsedDate, 1))} is normal for it.`
+    : "";
 
-  /* -------------------------------------------------
-   * Break cell parity: the grid row carries DABreakList null, the
-   * real break list comes from GetEmployeeBreaksByDate. Load it now
-   * so the current break can be shown and edited in place.
-   * ------------------------------------------------- */
-  const breaksResult = await safePostJson(
-    `${baseUrl}/TNAV9/api/ManualInOut/GetEmployeeBreaksByDate/`,
-    { empNumber: rowEmpToken, datInDateText: dateText },
-    ajaxHeaders
-  );
-  const existingBreaks = Array.isArray(breaksResult.body) ? breaksResult.body : [];
-  const currentBreak = existingBreaks.length > 0 ? existingBreaks[0] : null;
-  const currentBreakInText = currentBreak ? (currentBreak.BStartTimeText || hhmmToText(currentBreak.BStartTime)) : null;
-  const currentBreakOutText = currentBreak ? (currentBreak.BEndTimeText || hhmmToText(currentBreak.BEndTime)) : null;
+  const FIELD_DEFS = [
+    { key: "inDate", label: "In Date", current: suggestedInDateText },
+    { key: "inTime", label: "In Time", current: currentInText },
+    { key: "outDate", label: "Out Date", current: suggestedOutDateText },
+    { key: "outTime", label: "Out Time", current: currentOutText }
+  ];
 
-  /* -------------------------------------------------
-   * Step 7: collect the new values.
-   * ------------------------------------------------- */
-  const wantsInChange = !!args.inTime;
-  const wantsOutChange = !!args.outTime;
-  const wantsBreakChange = !!(args.breakInTime || args.breakOutTime);
+  /* What the user chose to change: the fields named in fieldsToEdit, plus
+   * any value already given. The screen saves an In on its own or an Out on
+   * its own, so one field is enough; the rest keep their recorded values. */
+  const named = Array.isArray(args.fieldsToEdit)
+    ? args.fieldsToEdit.map(function (f) { return String(f || "").toLowerCase().replace(/[^a-z]/g, ""); })
+    : [];
+  const chosen = FIELD_DEFS.filter(function (f) {
+    // A time being cleared is not asked for.
+    if ((f.key === "inTime" && clearIn && !args.inTime) || (f.key === "outTime" && clearOut && !args.outTime)) return false;
+    return named.indexOf(f.key.toLowerCase()) !== -1 || !!args[f.key];
+  });
 
-  if (!wantsInChange && !wantsOutChange && !wantsBreakChange) {
-    /* The user often arrives here from the submit tool, having been told
-     * the day was already submitted - lead with that so the answer is the
-     * same whichever way they came in. */
-    const alreadySubmitted = hasExistingIn && hasExistingOut
-      ? `The manual In and Out for ${employeeLabel} on ${dateText} has already been submitted (In: ${currentInText}, Out: ${currentOutText}). `
-      : "";
-    return {
+  const recordedText = `Recorded for ${employeeLabel} on ${dateText} - In: ${suggestedInDateText} ${currentInText || "-"}, Out: ${suggestedOutDateText} ${currentOutText || "-"}${shiftDetails.recordedBreaks.length > 0 ? `, breaks: ${shiftDetails.recordedBreaks.map(function (b) { return `${b.breakNo}) ${b.breakIn} - ${b.breakOut}`; }).join(", ")}` : ", no breaks"}.`;
+
+  const commonDetails = {
+    shiftDetails: Object.assign({ employee: employeeLabel, employeeNumber: employeeDisplayNumber, designation: employeeDesignation }, shiftDetails),
+    current: Object.assign({
+      employee: employeeLabel,
+      employeeNumber: employeeDisplayNumber,
+      designation: employeeDesignation,
+      date: dateText,
+      tabs: tabsOf(gridRow).map(function (t) { return t.label; }),
+      inDate: suggestedInDateText,
+      inTime: currentInText,
+      outDate: suggestedOutDateText,
+      outTime: currentOutText,
+      status: targetRow.RecordStatusText || null,
+      previouslyManuallyFixed,
+      previouslyRejected
+    }, shiftInfo)
+  };
+
+  // Nothing chosen yet: show what is recorded and ask which part to edit.
+  if (chosen.length === 0 && requestedBreaks.length === 0 && !clearing) {
+    return Object.assign({
       needsInput: true,
-      message: `${alreadySubmitted}Here is what is currently recorded for ${employeeLabel} on ${dateText}. Please give me the new In Time and Out Time (HH:mm) and the reason for the change. Break In Time and Break Out Time are optional - add them only if you want to.`,
-      current: {
-        employee: employeeLabel,
-        employeeNumber: employeeDisplayNumber,
-        designation: employeeDesignation,
-        date: dateText,
-        inDate: targetRow.InDateText,
-        outDate: targetRow.OutDateText,
-        inTime: currentInText,
-        outTime: currentOutText,
-        breakInTime: currentBreakInText,
-        breakOutTime: currentBreakOutText,
-        shift: targetRow.ShiftAbbreviation || null,
-        shiftPeriod: shiftWindow ? shiftWindow.text : null,
-        shiftToolTip: targetRow.ShiftToolTip || null,
-        status: targetRow.RecordStatusText || null,
-        pendingApproval: isPendingApproval,
-        leave: leaveInfo,
-        rejectedOnThisDay,
-        calculated
-      },
-      missingFields: ["In Time", "Out Time", "Reason"]
-    };
+      message: `${shiftDetailsText(shiftDetails)} ${recordedText} Which do you want to edit - In Date, In Time, Out Date or Out Time? You can also add one or more breaks or change a recorded break by its number, clear the recorded In or Out time, or delete a recorded break.`,
+      missingFields: ["Field to edit"],
+      editableFields: FIELD_DEFS.map(function (f) { return { field: f.label, argument: f.key, current: f.current }; }),
+      employeeSummary: summary
+    }, commonDetails);
   }
 
-  if ((args.breakInTime && !args.breakOutTime) || (!args.breakInTime && args.breakOutTime)) {
-    return {
+  // Chosen, but the new value (or the reason) is still to come.
+  const missing = chosen.filter(function (f) { return !args[f.key]; }).map(function (f) { return f.label; });
+  if (!args.reason) missing.push("Reason");
+  if (missing.length > 0) {
+    const asking = chosen.filter(function (f) { return !args[f.key]; })
+      .map(function (f) { return `${f.label} (now ${f.current || "-"})`; });
+    return Object.assign({
       needsInput: true,
-      message: "You gave only one break time. Please provide both Break In Time and Break Out Time (HH:mm), or leave both out to keep the break unchanged.",
-      missingFields: [args.breakInTime ? "Break Out Time" : "Break In Time"]
-    };
-  }
-
-  if (!args.reason) {
-    return {
-      needsInput: true,
-      message: `Please tell me the reason for changing the manual In and Out for ${employeeLabel} on ${dateText}.`,
-      missingFields: ["Reason"],
-      current: { employee: employeeLabel, date: dateText, inTime: currentInText, outTime: currentOutText }
-    };
+      message: `${recordedText} Please give me ${asking.length > 0 ? `the new ${asking.join(", ")}` : ""}${asking.length > 0 && !args.reason ? " and " : ""}${!args.reason ? "the reason for the change" : ""}. Dates are ${dateFormatName} and times are HH:mm.${chosen.some(function (f) { return f.key === "outDate" || f.key === "outTime"; }) ? nextDayNote : ""}`,
+      missingFields: missing,
+      fieldsToEdit: chosen.map(function (f) { return f.key; })
+    }, commonDetails);
   }
 
   /* -------------------------------------------------
-   * Validate the new values (HH:mm in, HH.MM on the wire).
+   * Read the values. Only what the request needs is checked here - a
+   * date the API can read and an HH:mm time; whether the server accepts
+   * them is the server's answer, relayed as is.
    * ------------------------------------------------- */
-  let newIn = null;
-  if (wantsInChange) {
-    newIn = timeToHHMM(args.inTime);
-    if (newIn === null) {
-      return { error: true, message: "In Time must be in HH:mm 24-hour format, e.g. 08:30." };
+  if (args.inTime && timeToHHMM(args.inTime) === null) {
+    return invalid("In Time must be in HH:mm 24-hour format, e.g. 08:30.", Object.assign({ missingFields: ["In Time"] }, commonDetails));
+  }
+  if (args.outTime && timeToHHMM(args.outTime) === null) {
+    return invalid("Out Time must be in HH:mm 24-hour format, e.g. 17:30.", Object.assign({ missingFields: ["Out Time"] }, commonDetails));
+  }
+
+  const parsedInDateText = args.inDate ? parseCultureDate(args.inDate) : parseCultureDate(suggestedInDateText);
+  if (!parsedInDateText) return invalid(`Invalid In Date. Please provide it as ${dateFormatName}.`, Object.assign({ missingFields: ["In Date"] }, commonDetails));
+  const parsedOutDateText = args.outDate ? parseCultureDate(args.outDate) : parseCultureDate(suggestedOutDateText);
+  if (!parsedOutDateText) return invalid(`Invalid Out Date. Please provide it as ${dateFormatName}.`, Object.assign({ missingFields: ["Out Date"] }, commonDetails));
+
+  if (clearIn && args.inTime) {
+    return invalid(`You asked to clear the In time and also gave a new one (${args.inTime}). Please either clear it or give the new In time.`, Object.assign({ missingFields: ["In Time"] }, commonDetails));
+  }
+  if (clearOut && args.outTime) {
+    return invalid(`You asked to clear the Out time and also gave a new one (${args.outTime}). Please either clear it or give the new Out time.`, Object.assign({ missingFields: ["Out Time"] }, commonDetails));
+  }
+  if (clearIn && !currentInText) {
+    return invalid(`There is no In time recorded on ${dateText}, so there is nothing to clear.`, Object.assign({}, commonDetails));
+  }
+  if (clearOut && !currentOutText) {
+    return invalid(`There is no Out time recorded on ${dateText}, so there is nothing to clear.`, Object.assign({}, commonDetails));
+  }
+  for (let i = 0; i < deleteBreakNos.length; i++) {
+    const n = deleteBreakNos[i];
+    if (!Number.isInteger(n) || n < 1 || n > existingBreaks.length) {
+      return invalid(existingBreaks.length > 0
+        ? `Break ${deleteBreakNos[i]} cannot be deleted - ${dateText} has recorded breaks 1 to ${existingBreaks.length}.`
+        : `There are no recorded breaks on ${dateText} to delete.`, Object.assign({ recordedBreaks: shiftDetails.recordedBreaks }, commonDetails));
+    }
+    if (deleteBreakNos.indexOf(n) !== i) return invalid(`Break ${n} is listed twice to delete. Give it once.`, Object.assign({}, commonDetails));
+    if (requestedBreaks.some(function (b) { return Number(b.breakNo) === n; })) {
+      return invalid(`Recorded break ${n} is both deleted and changed. Please either delete it or change it.`, Object.assign({}, commonDetails));
     }
   }
 
-  let newOut = null;
-  if (wantsOutChange) {
-    newOut = timeToHHMM(args.outTime);
-    if (newOut === null) {
-      return { error: true, message: "Out Time must be in HH:mm 24-hour format, e.g. 17:30." };
-    }
-  }
+  const breakShapeProblem = checkBreakShapes(requestedBreaks, existingBreaks);
+  if (breakShapeProblem) return Object.assign(breakShapeProblem, commonDetails);
 
-  let breakIn = null;
-  let breakOut = null;
-  if (args.breakInTime) {
-    breakIn = timeToHHMM(args.breakInTime);
-    if (breakIn === null) {
-      return { error: true, message: "Break In Time must be in HH:mm 24-hour format, e.g. 12:00." };
-    }
-  }
-  if (args.breakOutTime) {
-    breakOut = timeToHHMM(args.breakOutTime);
-    if (breakOut === null) {
-      return { error: true, message: "Break Out Time must be in HH:mm 24-hour format, e.g. 13:00." };
-    }
-  }
+  const finalInText = clearIn ? "" : (args.inTime ? normaliseHHMM(args.inTime) : (currentInText || ""));
+  const finalOutText = clearOut ? "" : (args.outTime ? normaliseHHMM(args.outTime) : (currentOutText || ""));
+  const finalInDateText = formatCultureDate(parsedInDateText);
+  const finalOutDateText = formatCultureDate(parsedOutDateText);
 
-  // Anything the user leaves out keeps the value already recorded.
-  const finalInTime = wantsInChange ? newIn : targetRow.InTime;
-  const finalOutTime = wantsOutChange ? newOut : targetRow.OutTime;
-  const finalInText = wantsInChange ? args.inTime : (currentInText || "");
-  const finalOutText = wantsOutChange ? args.outTime : (currentOutText || "");
+  const inKey = toMinuteKey(parsedInDateText, finalInText);
+  const outKey = toMinuteKey(parsedOutDateText, finalOutText);
+  const warnings = [];
 
+  /* "Out after In" is the shift's own rule only when its allowed window
+   * (the row's ShiftToolTip) lies within one day - then the Out cannot be
+   * on a later date and is checked against the In. A window that runs past
+   * midnight lets the Out sit on the next date (captured: In 20/01 09:00,
+   * Out 21/01 06:00), so no ordering is applied there; the server decides. */
   /* -------------------------------------------------
-   * Keep the row's own dates - on a midnight shift the Out date is
-   * legitimately the next day, so never force both to the selected date.
+   * Midnight crossover. A shift can end after midnight, on the next day's
+   * date. The screen then refuses an In that is not later than the
+   * previous day's Out, or an Out that is not earlier than the next day's
+   * In, and saves neither day (captured: 25/11 In 00:00, Out 26/11 03:00
+   * with 26/11 In 26/11 00:00 -> Status false, "Employee In-Time should
+   * be greater than shift start cutoff time", nothing submitted). The
+   * neighbouring days' times come from the grid; a neighbour still in the
+   * approval process shows no times there (-1), so its requested times
+   * come from its pending request (GetEmployeePendingApprovalData, the Pending
+   * tab's own details call).
    * ------------------------------------------------- */
-  let finalInDateText = targetRow.InDateText;
-  let finalOutDateText = targetRow.OutDateText;
+  /* The other days the user asked for in the same request and that are
+   * not submitted yet (otherEntries). The screen submits such days together
+   * and refuses them all when two of them overlap across midnight, so their
+   * values count here as those days' own - each day's preview shows the
+   * overlap before anything is confirmed or submitted. */
+  function parseEntryDate(value) {
+    const text = String(value || "").trim();
+    const iso = /^(\d{4})-(\d{2})-(\d{2})/.exec(text);
+    return parseCultureDate(text) || (iso ? { yyyy: iso[1], mm: iso[2], dd: iso[3] } : null);
+  }
 
-  if (args.inDate) {
-    const parsedInDate = parseCultureDate(args.inDate);
-    if (!parsedInDate) return { error: true, message: `Invalid inDate. Please provide it as ${dateFormatName}.` };
-    finalInDateText = formatCultureDate(parsedInDate);
+  function sameRequestEntry(day) {
+    const list = Array.isArray(args.otherEntries) ? args.otherEntries : [];
+    const isClock = function (v) {
+      const m = /^(\d{1,2}):(\d{2})$/.exec(String(v || "").trim());
+      return !!m && Number(m[1]) <= 23 && Number(m[2]) <= 59;
+    };
+    for (const e of list) {
+      if (!e || typeof e !== "object") continue;
+      const entryDay = parseEntryDate(e.date || e.inDate);
+      if (!entryDay || toDateKey(entryDay) !== toDateKey(day)) continue;
+      const side = function (dateValue, timeValue) {
+        const parsed = parseEntryDate(dateValue) || (timeValue ? entryDay : null);
+        if (!parsed || !isClock(timeValue)) return null;
+        const clock = normaliseHHMM(timeValue);
+        const key = toMinuteKey(parsed, clock);
+        return key === null ? null : { key, parsed, dateText: formatCultureDate(parsed), time: clock };
+      };
+      return { in: side(e.inDate, e.inTime), out: side(e.outDate, e.outTime) };
+    }
+    return null;
   }
-  if (args.outDate) {
-    const parsedOutDate = parseCultureDate(args.outDate);
-    if (!parsedOutDate) return { error: true, message: `Invalid outDate. Please provide it as ${dateFormatName}.` };
-    finalOutDateText = formatCultureDate(parsedOutDate);
+
+  async function neighbourTimes(offset, fromDay) {
+    const base = fromDay || parsedDate;
+    const day = base ? addDays(base, offset) : null;
+    if (!day) return null;
+    const row = recordList.find(function (r) { return isoDayOf(r.DatInDate) === `${day.yyyy}-${day.mm}-${day.dd}`; });
+    const entry = sameRequestEntry(day);
+    if (!row && !entry) return null;
+    if (!row) return { day, dateText: formatCultureDate(day), in: entry.in, out: entry.out, pending: false, sameRequest: true };
+    function edge(dateIso, time, text) {
+      const parsed = isoToParsed(dateIso);
+      if (!parsed || !hasTime(time)) return null;
+      const clock = text || hhmmToText(time);
+      const key = toMinuteKey(parsed, clock);
+      return key === null ? null : { key, parsed, dateText: formatCultureDate(parsed), time: clock };
+    }
+    const found = {
+      day,
+      dateText: row.InDateText || formatCultureDate(day),
+      in: edge(row.InDate, row.InTime, row.InTimeText),
+      out: edge(row.OutDate, row.OutTime, row.OutTimeText),
+      pending: false
+    };
+    const window = parseGraceWindow(row.ShiftToolTip);
+    if (inTab(row, pendingTab)) {
+      const res = await safePostJson(`${baseUrl}/TNAV9/api/ManualInOut/GetEmployeePendingApprovalData/`, {
+        empNumber: row.EmpNumber || empNumber,
+        datInDateText: row.InDateText || formatCultureDate(day)
+      }, ajaxHeaders);
+      (Array.isArray(res.body) ? res.body : []).forEach(function (p) {
+        const m = p.MClockData || {};
+        const requested = edge(m.NewDate, m.NewTime, null);
+        // Only a time inside that day's own allowed window (its ShiftToolTip) belongs to that day.
+        if (!requested || (window && (requested.key < window.start || requested.key > window.end))) return;
+        // Which time it is, as the request names it (TimeModeText: "In Time" / "Out Time").
+        const mode = String(p.TimeModeText || "");
+        if (/out/i.test(mode)) found.out = requested;
+        else if (/in/i.test(mode)) found.in = requested;
+        else return;
+        found.pending = true;
+      });
+    }
+    // A value given for that day in the same request replaces what is recorded or requested.
+    if (entry) {
+      if (entry.in) found.in = entry.in;
+      if (entry.out) found.out = entry.out;
+      found.sameRequest = !!(entry.in || entry.out);
+    }
+    return found;
   }
+
+  /* A neighbouring day with no time yet to compare with can still be
+   * overlapped: its own allowed window (its ShiftToolTip) shows where its
+   * swipes may fall. The preview says so before anything is confirmed, so a
+   * day is not submitted that would make the neighbour's submit refused. */
+  /* The dates checked are only the ones the user entered in this request -
+   * the day being submitted and otherEntries - nothing is assumed about any
+   * other date. Each entered date is checked against the day before and the
+   * day after it: another entered date when there is one, otherwise what
+   * that day already holds (recorded in the grid, or requested and waiting
+   * for approval). A shift that ends on the following date is therefore
+   * checked against that date. Every pair is checked here, before the
+   * preview, so no entered date is submitted while two of them overlap. */
+  const dayTimesCache = {};
+  async function timesOf(day) {
+    const k = toDateKey(day);
+    if (Object.prototype.hasOwnProperty.call(dayTimesCache, k)) return dayTimesCache[k];
+    let value;
+    if (parsedDate && k === toDateKey(parsedDate)) {
+      value = {
+        day,
+        dateText,
+        in: inKey !== null ? { key: inKey, parsed: parsedInDateText, dateText: finalInDateText, time: finalInText } : null,
+        out: outKey !== null ? { key: outKey, parsed: parsedOutDateText, dateText: finalOutDateText, time: finalOutText } : null,
+        source: "current"
+      };
+    } else {
+      const found = await neighbourTimes(0, day);
+      value = found ? Object.assign(found, { source: found.sameRequest ? "entered" : (found.pending ? "pending" : "recorded") }) : null;
+    }
+    dayTimesCache[k] = value;
+    return value;
+  }
+  function sourceText(times) {
+    if (times.source === "current") return "the date you are submitting";
+    if (times.source === "entered") return "which you entered in this same request";
+    if (times.source === "pending") return "submitted and waiting for approval";
+    return "already recorded";
+  }
+
+  const enteredDays = [];
+  if (parsedDate) enteredDays.push(parsedDate);
+  (Array.isArray(args.otherEntries) ? args.otherEntries : []).forEach(function (e) {
+    const d = e && typeof e === "object" ? parseEntryDate(e.date || e.inDate) : null;
+    if (d && !enteredDays.some(function (x) { return toDateKey(x) === toDateKey(d); })) enteredDays.push(d);
+  });
+  enteredDays.sort(function (a, b) { return toDateKey(a) - toDateKey(b); });
+  const otherEnteredDates = enteredDays
+    .filter(function (d) { return !parsedDate || toDateKey(d) !== toDateKey(parsedDate); })
+    .map(formatCultureDate);
+
+  for (const day of enteredDays) {
+    const pairs = [[addDays(day, -1), day], [day, addDays(day, 1)]];
+    for (const pair of pairs) {
+      const earlier = await timesOf(pair[0]);
+      const later = await timesOf(pair[1]);
+      if (!earlier || !later || !earlier.out || !later.in || later.in.key > earlier.out.key) continue;
+      const pastMidnight = toDateKey(earlier.out.parsed) > toDateKey(earlier.day);
+      const enteredBoth = earlier.source !== "recorded" && earlier.source !== "pending"
+        && later.source !== "recorded" && later.source !== "pending";
+      // What the user is asked to change: the side that belongs to the date being submitted, else the entered one.
+      const fixLater = later.source === "current" || (earlier.source !== "current" && later.source === "entered");
+      return invalid(`The In of ${later.dateText} (${later.in.dateText} ${later.in.time}, ${sourceText(later)}) is not later than the Out of ${earlier.dateText} (${earlier.out.dateText} ${earlier.out.time}, ${sourceText(earlier)}${pastMidnight ? " - that shift runs past midnight" : ""}). The two days overlap across midnight, which the system does not accept ("Employee In-Time should be greater than shift start cutoff time")${enteredBoth ? ", so neither day is submitted" : ""}. Please give ${fixLater ? `an In for ${later.dateText} later than ${earlier.out.dateText} ${earlier.out.time}` : `an Out for ${earlier.dateText} earlier than ${later.in.dateText} ${later.in.time}`}.`, Object.assign({
+        missingFields: fixLater ? [`In Date (${later.dateText})`, `In Time (${later.dateText})`] : [`Out Date (${earlier.dateText})`, `Out Time (${earlier.dateText})`],
+        midnightCrossover: true,
+        overlap: {
+          earlierDay: { date: earlier.dateText, outDate: earlier.out.dateText, outTime: earlier.out.time, source: earlier.source },
+          laterDay: { date: later.dateText, inDate: later.in.dateText, inTime: later.in.time, source: later.source }
+        },
+        checkedDates: enteredDays.map(formatCultureDate),
+        // Nothing is submitted for any entered date while two of them overlap.
+        submitNeither: enteredBoth
+      }, commonDetails));
+    }
+  }
+
+  if (inKey !== null && outKey !== null && outKey <= inKey) {
+    if (shiftWindow && !shiftWindow.spansNextDay) {
+      return invalid(`The Out (${finalOutDateText} ${finalOutText}) is not after the In (${finalInDateText} ${finalInText}). This shift runs ${shiftWindow.text} and has to be swiped between ${shiftWindow.startText} and ${shiftWindow.endText}, which is all within one day, so the Out has to be later than the In.`, Object.assign({ missingFields: ["Out Date", "Out Time"] }, commonDetails));
+    }
+    warnings.push(`The Out (${finalOutDateText} ${finalOutText}) is not after the In (${finalInDateText} ${finalInText}). The system will decide whether it accepts this.`);
+  }
+  if (shiftWindow) {
+    if (inKey !== null && (inKey < shiftWindow.start || inKey > shiftWindow.end)) {
+      warnings.push(`The In (${finalInDateText} ${finalInText}) falls outside the shift's allowed window (${targetRow.ShiftToolTip}).`);
+    }
+    if (outKey !== null && (outKey < shiftWindow.start || outKey > shiftWindow.end)) {
+      warnings.push(`The Out (${finalOutDateText} ${finalOutText}) falls outside the shift's allowed window (${targetRow.ShiftToolTip}).`);
+    }
+  }
+
+  // Breaks: placed inside the In -> Out span (the screen's "Break Start/End Dates should be within In/Out Dates").
+  const breakCheck = placeBreaks(requestedBreaks, {
+    inParsed: parsedInDateText,
+    outParsed: parsedOutDateText,
+    inKey,
+    outKey,
+    inText: finalInText,
+    outText: finalOutText,
+    inDateText: finalInDateText,
+    outDateText: finalOutDateText
+  }, shiftWindow, existingBreaks);
+  if (breakCheck.response) return Object.assign(breakCheck.response, commonDetails);
+  const placedBreaks = breakCheck.placed;
+
+  const inTimeChanged = finalInText !== (currentInText || "");
+  const outTimeChanged = finalOutText !== (currentOutText || "");
+  const inDateChanged = finalInDateText !== suggestedInDateText;
+  const outDateChanged = finalOutDateText !== suggestedOutDateText;
 
   const changes = [];
-  if (wantsInChange && args.inTime !== currentInText) {
-    changes.push({ field: "In Time", from: currentInText, to: args.inTime });
-  }
-  if (wantsOutChange && args.outTime !== currentOutText) {
-    changes.push({ field: "Out Time", from: currentOutText, to: args.outTime });
-  }
-  if (finalInDateText !== targetRow.InDateText) {
-    changes.push({ field: "In Date", from: targetRow.InDateText, to: finalInDateText });
-  }
-  if (finalOutDateText !== targetRow.OutDateText) {
-    changes.push({ field: "Out Date", from: targetRow.OutDateText, to: finalOutDateText });
-  }
-  if (wantsBreakChange && (args.breakInTime !== currentBreakInText || args.breakOutTime !== currentBreakOutText)) {
-    changes.push({ field: "Break In Time", from: currentBreakInText, to: args.breakInTime });
-    changes.push({ field: "Break Out Time", from: currentBreakOutText, to: args.breakOutTime });
-  }
+  if (inDateChanged) changes.push({ field: "In Date", from: suggestedInDateText, to: finalInDateText });
+  if (inTimeChanged) changes.push({ field: "In Time", from: currentInText, to: finalInText || "(cleared)" });
+  if (outDateChanged) changes.push({ field: "Out Date", from: suggestedOutDateText, to: finalOutDateText });
+  if (outTimeChanged) changes.push({ field: "Out Time", from: currentOutText, to: finalOutText || "(cleared)" });
+  placedBreaks.forEach(function (b) {
+    const recorded = b.breakNo ? shiftDetails.recordedBreaks[b.breakNo - 1] : null;
+    if (recorded && recorded.breakIn === b.inText && recorded.breakOut === b.outText) return;
+    changes.push({
+      field: recorded ? `Break ${b.breakNo}` : "New break",
+      from: recorded ? `${recorded.breakIn} - ${recorded.breakOut}` : null,
+      to: `${b.inText} - ${b.outText}`
+    });
+  });
+
+  deleteBreakNos.forEach(function (n) {
+    const recorded = shiftDetails.recordedBreaks[n - 1];
+    changes.push({ field: `Break ${n}`, from: recorded ? `${recorded.breakIn} - ${recorded.breakOut}` : null, to: "(deleted)" });
+  });
 
   if (changes.length === 0) {
-    return {
+    return Object.assign({
       noChanges: true,
-      message: `The values you gave match what is already recorded for ${employeeLabel} on ${dateText} (In: ${currentInText || "-"}, Out: ${currentOutText || "-"}). There is nothing to update.`,
-      current: { employee: employeeLabel, date: dateText, inTime: currentInText, outTime: currentOutText }
-    };
+      message: `The values you gave match what is already recorded. ${recordedText} There is nothing to update - which part do you want to change?`
+    }, commonDetails);
   }
-
-  /* -------------------------------------------------
-   * Check the times against the shift's grace window. The server
-   * enforces this, so surface it before the user confirms.
-   * ------------------------------------------------- */
-  const warnings = [];
-  let outTimeExceedsGrace = false;
-
-  if (isPendingApproval) {
-    warnings.push(`This day is still pending approval (${targetRow.RecordStatusText || "P/A"}) for ${employeeLabel}. Changing it now submits another adjustment on top of the one already waiting - the pending one may need cancelling first through "Cancel Pending Manual In Out".`);
-  }
-  if (leaveInfo) {
-    warnings.push(`${employeeLabel} is on ${leaveInfo.leaveType}${leaveInfo.leaveDays ? ` (${leaveInfo.leaveDays})` : ""} on ${dateText}.`);
-  }
-
-  if (shiftWindow) {
-    const inKey = toMinuteKey(parseCultureDate(finalInDateText), finalInText);
-    const outKey = toMinuteKey(parseCultureDate(finalOutDateText), finalOutText);
-
-    if (wantsInChange && inKey !== null && (inKey < shiftWindow.start || inKey > shiftWindow.end)) {
-      warnings.push(`The In time ${finalInText} on ${finalInDateText} falls outside the shift's allowed window (${targetRow.ShiftToolTip}).`);
-    }
-    if (wantsOutChange && outKey !== null && (outKey < shiftWindow.start || outKey > shiftWindow.end)) {
-      outTimeExceedsGrace = true;
-      warnings.push(`The Out time ${finalOutText} on ${finalOutDateText} falls outside the shift's allowed window (${targetRow.ShiftToolTip}). Confirming will submit it anyway, the same as accepting the warning in the UI.`);
-    }
-    /* A break outside the shift's allowed window is refused outright, not
-     * warned about - the record must not be saved with it. */
-    if (breakIn !== null && breakOut !== null) {
-      const bInKey = toMinuteKey(parsedDate, args.breakInTime);
-      const bOutKey = toMinuteKey(parsedDate, args.breakOutTime);
-      const outside = [];
-      if (bInKey !== null && (bInKey < shiftWindow.start || bInKey > shiftWindow.end)) {
-        outside.push(`Break In Time ${args.breakInTime}`);
-      }
-      if (bOutKey !== null && (bOutKey < shiftWindow.start || bOutKey > shiftWindow.end)) {
-        outside.push(`Break Out Time ${args.breakOutTime}`);
-      }
-      if (outside.length > 0) {
-        return {
-          error: true,
-          message: `${outside.join(" and ")} ${outside.length > 1 ? "are" : "is"} not within the shift's allowed period, so this cannot be saved. The shift and its allowed window are: ${targetRow.ShiftToolTip}. Please give break times inside that window.`,
-          current: {
-            employee: employeeLabel,
-            date: dateText,
-            shift: targetRow.ShiftAbbreviation || null,
-            shiftPeriod: shiftWindow.text,
-            shiftToolTip: targetRow.ShiftToolTip || null,
-            breakInTime: args.breakInTime,
-            breakOutTime: args.breakOutTime
-          }
-        };
-      }
-    }
-  }
-
-  /* -------------------------------------------------
-   * Comment cell parity: opening it loads the day's comment history,
-   * keyed by the row's own EmpNumber token - which is not the same
-   * token the search was filtered by.
-   * ------------------------------------------------- */
-  const commentHistoryResult = await safePostJson(
-    `${baseUrl}/TNAV9/api/ManualInOut/GetCommentHistoryByDate/`,
-    { empNumber: rowEmpToken, datInDateText: dateText },
-    ajaxHeaders
-  );
-  const commentHistory = Array.isArray(commentHistoryResult.body) ? commentHistoryResult.body : [];
 
   const previewData = {
     employee: employeeLabel,
@@ -1226,174 +1905,154 @@
     date: dateText,
     shift: targetRow.ShiftAbbreviation || null,
     shiftPeriod: shiftWindow ? shiftWindow.text : null,
-    inDate: finalInDateText,
-    outDate: finalOutDateText,
-    inTime: { current: currentInText, updated: finalInText || null },
-    outTime: { current: currentOutText, updated: finalOutText || null },
-    breakInTime: { current: currentBreakInText, updated: args.breakInTime || currentBreakInText },
-    breakOutTime: { current: currentBreakOutText, updated: args.breakOutTime || currentBreakOutText },
+    inDate: { current: suggestedInDateText, updated: finalInDateText },
+    inTime: { current: currentInText, updated: finalInText || null, cleared: clearIn },
+    outDate: { current: suggestedOutDateText, updated: finalOutDateText },
+    outTime: { current: currentOutText, updated: finalOutText || null, cleared: clearOut },
+    // True when the Out lands on the date after the In - worth showing.
+    outIsNextDay: finalOutDateText !== finalInDateText,
+    breaks: placedBreaks.map(function (b) {
+      return {
+        changesRecordedBreak: b.breakNo,
+        breakInTime: b.inText,
+        breakOutTime: b.outText,
+        startDate: formatCultureDate(b.start),
+        endDate: formatCultureDate(b.end)
+      };
+    }),
+    deletedBreaks: deleteBreakNos.map(function (n) { return shiftDetails.recordedBreaks[n - 1]; }),
+    recordedBreaks: shiftDetails.recordedBreaks,
     reason: args.reason,
-    status: targetRow.RecordStatusText || null,
-    pendingApproval: isPendingApproval,
-    leave: leaveInfo,
-    commentHistoryCount: commentHistory.length,
-    rejectedOnThisDay,
-    calculated,
-    changes,
-    warnings
+    previouslyManuallyFixed,
+    previouslyRejected,
+    warnings,
+    changes
   };
 
   /* -------------------------------------------------
-   * Step 8: nothing is written until the user confirms. This edits
-   * someone else's attendance, so the confirmation names them.
+   * Step 6: nothing is written until the user confirms.
    * ------------------------------------------------- */
-  if (!args.confirmed) {
+  /* The submit only goes ahead for the exact values the user saw in a
+   * preview: the preview carries a token made from those values, and
+   * confirmed:true without that token - or with one for other values -
+   * returns the preview again instead of submitting. Every check above has
+   * then run and been shown before the user is asked to confirm. */
+  const previewToken = (function (text) {
+    let h = 2166136261;
+    for (let i = 0; i < text.length; i++) {
+      h ^= text.charCodeAt(i);
+      h = Math.imul(h, 16777619) >>> 0;
+    }
+    return h.toString(36);
+  })(JSON.stringify(previewData));
+  const confirmedThisPreview = args.confirmed === true && String(args.previewToken || "") === previewToken;
+
+  if (!confirmedThisPreview) {
     return {
       needsConfirmation: true,
+      previewToken,
+      // confirmed:true came without this preview's token: nothing was submitted - show this preview and ask again.
+      notSubmitted: args.confirmed === true ? "Nothing was submitted - these values have not been confirmed by the user yet. Show this preview and ask for confirmation." : undefined,
       preview: previewData,
-      message: warnings.length > 0
-        ? `Please review the changes to ${employeeLabel}'s manual In and Out below - note the warnings - and confirm before I save them.`
-        : `Please review the changes to ${employeeLabel}'s manual In and Out below and confirm before I save them.`,
+      shiftDetails,
+      // The shift is shown with the preview too - the user may have given every value up front.
+      message: shiftDetailsText(shiftDetails) + (otherEnteredDates.length > 0 ? ` Checked for midnight overlap together with the other date(s) you entered: ${otherEnteredDates.join(", ")} - no overlap.` : "") + " " + (warnings.length > 0
+        ? `Here are the changes for ${employeeLabel} - note the warnings - please confirm before I update the manual In and Out.`
+        : `Here are the changes for ${employeeLabel}. Please confirm before I update the manual In and Out.`),
       confirmationPrompt: `Are you sure you want to save these changes for ${employeeLabel}? Reply yes to update, or no to make further changes.`
     };
   }
 
   /* -------------------------------------------------
-   * Step 9: submit. IsSelected is the row checkbox and is true only
-   * on the row being changed. Every Old* field keeps its pre-edit
-   * value so the server sees the before/after pair.
+   * Step 7: submit. IsSelected (the row checkbox) is true only on the
+   * row being changed; every Old* field keeps its pre-edit value. The
+   * captured Valid Swipes submit moves InDate/OutDate (ISO) with the
+   * date texts, sends a changed time as the string "HH.MM", and marks
+   * each changed cell ChangeCell_Highlight. The In/Out old values
+   * (InOldTime, OutOldTime, ...) stay exactly as the grid gave them.
    * ------------------------------------------------- */
-  function buildUpdatedRow(row, forceOutTimeExceedConfirmed) {
-    const updated = Object.assign({}, row, {
-      InTime: finalInTime,
-      OutTime: finalOutTime,
-      InTimeText: finalInText || "",
-      OutTimeText: finalOutText || "",
-      InDateText: finalInDateText,
-      OutDateText: finalOutDateText,
-      Comment: args.reason,
-      IsSelected: true,
-      IsOutTimeExceedConfirmed: forceOutTimeExceedConfirmed === true ? true : row.IsOutTimeExceedConfirmed === true
-    });
-
-    // The knockout binding stamps the "changed cell" class on whichever
-    // half was actually typed into, and the submit carries it along.
-    if (wantsInChange) updated.InTimeHighlightCSS = "ChangeCell_Highlight";
-    if (wantsOutChange) updated.OutTimeHighlightCSS = "ChangeCell_Highlight";
-
-    /* The grid row's DABreakList is null; the day's real breaks come from
-     * GetEmployeeBreaksByDate, and the captured edit posts them back on the
-     * row exactly as they were loaded - ActionType 0, Old* pair intact -
-     * even when the break itself was not touched. Sending [] against a
-     * BreakCount of 1 would tell the server the day lost its break, so the
-     * loaded list is always carried. */
-    updated.DABreakList = existingBreaks.slice();
-    updated.BreakCount = existingBreaks.length;
-
-    if (breakIn !== null && breakOut !== null) {
-      const datInDate = row.DatInDate || formatIsoDateOnly(parsedDate);
-
-      if (currentBreak) {
-        /* Change the existing break in place, leaving any others untouched,
-         * and keep its pre-edit times as the Old* half of the pair.
-         * ActionType 0 is what a break carries when it comes back untouched,
-         * and 1 is what the captured submit sends for one the user worked
-         * on, so a changed break goes out as 1. */
-        updated.DABreakList = existingBreaks.map(function (br, idx) {
-          if (idx !== 0) return br;
-          return Object.assign({}, br, {
-            BStartTime: breakIn,
-            BStartTimeText: args.breakInTime,
-            BEndTime: breakOut,
-            BEndTimeText: args.breakOutTime,
-            BStartOldDate: br.BStartOldDate !== undefined && br.BStartOldDate !== null ? br.BStartOldDate : br.BStartDate,
-            BStartOldTime: br.BStartOldTime !== undefined && br.BStartOldTime !== -1 ? br.BStartOldTime : br.BStartTime,
-            BEndOldDate: br.BEndOldDate !== undefined && br.BEndOldDate !== null ? br.BEndOldDate : br.BEndDate,
-            BEndOldTime: br.BEndOldTime !== undefined && br.BEndOldTime !== -1 ? br.BEndOldTime : br.BEndTime,
-            ActionType: 1
-          });
-        });
-      } else {
-        const baseSeq = existingBreaks.reduce(function (maxVal, br) {
-          const seq = Number(br && br.SeqNo);
-          return Number.isFinite(seq) && seq > maxVal ? seq : maxVal;
-        }, 0);
-
-        // ActionType is 1 on a break added through the grid - the captured
-        // submit sends 1 for a break the day did not have before, with the
-        // BStart/BEnd Old* pair left empty.
-        updated.DABreakList = existingBreaks.concat([{
-          DatInDate: datInDate,
-          EmpNumber: row.EmpNumber || empToken,
-          SeqNo: baseSeq + 1,
-          BStartDate: datInDate,
-          BStartTime: breakIn,
-          BEndDate: datInDate,
-          BEndTime: breakOut,
-          BStartOldDate: null,
-          BStartOldTime: -1,
-          BEndOldDate: null,
-          BEndOldTime: -1,
-          BStartDateText: dateText,
-          BEndDateText: dateText,
-          BStartTimeText: args.breakInTime,
-          BEndTimeText: args.breakOutTime,
-          ActionType: 1
-        }]);
-      }
-      updated.BreakCount = updated.DABreakList.length;
+  /* An emptied cell goes out as the grid's own "no time" value - what
+   * the page's rows carry where nothing was swiped (captured: the cleared
+   * Out sent as OutTime -1 with OutTimeText ""). */
+  const emptyTime = (function () {
+    for (const r of tabRows) {
+      if (r.InTimeText === "" && typeof r.InTime === "number") return r.InTime;
+      if (r.OutTimeText === "" && typeof r.OutTime === "number") return r.OutTime;
     }
+    return typeof targetRow.NextInTime === "number" ? targetRow.NextInTime : -1;
+  })();
+  // The delete ActionType from the screen's scripts; failing that, the value the captured delete carried.
+  const scriptDeleteAction = deleteBreakNos.length > 0 ? await readBreakDeleteAction(pageHtml) : null;
+  const deleteAction = scriptDeleteAction !== null ? scriptDeleteAction : 3;
 
-    return updated;
+  const inChanged = inTimeChanged || inDateChanged;
+  const outChanged = outTimeChanged || outDateChanged;
+  const updatedRow = Object.assign({}, targetRow, {
+    InDate: formatIsoDateOnly(parsedInDateText),
+    OutDate: formatIsoDateOnly(parsedOutDateText),
+    InTime: clearIn ? emptyTime : (inChanged ? toWireTime(finalInText) : targetRow.InTime),
+    OutTime: clearOut ? emptyTime : (outChanged ? toWireTime(finalOutText) : targetRow.OutTime),
+    InTimeText: finalInText,
+    OutTimeText: finalOutText,
+    InDateText: finalInDateText,
+    OutDateText: finalOutDateText,
+    Comment: args.reason,
+    IsSelected: true
+  });
+  if (inChanged) updatedRow.InTimeHighlightCSS = "ChangeCell_Highlight";
+  if (outChanged) updatedRow.OutTimeHighlightCSS = "ChangeCell_Highlight";
+
+  /* The row came off the grid with DABreakList null, normalised to [] by
+   * toValidSwipeRow while BreakCount kept the day's real count - so the
+   * loaded list is always carried, with any change or addition merged in. */
+  updatedRow.DABreakList = mergeBreaks(existingBreaks, placedBreaks, targetRow);
+  deleteBreakNos.forEach(function (n) {
+    updatedRow.DABreakList[n - 1] = deletedBreak(updatedRow.DABreakList[n - 1], deleteAction, emptyTime);
+  });
+  // BreakCount is the breaks left standing (captured: 0 after deleting the day's only break).
+  updatedRow.BreakCount = updatedRow.DABreakList.length > 0 ? updatedRow.DABreakList.length - deleteBreakNos.length : targetRow.BreakCount;
+
+  // The captured submit posts the Valid Swipes page on screen - nothing else.
+  const detailList = tabRows.map(function (row, idx) {
+    if (idx === rowIndexOnPage) return updatedRow;
+    return Object.assign({}, row, { IsSelected: false });
+  });
+
+  // The captured payload carries exactly these two keys.
+  async function submitList(list) {
+    const payload = { PageMode: pageMode, ManualInOutDetailList: list };
+    try {
+      const raw = await fetch(`${baseUrl}/TNAV9/api/ManualInOut/SubmitManualAdjustment/`, {
+        method: "POST",
+        headers: jsonHeaders,
+        body: JSON.stringify(payload),
+        redirect: "follow"
+      });
+      const result = await raw.json().catch(function () { return {}; });
+      return { raw, result, payload };
+    } catch (e) {
+      return { raw: { ok: false, status: 0 }, result: {}, payload };
+    }
   }
 
-  // The captured payload carries exactly these two keys; this screen is
-  // the same view model with PageMode 0.
-  async function submitList(detailList) {
-    const payload = { PageMode: 0, ManualInOutDetailList: detailList };
-    const raw = await fetch(`${baseUrl}/TNAV9/api/ManualInOut/SubmitManualAdjustment/`, {
-      method: "POST",
-      headers: jsonHeaders,
-      body: JSON.stringify(payload),
-      redirect: "follow"
-    });
-    const result = await raw.json().catch(function () { return {}; });
-    return { raw, result, payload };
-  }
-
+  /* The server's own verdict. Status true with failCount above zero is a
+   * partial failure; its reason is the DataList entry for this day. */
   function succeeded(attempt) {
-    return attempt.raw.ok && attempt.result && attempt.result.Status === true;
+    return attempt.raw.ok
+      && attempt.result
+      && attempt.result.Status === true
+      && !(Number(attempt.result.failCount) > 0);
   }
 
-  function listWith(updatedRow) {
-    return tabRows.map(function (row, idx) {
-      if (idx === tabIndex) return updatedRow;
-      return Object.assign({}, row, { IsSelected: false });
-    });
+  function rowResultOf(result) {
+    const list = result && Array.isArray(result.DataList) ? result.DataList : [];
+    return list.find(function (d) { return isoDayOf(d && d.DatInDate) === targetIsoDay; }) || null;
   }
 
-  let updatedRow = buildUpdatedRow(targetRow, outTimeExceedsGrace);
-  let submitAttempt = await submitList(listWith(updatedRow));
-  let retriedWithGraceConfirmed = false;
+  let submitAttempt = await submitList(detailList);
   let retriedWithSingleRow = false;
 
-  /* The page shows an "out time exceeds the configured grace" dialog and
-   * resubmits with the flag set once the user clicks OK. Our own confirm
-   * step is that OK, so replay it if the server asks and we have not
-   * already set the flag from the grace check above. */
-  if (!succeeded(submitAttempt) && !outTimeExceedsGrace) {
-    const askedForConfirmation = (submitAttempt.result && submitAttempt.result.IsConfirmationRequired === true)
-      || (Array.isArray(submitAttempt.result && submitAttempt.result.ManualInOutDetailList)
-        && submitAttempt.result.ManualInOutDetailList.some(function (r) { return r && r.IsConfirmationRequired === true; }));
-
-    if (askedForConfirmation || gridRow.IsTimeExceedsConfiguredGrace === true || gridRow.IsConfirmationRequired === true) {
-      updatedRow = buildUpdatedRow(targetRow, true);
-      submitAttempt = await submitList(listWith(updatedRow));
-      retriedWithGraceConfirmed = true;
-    }
-  }
-
-  // A 5xx on the full tab list can mean the server choked on an unrelated
+  // A 5xx on the full page can mean the server choked on an unrelated
   // row - retry once with only the row being changed.
   if (!succeeded(submitAttempt) && submitAttempt.raw.status >= 500) {
     submitAttempt = await submitList([updatedRow]);
@@ -1402,97 +2061,94 @@
 
   const submitRaw = submitAttempt.raw;
   const submitResult = submitAttempt.result;
+  const submitRowResult = rowResultOf(submitResult);
 
   if (!succeeded(submitAttempt)) {
     const instance = submitResult && submitResult.instance ? String(submitResult.instance) : "";
     const instanceTrace = instance.includes(":") ? instance.split(":").pop() : null;
+    const serverMessage = (submitRowResult && submitRowResult.Message)
+      || (submitResult && submitResult.Message)
+      || (submitResult && submitResult.detail)
+      || null;
+    const diagnostics = {
+      submitHttpStatus: submitRaw.status,
+      retriedWithSingleRow,
+      selectedDate: dateText,
+      tab: ownTab.label,
+      validSwipeCount: validSourceRows.length,
+      validPageIndex,
+      pageSize,
+      rowIndexOnPage,
+      previouslyManuallyFixed,
+      previouslyRejected,
+      totalRowsSubmitted: (submitAttempt.payload.ManualInOutDetailList || []).length,
+      breaksSubmitted: placedBreaks.length,
+      employee: employeeLabel,
+      employeeNumber: employeeDisplayNumber,
+      pageUrl,
+      culture,
+      rosterGroup,
+      rosterCode,
+      fromDateText,
+      toDateText,
+      payloadTopLevelKeys: Object.keys(submitAttempt.payload || {}),
+      selectedRowBeforeUpdate: pickRowDebug(targetRow),
+      selectedRowAfterUpdate: pickRowDebug(updatedRow),
+      traceId: (submitResult && submitResult.traceId) || instanceTrace || null,
+      errorCode: (submitResult && submitResult.errorCode) || null
+    };
+
+    // The server answered and said why - a validation answer, relayed as is.
+    if (serverMessage && submitRaw.status > 0 && submitRaw.status < 500) {
+      return invalid(serverMessage, {
+        submitted: false,
+        preview: previewData,
+        apiResponse: submitResult,
+        diagnostics
+      });
+    }
+
     return {
       error: true,
-      message: (submitResult && submitResult.Message) || (submitResult && submitResult.detail) || `Failed to update the manual In and Out for ${employeeLabel}. Please verify in the UI.`,
+      message: serverMessage || `The manual In and Out for ${employeeLabel} could not be updated because the server did not respond. Please verify in the UI.`,
       apiResponse: submitResult,
-      warnings,
-      diagnostics: {
-        submitHttpStatus: submitRaw.status,
-        retriedWithGraceConfirmed,
-        retriedWithSingleRow,
-        outTimeExceedsGrace,
-        employee: employeeLabel,
-        employeeNumber: employeeDisplayNumber,
-        selectedDate: dateText,
-        tabRecordType,
-        tabRowCount: tabRows.length,
-        tabRowIndex: tabIndex,
-        gridRowCount: recordList.length,
-        validSwipeCount: validSwipeRows.length,
-        recordStatus: targetRow.RecordStatus,
-        recordStatusText: targetRow.RecordStatusText || null,
-        pendingApproval: isPendingApproval,
-        rejectedOnThisDay,
-        totalRowsSubmitted: (submitAttempt.payload.ManualInOutDetailList || []).length,
-        breakEdited: breakIn !== null && breakOut !== null,
-        breakWasExisting: !!currentBreak,
-        existingBreakCount: existingBreaks.length,
-        changedIn: wantsInChange,
-        changedOut: wantsOutChange,
-        searchContext: activeContext.label,
-        searchPagesFetched: pagesFetched,
-        pageUrl,
-        culture,
-        rosterGroup,
-        rosterCode: usedRosterCode,
-        dateSelectMode: requestedMode,
-        fromDateText,
-        toDateText,
-        payloadTopLevelKeys: Object.keys(submitAttempt.payload || {}),
-        selectedRowBeforeUpdate: pickRowDebug(targetRow),
-        selectedRowAfterUpdate: pickRowDebug(updatedRow),
-        traceId: (submitResult && submitResult.traceId) || instanceTrace || null,
-        errorCode: (submitResult && submitResult.errorCode) || null
-      }
+      diagnostics
     };
   }
 
   /* -------------------------------------------------
-   * Mirror the post-submit UI refresh sequence (best-effort).
+   * Post-submit refresh (captured Valid swipes, after the submit):
+   *   GetGridDataByCriteria -> GetManuallyTimeFixedData
+   *   -> GetManualRejectedData -> GetDynamicEmployeeSummary
+   * The summary is keyed by the token the refreshed rows carry. The
+   * refresh search is the short
+   * {FilterMode: 1, FromDateText, ToDateText, EmpNumber} form, and
+   * fixed / rejected both get the first page of the grid's first tab.
+   * Best-effort: the submit already succeeded.
    * ------------------------------------------------- */
-  const ts = Date.now();
-  await safeGetJson(`${baseUrl}/WorkflowV5/WebAPI/V1/Workflow/GetWorkflowConfigurationsForNotification?_=${ts}`);
-  await safeGetJson(`${baseUrl}/WorkflowV5/WebAPI/V1/Workflow/GetModuleWisePendingWorkflowSummaryNotification?_=${ts + 1}`);
+  const refreshGrid = await safePostJson(`${baseUrl}/TNAV9/api/ManualInOut/GetGridDataByCriteria/`, {
+    FilterMode: 1,
+    FromDateText: fromDateText,
+    ToDateText: toDateText,
+    EmpNumber: empNumber
+  }, jsonHeaders);
+  const refreshedList = rowsOf(refreshGrid.body);
+  if (refreshedList.length > 0) tabs = buildTabs(tabLinks, typeValues, refreshGrid.body, refreshedList);
 
-  const refreshGrid = await safePostJson(`${baseUrl}/TNAV9/api/ManualInOut/GetGridDataByCriteria/`, gridPayload, jsonHeaders);
-  const refreshedList = (refreshGrid.body && refreshGrid.body.ManualInOutDetailList) || [];
-  /* Both refresh calls get the SAME array - the captured pair posts an
-   * identical body of InOutRecordType 1 rows to each, so this is the tab
-   * the page lands back on rather than a per-endpoint filter. */
-  const refreshedManualRows = refreshedList
-    .filter(function (r) { return r.InOutRecordType === 1; })
-    .map(toSubmitRow);
-  const refreshedEmpToken = (refreshedList[0] && refreshedList[0].EmpNumber) || empToken;
-
-  await safePostJson(`${baseUrl}/TNAV9/api/ManualInOut/GetManuallyTimeFixedData/`, refreshedManualRows, jsonHeaders);
-  await safePostJson(`${baseUrl}/TNAV9/api/ManualInOut/GetManualRejectedData/`, refreshedManualRows, jsonHeaders);
-  await safePostJson(`${baseUrl}/TNAV9/api/Common/GetDynamicEmployeeSummary/`, {
-    pageId: 1,
-    empNumber: refreshedEmpToken,
-    fromDateText,
-    toDateText
-  }, ajaxHeaders);
-
-  // Read the day back so the caller reports what the server actually stored.
+  await postFixedAndRejected(regularizePage(refreshedList));
+  const refreshedSummary = shapeSummary(await postSummary(summaryTokenOf(refreshGrid.body, refreshedList)));
+  // Read back the day so the caller reports what the server actually stored.
   const savedRow = refreshedList.find(function (r) { return isoDayOf(r.DatInDate) === targetIsoDay; });
 
   return {
     success: true,
+    // No status here: the server's per-day text ("Record submitted for approval." ...) and the
+    // day's tab/status are left out of the success answer; the status is asked for separately.
     message: `The manual In and Out for ${employeeLabel} on ${dateText} has been updated successfully.`,
-    updated: previewData,
-    saved: savedRow ? {
-      employee: employeeLabel,
-      date: dateText,
-      inTime: savedRow.InTimeText || hhmmToText(savedRow.InTime),
-      outTime: savedRow.OutTimeText || hhmmToText(savedRow.OutTime),
-      breakCount: savedRow.BreakCount,
-      status: savedRow.RecordStatusText || null
-    } : null,
-    apiResponse: submitResult
+    updated: (function (values) { delete values.commentHistory; delete values.tab; return values; })(Object.assign({}, previewData)),
+    // What the grid now holds for the day - without its status or tab; the status is asked for separately.
+    saved: savedRow ? (function (day) { delete day.status; delete day.tabs; return day; })(describeDay(savedRow)) : null,
+    summary: refreshedSummary,
+    apiResponse: { successCount: submitResult.successCount, failCount: submitResult.failCount }
   };
 });

@@ -1,6 +1,6 @@
 # Beacon tool patterns
 
-Auto-generated from 385 exported tool(s) and 183 function(s) by `npm run beacon:export`. Regenerated on every export — do not hand-edit; add durable notes to README.md instead.
+Auto-generated from 387 exported tool(s) and 183 function(s) by `npm run beacon:export`. Regenerated on every export — do not hand-edit; add durable notes to README.md instead.
 
 ## Permission / menu-access checks
 
@@ -52,8 +52,8 @@ Date/time formatting or parsing utilities.
 
 Logic that selects an employee, subordinate, or reporting-line record.
 
-- `tools/submitsubordinatesmanualinandout/transformer.js`: `* Step 1: identify the subordinate and the date.`
-- `tools/editsubordinatesmanualinandout/transformer.js`: `* Step 1: identify the subordinate and the date.`
+- `tools/submitsubordinatesmanualinandout/transformer.js`: `// The subordinate's search token, once the search component has issued it.`
+- `tools/editsubordinatesmanualinandout/transformer.js`: `// The subordinate's search token, once the search component has issued it.`
 - `tools/editbenefitclearanceheadinformation/transformer.js`: `if (args.employeeId) {`
 - `tools/createbenefitclearanceheadinformation/transformer.js`: `if (!args.employeeId) {`
 - `tools/getpriorovertimeapplicationdetails/transformer.js`: `employeeId : entry.EmpDisplayName || "",`
@@ -62,30 +62,30 @@ Logic that selects an employee, subordinate, or reporting-line record.
 
 try/catch or status-code branching around an API call.
 
-- `tools/submitsubordinatesmanualinandout/transformer.js`: `const body = await res.json().catch(function () { return null; });`
+- `tools/submitsubordinatesmanualinandout/transformer.js`: `} catch (e) {`
 - `tools/submitselfmanualinandout/transformer.js`: `} catch (e) {`
 - `tools/submitmanualinandoutbyadmin/transformer.js`: `} catch (e) {`
-- `tools/editsubordinatesmanualinandout/transformer.js`: `const body = await res.json().catch(function () { return null; });`
+- `tools/editsubordinatesmanualinandout/transformer.js`: `} catch (e) {`
 - `tools/editselfmanualinandout/transformer.js`: `} catch (e) {`
 
 ## Response transformation
 
 Mapping/reshaping a raw API response before returning it (typical Transformer responsibility).
 
-- `tools/submitsubordinatesmanualinandout/transformer.js`: `candidates: matches.map(function (r) { return { employeeNumber: displayNumberOf(r), employee: r.text }; })`
-- `tools/submitselfmanualinandout/transformer.js`: `availableRosters: rosterList.map(function (r) { return { rosterCode: r.RosterCode, rosterName: r.RosterName }; })`
-- `tools/submitmanualinandoutbyadmin/transformer.js`: `availableRosters: rosterList.map(function (r) { return { rosterCode: r.RosterCode, rosterName: r.RosterName }; })`
-- `tools/editsubordinatesmanualinandout/transformer.js`: `availableRosters: rosterList.map(function (r) { return { rosterCode: r.RosterCode, rosterName: r.RosterName }; })`
-- `tools/editselfmanualinandout/transformer.js`: `availableRosters: rosterList.map(function (r) { return { rosterCode: r.RosterCode, rosterName: r.RosterName }; })`
+- `tools/submitsubordinatesmanualinandout/transformer.js`: `const changes = list.map(function (p) {`
+- `tools/submitselfmanualinandout/transformer.js`: `const changes = list.map(function (p) {`
+- `tools/submitmanualinandoutbyadmin/transformer.js`: `const changes = list.map(function (p) {`
+- `tools/editsubordinatesmanualinandout/transformer.js`: `const changes = list.map(function (p) {`
+- `tools/editselfmanualinandout/transformer.js`: `const changes = list.map(function (p) {`
 
 ## Pagination
 
 Page/limit/offset/cursor handling for list endpoints.
 
-- `tools/submitsubordinatesmanualinandout/transformer.js`: `* "07.00", not the number 7 - that is what the page sends for the`
+- `tools/submitsubordinatesmanualinandout/transformer.js`: `* carries exactly those flags, so the submitted page is marked the same way. */`
 - `tools/submitselfmanualinandout/transformer.js`: `// Wide default period, matching what the page falls back to.`
-- `tools/submitmanualinandoutbyadmin/transformer.js`: `// Wide default period, matching what the page falls back to.`
-- `tools/editsubordinatesmanualinandout/transformer.js`: `* "07.00", not the number 7 - that is what the page sends for the`
+- `tools/submitmanualinandoutbyadmin/transformer.js`: `* carries exactly those flags, so the submitted page is marked the same way. */`
+- `tools/editsubordinatesmanualinandout/transformer.js`: `* search component URLs, the reason dropdown, the grid page size,`
 - `tools/editselfmanualinandout/transformer.js`: `// Wide default period, matching what the page falls back to.`
 
 ## Self vs subordinate vs administrator operations
@@ -96,4 +96,3 @@ Branches that distinguish acting on your own record vs a subordinate's vs an adm
 - `tools/getcompanyhierarchydetails/transformer.js`: `administrator: getValue("#ctl00_body_txtAdminName"),`
 - `tools/geteimattributelist/transformer.js`: `administrator: doc.querySelector('#ctl00_body_txtAdminName')?.value || "",`
 - `tools/submitmygrievanceapplication/transformer.js`: `return "No grievance grounds are currently available. Please contact your HR administrator.";`
-- `tools/myteamgrievanceapplication/transformer.js`: `error: "Could not load your team list from the Team Grievance page - please try again, or contact your HR administrator if it keeps happening.",`
